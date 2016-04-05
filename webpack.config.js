@@ -14,7 +14,7 @@ var DEFAULT_PARAMS = {
         extensions: ['', '.ts', '.tsx', '.js']
     },
     entry: {
-        main: './src/main.tsx'
+        main: './client/app/main.tsx'
     },
     output: {
         publicPath: '',
@@ -32,15 +32,11 @@ var DEFAULT_PARAMS = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './src/index.html',
+            template: './client/app/index.html',
             inject: 'body'
         }),
         new webpack.optimize.DedupePlugin()
     ].concat(_bootswatchWorkaround()),
-    devServer: {
-        contentBase: 'dev/',
-        port: 8081
-    },
     debug: true,
     progress: true,
     colors: true

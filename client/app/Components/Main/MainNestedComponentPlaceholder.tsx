@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import auth from '../../Auths/auth'
+import auth from '../../Auths/Auth'
 import {LoginForm} from "../Login/LoginForm";
 import AuthStore from "../../Auths/AuthStore"
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import auth from '../../Auths/auth'
+import auth from '../../Auths/Auth'
 export class LoginForm extends React.Component<any, {secretCode: string}> {
 
 
