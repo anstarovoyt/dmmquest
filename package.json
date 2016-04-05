@@ -1,0 +1,36 @@
+{
+  "name": "dmmquest",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "webpack-dev-server --inline --hot --TARGET=DEV",
+    "build": "webpack && node server.js",
+    "dist": "webpack --TARGET=DIST && node server.js --TARGET=DIST"
+  },
+  "dependencies": {
+    "axios": "0.7.0",
+    "bluebird": "2.10.2",
+    "bootswatch": "3.3.5",
+    "classnames": "2.2.0",
+    "fbjs": "0.2.1",
+    "font-awesome": "4.4.0",
+    "history": "1.17",
+    "lodash": "3.10.1",
+    "material-ui": "0.13.1",
+    "react": "0.14.2",
+    "react-addons-create-fragment": "0.14.2",
+    "react-addons-pure-render-mixin": "0.14.2",
+    "react-addons-transition-group": "0.14.2",
+    "react-addons-update": "0.14.2",
+    "react-bootstrap": "0.27.2",
+    "react-dom": "0.14.2",
+    "react-router": "^2.0.0",
+    "react-tap-event-plugin": "0.2.0",
+    "uuid": "2.0.1"
+  },
+  "devDependencies": {
+    "minimist": "1.2.0",
+    "typescript": "^1.8.2",
+    "url-loader": "0.5.6",
+    "webpack": "1.12.2"
+  }
+}
