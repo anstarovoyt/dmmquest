@@ -4,8 +4,8 @@ import "./main.css"
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 import {Router, Route, IndexRoute, useRouterHistory} from "react-router"
-import MainComponent from "./components/Main/MainComponent"
-import StagesComponent from "./components/Stages/StagesComponent"
+import MainComponent from "components/main1/MainComponent"
+import StagesComponent from "components/stages1/StagesComponent"
 import {createHashHistory} from "history"
 
 
