@@ -1,8 +1,8 @@
 import * as React from "react"
 
-import auth from '../../Auths/Auth'
-import {LoginForm} from "../Login/LoginForm";
-import AuthStore from "../../Auths/AuthStore"
+import auth from '../../authentication/AuthService'
+import {LoginForm} from "../login/LoginForm";
+import AuthStore from "../../authentication/AuthStore"
 
 export default class Placeholder extends React.Component<{ children: any }, {loggedIn: boolean}> {
 
