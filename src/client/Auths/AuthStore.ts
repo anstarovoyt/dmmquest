@@ -1,6 +1,6 @@
 import {EventEmitter} from 'events';
 
-export default new class AuthStore extends EventEmitter {
+class AuthStore extends EventEmitter {
 
 	constructor() {
 		super();
@@ -18,5 +18,7 @@ export default new class AuthStore extends EventEmitter {
 		console.log('remove listener');
 		this.removeListener('CHANGE', cb);
 	}
-}()
+}
+
+export default new AuthStore()
 
