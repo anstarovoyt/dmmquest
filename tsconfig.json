@@ -6,7 +6,9 @@
   },
   "files": [
     "server",
-    "./client/typings/express/express"
+    "./client/typings/express/express",
+    "client/app/state/QuestTexts.d.ts",
+    "client/app/state/AppState.d.ts"
   ],
   "exclude": [
     "node_modules"

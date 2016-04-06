@@ -17,7 +17,7 @@ var DEFAULT_PARAMS = {
         main: './client/app/main.tsx'
     },
     output: {
-        publicPath: '',
+        publicPath: '/',
         filename: '[name].[chunkhash].js',
         sourceMapFilename: '[name].[chunkhash].map'
     },

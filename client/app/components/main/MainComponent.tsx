@@ -10,11 +10,10 @@ export default class MainComponent extends React.Component<{ children: any }, {}
 				<nav className="navbar navbar-inverse navbar-fixed-top">
 					<div className="container">
 						<div className="navbar-header">
-							<Link className="navbar-brand" to="/">Main page</Link>
+							<Link className="navbar-brand" to="/">Квест ДММ</Link>
 						</div>
 
 						<ul className="nav navbar-nav">
-							<li><Link to="/todo">Todo</Link></li>
 						</ul>
 					</div>
 				</nav>

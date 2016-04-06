@@ -7,6 +7,7 @@ import {Router, Route, IndexRoute, useRouterHistory} from "react-router"
 import MainComponent from "./components/main/MainComponent"
 import StagesComponent from "./components/stages/StagesComponent"
 import {createHashHistory} from "history"
+import {StageComponent} from "./components/stage/StageComponent";
 
 
 const appHistory = useRouterHistory(createHashHistory)({ queryKey: false });
@@ -19,6 +20,7 @@ function renderRouter() {
 			<Route path="/" component={MainComponent}>
 				<IndexRoute component={StagesComponent}/>
 				<Route path="/stages" component={StagesComponent}/>
+				<Route path="/stage/:id" component={StageComponent}/>
 			</Route>
 		</Router>
 	), document.getElementById('content'));
