@@ -3,7 +3,7 @@ import * as React from "react"
 import {Link} from 'react-router';
 
 
-export default class StagesComponent extends React.Component<any, any> {
+export class StagesListComponent extends React.Component<any, any> {
 
 	render() {
 		//todo implement

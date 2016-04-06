@@ -1,9 +1,9 @@
-interface RequestQuestTexts {
+interface QuestTextsRequest {
 	token: string
-	stageId: string
+	stageId: number
 }
 
-interface ResponseQuestTexts {
+interface QuestTextsResponse {
 	success: boolean
 	questTexts?: QuestTexts
 }

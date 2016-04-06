@@ -6,19 +6,21 @@ class AuthStore extends EventEmitter {
 		super();
 	}
 
-	emitChange() {
-		this.emit('CHANGE');
+	emitChange(newState:LoginInfo) {
+		this.emit('CHANGE', newState);
 	}
 
-	addChangeListener(callback: ()=>void) {
+	addChangeListener(callback: (p:LoginInfo)=>void) {
 		this.on('CHANGE', callback);
 	}
 
-	removeChangeListener(cb: () => void) {
+	removeChangeListener(cb: (p:LoginInfo) => void) {
 		console.log('remove listener');
 		this.removeListener('CHANGE', cb);
 	}
 }
 
-export default new AuthStore()
+var authStore = new AuthStore();
+
+export {authStore}
 

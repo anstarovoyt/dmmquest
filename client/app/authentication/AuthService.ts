@@ -1,52 +1,56 @@
-import authStore from './AuthStore';
+import {authStore} from './AuthStore';
+import {authRequest} from "../communitation/Dispatcher";
 
 var auth = new class {
-	login(secretCode: string): void {
-		if (localStorage.authToken) {
-			this.onChange(true);
-			return
-		}
-		authRequest(secretCode, (result) => {
-			if (result.authenticated) {
-				localStorage.authToken = result.token;
-				this.onChange(true);
-			} else {
-				this.onChange(false);
-			}
-		})
-	}
+    login(secretCode:string):void {
+        var token = this.getToken();
+        if (token) {
+            this.onChange({
+                authenticated:true,
+                token:token
+            });
+            return
+        }
+        
+        authRequest({secretCode}, (resp) => {
+            if (resp.authenticated) {
+                this.storeLoginInfo(resp);
+                this.onChange(resp);
+            } else {
+                this.onChange(resp);
+            }
+        });
+    }
 
-	getToken(): string {
-		return localStorage.authToken
-	}
+    getToken():string {
+        return localStorage.authToken
+    }
 
-	logout(callback?: () => void): void {
-		delete localStorage.authToken;
-		if (callback) callback();
-		this.onChange(false)
-	};
+    logout():void {
+        this.dropLoginInfo();
+        
+        this.onChange({
+            authenticated: false,
+            token: null
+        })
+    };
 
-	loggedIn(): boolean {
-		return !!localStorage.authToken
-	};
+    loggedIn():boolean {
+        return !!localStorage.authToken
+    };
 
-	onChange(p: boolean) {
-		authStore.emitChange();
-	};
+    private onChange(result:LoginInfo) {
+        authStore.emitChange(result);
+    };
+
+    private storeLoginInfo(result) {
+        localStorage.authToken = result.token;
+    }
+    
+    private dropLoginInfo() {
+        delete localStorage.authToken;
+    }
 };
 
-function authRequest(secretCode: string, callback: (info: LoginInfo) => void) {
-	//todo real impl
-	setTimeout(() => {
-		if (secretCode == 'secretCode') {
-			callback({
-				authenticated: true,
-				token: Math.random().toString(36).substring(7)
-			})
-		} else {
-			callback({authenticated: false})
-		}
-	}, 0);
-}
 
-export default auth;
+export  {auth}

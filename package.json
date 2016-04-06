@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "webpack-dev-server --inline --hot --TARGET=DEV",
-    "build": "webpack && node server.js",
+    "build": "webpack && tsc && node server.js",
     "dist": "webpack --TARGET=DIST && node server.js --TARGET=DIST"
   },
   "dependencies": {
@@ -17,7 +17,6 @@
     "font-awesome": "4.4.0",
     "history": "1.17",
     "lodash": "3.10.1",
-    "material-ui": "0.13.1",
     "react": "0.14.2",
     "react-addons-create-fragment": "0.14.2",
     "react-addons-pure-render-mixin": "0.14.2",

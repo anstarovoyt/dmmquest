@@ -1,52 +1,52 @@
 import * as React from "react"
 import {questService} from "../../state/QuestService";
+import {LoadingComponent} from "../common/LoadingComponent";
 
-export class StageComponent extends React.Component<any, {questTexts?: QuestTexts, stage?: Stage}> {
-
-
-	constructor(props: any) {
-		super(props)
-		this.state = {};
-	}
-
-	componentDidMount() {
-		var stage: Stage = {
-			id: "1"
-		};
-
-		questService.getAsyncQuestTexts(stage, (res) => {
-			console.log('changed state')
-			this.setState({
-				questTexts: res,
-				stage: stage
-			})
-		})
-	}
+export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
 
 
-	render() {
-		if (this.state.questTexts) {
-			var todoItems = this.state.questTexts.quests.map(item => {
-				return <QuestComponent key={item.id} quest={item} stage={this.state.stage}/>;
-			});
-			return (
-				<div>
-					<ul>{todoItems}</ul>
-				</div>
-			);
-		} else {
-			return (
-				<div>
-					<ul>Нет открытых квестов!</ul>
-				</div>
-			);
-		}
-	}
+    constructor(props:any) {
+        super(props);
+        this.state = {};
+    }
+
+
+    componentDidMount() {
+        var currentStage = this.getCurrentStage();
+        questService.getAsyncQuestTexts(currentStage, (res) => {
+            this.setState({
+                questTexts: res,
+                stage: currentStage
+            })
+        })
+    }
+
+    private getCurrentStage() {
+        return this.props.stage;
+    }
+
+
+    render() {
+        var currentStage = this.getCurrentStage();
+        
+        if (this.state.questTexts) {
+            var todoItems = this.state.questTexts.quests.map(item => {
+                return <QuestComponent key={item.id} quest={item} stage={this.props.stage}/>;
+            });
+            return (
+                <div>
+                    <ul>{todoItems}</ul>
+                </div>
+            );
+        }
+
+        return <LoadingComponent />;
+    }
 }
 
-class QuestComponent extends React.Component<{quest: Quest, stage: Stage}, any> {
+class QuestComponent extends React.Component<{quest:Quest, stage:Stage}, any> {
 
-	render() {
-		return <div> {this.props.quest.text} </div>
-	}
+    render() {
+        return <div> {this.props.quest.text} </div>
+    }
 }

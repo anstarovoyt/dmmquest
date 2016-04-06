@@ -7,8 +7,11 @@
   "files": [
     "server",
     "./client/typings/express/express",
-    "client/app/state/QuestTexts.d.ts",
-    "client/app/state/AppState.d.ts"
+    "client/app/state/QuestTexts",
+    "client/app/state/AppState",
+    "dataloader",
+    "client/app/authentication/Auth.d.ts",
+    "client/app/state/Answers.d.ts"
   ],
   "exclude": [
     "node_modules"
