@@ -3,9 +3,10 @@ import {appStateService} from "../../state/AppStateService";
 import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
 import {LoadingComponent} from "../common/LoadingComponent";
+import {StageLocked} from "./StageLocked";
 
 
-type StageStage = {stage?:Stage, loading?:boolean, notAvailable?:boolean};
+type StageStage = {stage:Stage, loading:boolean, available:boolean};
 
 export class StageContainerComponent extends React.Component<{params:any},StageStage > {
 
@@ -18,9 +19,9 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
         this.state = this.getStageByAppState(state);
     }
 
-    _onChange(loginInfo:AppState) {
+    _onChange(appState:AppState) {
         console.log('update state stage container');
-        this.setState(this.getStageByAppState(loginInfo));
+        this.setState(this.getStageByAppState(appState));
     }
 
     componentWillMount() {
@@ -37,7 +38,11 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
     private getStageByAppState(state:AppState):StageStage {
         console.log('test state');
         if (!state) {
-            return {loading: true};
+            return {
+                loading: true,
+                available: false,
+                stage: null
+            };
         }
         else {
             var id:string = this.props.params.id;
@@ -50,7 +55,8 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
                     if (stage) {
                         return {
                             stage,
-                            loading: false
+                            loading: false,
+                            available: true
                         }
                     }
                 }
@@ -58,18 +64,24 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
         }
 
         return {
-            notAvailable: true
+            available: false,
+            loading: false,
+            stage: null
         }
     }
 
     render() {
         var state = this.state;
         if (state) {
-            if (state.notAvailable) {
-                return <div>Этап недоступен</div>
+            if (false === state.available) {
+                return <StageLocked />
             }
-            if (state.stage) {
-                return <StageComponent stage={state.stage}/>
+            var stage = state.stage;
+            if (stage) {
+                if (stage.isLocked) {
+                    return <StageLocked />
+                }
+                return <StageComponent stage={stage}/>
             }
         }
 

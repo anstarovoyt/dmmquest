@@ -3,13 +3,19 @@ import * as React from "react"
 import {Link} from 'react-router';
 
 
-export default class StagesComponent extends React.Component<any, any> {
+export class StageListItemComponent extends React.Component<{stage:Stage}, any> {
+
+    constructor(props:{stage:Stage}, context:any) {
+        super(props, context);
+    }
 
     render() {
-
+        var id = this.props.stage.id;
+        var stageLink = "stage/" + id;
         return (
             <div>
-                <Link to="stage/1">Stage 1</Link>
+                
+                <Link to={stageLink}>Stage {id}</Link>
                 <div>
                     status
                 </div>

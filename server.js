@@ -73,25 +73,29 @@ var appState = (function () {
         isBonus: false,
         isOpen: false,
         isCompleted: true,
+        isLocked: false,
         id: 0
     });
     result.push({
         isBonus: false,
         isOpen: true,
         isCompleted: false,
+        isLocked: false,
         id: 1
     });
     result.push({
         isBonus: false,
         isOpen: false,
         isCompleted: false,
-        id: 1
+        isLocked: true,
+        id: 2
     });
     result.push({
         isBonus: false,
         isOpen: false,
         isCompleted: false,
-        id: 1
+        isLocked: true,
+        id: 3
     });
     return {
         stages: result
@@ -116,6 +120,7 @@ function closeStage(stageId) {
         var nextStage = getNextStage(appState, stage);
         if (!nextStage.isCompleted) {
             nextStage.isOpen = true;
+            nextStage.isLocked = false;
         }
     }
     return appState;
