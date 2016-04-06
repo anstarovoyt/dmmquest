@@ -113,7 +113,7 @@ function _bootswatchWorkaround() {
 
     return extensions.map(function(ext) {
         var regexp = new RegExp('^\.\.\/fonts\/glyphicons-halflings-regular\.' + ext + '$');
-        var dest = 'bootswatch/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.' + ext;
+        var dest = 'bootstrap/dist/fonts/glyphicons-halflings-regular.' + ext;
         return new webpack.NormalModuleReplacementPlugin(regexp, dest);
     });
 }

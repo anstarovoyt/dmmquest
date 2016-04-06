@@ -1,6 +1,7 @@
 import * as React from "react";
 import {auth} from "../../authentication/AuthService";
 
+
 export class LoginForm extends React.Component<any, {secretCode:string}> {
 
 
@@ -11,16 +12,23 @@ export class LoginForm extends React.Component<any, {secretCode:string}> {
 
     render() {
         return (
-            <div>
-                <form className="commentForm" onSubmit={this.handleSubmit.bind(this)}>
-                    <input value={this.state.secretCode}
-                           onChange={this.handleCodeChanged.bind(this)}
-                           type="text"
-                           placeholder="Введите свой секретный код"/>
-
-                    <button>Login</button>
-                </form>
+            <div className="inner cover">
+                <p className="lead">
+                    <form className="input-group" onSubmit={this.handleSubmit.bind(this)}>
+                        
+                            <input value={this.state.secretCode}
+                                   onChange={this.handleCodeChanged.bind(this)}
+                                   className="form-control"
+                                   type="text"
+                                   placeholder="Введите секретный код"/>
+			                <span className="input-group-btn">
+			                    <button className="btn btn-info" type="button">
+                                    <span className="glyphicon glyphicon-fire"></span> Вперед</button>
+			                </span>
+                    </form>
+                </p>
             </div>
+
         )
     }
 
