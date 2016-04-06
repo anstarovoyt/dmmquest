@@ -6,13 +6,11 @@ export default class MainComponent extends React.Component<{ children:any }, {}>
 
     render() {
         return (
-            <div className="site-wrapper">
-                <div className="site-wrapper-inner">
-                    <div className="cover-container">
-                        <Placeholder children={this.props.children}/>
+            <div className="site-wrapper-inner">
+                <div className="cover-container">
+                    <Placeholder children={this.props.children}/>
 
-                        <FooterComponent />
-                    </div>
+                    <FooterComponent />
                 </div>
             </div>
 
