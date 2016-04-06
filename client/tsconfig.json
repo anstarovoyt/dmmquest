@@ -6,6 +6,7 @@
     "jsx": "react"
 //  , "noEmit": true
   },
+  "compileOnSave": false,
   "exclude": [
     "node_modules"
   ]
