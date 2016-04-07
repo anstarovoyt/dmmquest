@@ -5,6 +5,7 @@ var appState:AppState = (function () {
         isOpen: false,
         isCompleted: true,
         isLocked:false,
+        name:"Этап 1",
         id: 0
     });
     result.push({
@@ -12,6 +13,7 @@ var appState:AppState = (function () {
         isOpen: true,
         isCompleted: false,
         isLocked:false,
+        name:"Этап 2",
         id: 1
     });
     result.push({
@@ -19,13 +21,15 @@ var appState:AppState = (function () {
         isOpen: false,
         isCompleted: false,
         isLocked:true,
+        name:"Этап 3",
         id: 2
     });
     result.push({
-        isBonus: false,
-        isOpen: false,
+        isBonus: true,
+        isOpen: true,
         isCompleted: false,
-        isLocked:true,
+        isLocked:false,
+        name:"Бонус :)",
         id: 3
     });
 

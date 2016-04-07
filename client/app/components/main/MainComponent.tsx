@@ -6,12 +6,7 @@ export default class MainComponent extends React.Component<{ children:any }, {}>
 
     render() {
         return (
-            <div className="site-wrapper-inner">
-                <Placeholder children={this.props.children}/>
-                
-            </div>
-
-
+                <Placeholder children={this.props.children}/>             
         );
     }
 

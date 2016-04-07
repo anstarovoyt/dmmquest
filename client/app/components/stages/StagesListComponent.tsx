@@ -3,6 +3,7 @@ import {appStateStore} from "../../state/AppStateStore";
 import {appStateService} from "../../state/AppStateService";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageListItemComponent} from "./StageListItemComponent";
+import {auth} from "../../authentication/AuthService";
 
 
 export class StagesListComponent extends React.Component<any, {stages:Stage[],loading:boolean}> {
@@ -24,7 +25,7 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
     _onChange(appState:AppState) {
         console.log('update state stage container');
 
-        var state = appState == null ? {loading:false, stages:null} : {
+        var state = appState == null ? {loading: false, stages: null} : {
             stages: appState.stages,
             loading: false
         };
@@ -44,15 +45,23 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
     }
 
     render() {
+
         if (this.state.loading) {
-            return <LoadingComponent/>
+            return (<div className="col-lg-12">
+                    <h1>{auth.getName()}</h1>
+
+                    <LoadingComponent/>
+                </div>
+            )
+
         }
         var stages = this.state.stages;
         if (stages) {
             var result = stages.map(function (el) {
                 return <StageListItemComponent key={el.id} stage={el}/>
             })
-            return <div>
+            return <div className="col-lg-12">
+                <h1>{auth.getName()}</h1>
                 {result}
             </div>
         }

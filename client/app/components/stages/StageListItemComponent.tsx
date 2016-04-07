@@ -16,9 +16,9 @@ export class StageListItemComponent extends React.Component<{stage:Stage}, any> 
         var stageLink = "stage/" + id;
         return <div className="row">
             <div className="col-xs-12 col-md-8">
-                <Link to={stageLink}>{this.getName(stage)}</Link>
+                <h4><Link to={stageLink}>{this.getName(stage)}</Link></h4>
             </div>
-            
+
             <div className="col-xs-6 col-md-4">
                 <StageListItemStatusComponent stage={stage}/>
             </div>
@@ -27,9 +27,6 @@ export class StageListItemComponent extends React.Component<{stage:Stage}, any> 
 
 
     getName(stage:Stage) {
-        if (stage.isBonus) {
-            return "Бонус :)"
-        }
-        return "Этап " + (stage.id + 1);
+        return stage.name;
     }
 }

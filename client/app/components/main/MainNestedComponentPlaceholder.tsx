@@ -29,11 +29,7 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
 
                     <div className="inner cover">
                         <div className="row">
-                            <div className="col-lg-12">
-                                <h1>{loginInfo.name}</h1>
-
-                                {this.props.children}
-                            </div>
+                            {this.props.children}
                         </div>
                     </div>
                     <FooterComponent />
@@ -42,11 +38,17 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
         }
 
         return (
-            <div className="cover-container">
-                <LoginForm />
-                <FooterComponent />
+            <div className="site-wrapper">
+                <div className="site-wrapper-inner">
+                    <div className="cover-container">
+                        <LoginForm />
+                    </div>
+                </div>
             </div>
+        
         )
+
+
     }
 
 

@@ -11,6 +11,7 @@ interface Stage extends HasId {
     isOpen?:boolean
     isCompleted?:boolean
     isLocked?:boolean
+    name:string
     questAnswers?:{
         [id:number]:QuestAnswer
     }

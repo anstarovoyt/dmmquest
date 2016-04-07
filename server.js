@@ -3,7 +3,7 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var path = require('path');
-var PORT = process.env.PORT || 8080;
+var PORT = 8082;
 var TARGET_PATH_MAPPING = {
     BUILD: './build',
     DIST: './dist'
@@ -74,6 +74,7 @@ var appState = (function () {
         isOpen: false,
         isCompleted: true,
         isLocked: false,
+        name: "Этап 1",
         id: 0
     });
     result.push({
@@ -81,6 +82,7 @@ var appState = (function () {
         isOpen: true,
         isCompleted: false,
         isLocked: false,
+        name: "Этап 2",
         id: 1
     });
     result.push({
@@ -88,13 +90,15 @@ var appState = (function () {
         isOpen: false,
         isCompleted: false,
         isLocked: true,
+        name: "Этап 3",
         id: 2
     });
     result.push({
-        isBonus: false,
-        isOpen: false,
+        isBonus: true,
+        isOpen: true,
         isCompleted: false,
-        isLocked: true,
+        isLocked: false,
+        name: "Бонус :)",
         id: 3
     });
     return {
@@ -140,7 +144,8 @@ function login(secretCode) {
     if (secretCode == 'test') {
         return {
             authenticated: true,
-            token: secretCode
+            token: secretCode,
+            name: "Тестовая команда"
         };
     }
     return { authenticated: false };
