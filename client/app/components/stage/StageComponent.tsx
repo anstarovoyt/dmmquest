@@ -1,6 +1,9 @@
 import * as React from "react"
 import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
+import {Link} from 'react-router'
+
+
 
 export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
 
@@ -35,7 +38,10 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             });
             return (
                 <div className="col-lg-12">
-                    <h1><span>Этап 1</span></h1>
+                    <h1><Link to="/">
+                        <span className="glyphicon glyphicon-arrow-left"></span>
+                    </Link>
+                        <span>Этап 1</span></h1>
                     <ul>{todoItems}</ul>
                 </div>
             );
@@ -59,7 +65,7 @@ class QuestComponent extends React.Component<{quest:Quest, stage:Stage}, any> {
                 <div className="col-xs-12 col-md-8">
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
                     <p>{this.props.quest.text}</p>
-                    <p className="lead">
+                    <div className="lead">
                         <div className="input-group">
                             <input type="text"
                                    className="form-control"
@@ -68,10 +74,10 @@ class QuestComponent extends React.Component<{quest:Quest, stage:Stage}, any> {
                             
                             <span className="input-group-btn">
                               <button className="btn btn-info" type="button">
-                                  <span className="glyphicon glyphicon-floppy-save"/> Сохранить</button>
+                                  <span className="glyphicon glyphicon-floppy-save"></span> Сохранить</button>
                             </span>
                         </div>
-                    </p>
+                    </div>
                 </div>
             </div>)
     }
