@@ -1,4 +1,4 @@
-git checkout -b master
+git checkout master
 git rebase develop
 webpack --TARGET=DIST
 git commit -m 'add dist'
