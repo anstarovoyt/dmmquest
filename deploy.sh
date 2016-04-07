@@ -1,2 +1,5 @@
-git rebase heroku master
-git checkout master
+git checkout -b master
+git rebase develop
+git checkout develop
+git push heroku master -f
+
