@@ -1,2 +1,2 @@
-git checkout heroku
-git rebase master
+git rebase heroku master
+git checkout master
