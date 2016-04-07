@@ -3,7 +3,7 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var path = require('path');
-var PORT = 8082;
+var PORT = process.env.PORT || 8080;
 var TARGET_PATH_MAPPING = {
     BUILD: './build',
     DIST: './dist'
