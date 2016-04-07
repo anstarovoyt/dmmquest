@@ -12,22 +12,21 @@ export class LoginForm extends React.Component<any, {secretCode:string}> {
 
     render() {
         return (
-            <div className="inner cover">
+            <form className="inner cover" onSubmit={this.handleSubmit.bind(this)}>
                 <p className="lead">
-                    <form className="input-group" onSubmit={this.handleSubmit.bind(this)}>
-                        
-                            <input value={this.state.secretCode}
-                                   onChange={this.handleCodeChanged.bind(this)}
-                                   className="form-control"
-                                   type="text"
-                                   placeholder="Введите секретный код"/>
+                    <div className="input-group">
+                        <input value={this.state.secretCode}
+                               onChange={this.handleCodeChanged.bind(this)}
+                               className="form-control"
+                               type="text"
+                               placeholder="Введите секретный код"/>
 			                <span className="input-group-btn">
 			                    <button className="btn btn-info" type="button">
                                     <span className="glyphicon glyphicon-fire"></span> Вперед</button>
 			                </span>
-                    </form>
+                    </div>
                 </p>
-            </div>
+            </form>
 
         )
     }
