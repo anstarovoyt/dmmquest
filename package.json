@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack && tsc && node server.js",
-    "dist": "webpack --TARGET=DIST && tsc && node server.js --TARGET=DIST",
+    "dist": "webpack --TARGET=DIST",
     "postinstall": "webpack --progress --colors && tsc",
-    "start": "node server.js"
+    "start": "node server.js --TARGET=DIST"
   },
   "dependencies": {
     "axios": "0.7.0",
