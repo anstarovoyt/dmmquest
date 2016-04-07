@@ -4,7 +4,7 @@
   "scripts": {
     "build": "webpack && tsc && node server.js",
     "dist": "webpack --TARGET=DIST",
-    "postinstall": "webpack --progress --colors && tsc",
+    "postinstall": "webpack --progress --colors",
     "start": "node server.js --TARGET=DIST"
   },
   "dependencies": {
