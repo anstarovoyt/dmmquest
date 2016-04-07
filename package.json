@@ -2,9 +2,10 @@
   "name": "dmmquest",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack-dev-server --inline --hot --TARGET=DEV",
     "build": "webpack && tsc && node server.js",
-    "dist": "webpack --TARGET=DIST && node server.js --TARGET=DIST"
+    "dist": "webpack --TARGET=DIST && tsc && node server.js --TARGET=DIST"
+    "postinstall": "webpack --progress --colors && tsc",
+    "start": "node server.js"
   },
   "dependencies": {
     "axios": "0.7.0",
