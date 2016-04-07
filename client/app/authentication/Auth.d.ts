@@ -1,13 +1,17 @@
 interface Storage {
-	authToken;
+    auth: {
+        authToken:string,
+        name:string
+    }
 }
 
 interface LoginInfo {
-	authenticated: boolean;
-	token?: string;
+    authenticated:boolean;
+    name?:string;
+    token?:string;
 }
 
 
 interface LoginRequest {
-	secretCode:string
+    secretCode:string
 }

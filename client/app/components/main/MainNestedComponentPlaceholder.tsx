@@ -3,28 +3,50 @@ import * as React from "react"
 import {auth} from '../../authentication/AuthService'
 import {LoginForm} from "../login/LoginForm";
 import {authStore} from "../../authentication/AuthStore"
+import {HeaderComponent} from "../common/HeaderComponent";
+import {FooterComponent} from "../common/FooterComponent";
 
-export default class Placeholder extends React.Component<{ children:any }, {loggedIn:boolean}> {
+export default class Placeholder extends React.Component<{ children:any }, {loginInfo:LoginInfo}> {
 
     private _changeListener:()=> void;
 
     constructor(props) {
         super(props);
-        this.state = {loggedIn: auth.loggedIn()}
+        this.state = {loginInfo: auth.logginInfo()}
     }
 
     _onChange(loginInfo:LoginInfo) {
-        this.setState({loggedIn: loginInfo.authenticated});
+        this.setState({loginInfo});
         console.log('update holder')
     }
 
 
     render() {
-        if (this.state.loggedIn) {
-            return this.props.children;
+        var loginInfo = this.state.loginInfo;
+        if (loginInfo && loginInfo.authenticated) {
+            return (<div className="cover-container">
+                    <HeaderComponent />
+
+                    <div className="inner cover">
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <h1>{loginInfo.name}</h1>
+
+                                {this.props.children}
+                            </div>
+                        </div>
+                    </div>
+                    <FooterComponent />
+                </div>
+            )
         }
 
-        return <LoginForm />
+        return (
+            <div className="cover-container">
+                <LoginForm />
+                <FooterComponent />
+            </div>
+        )
     }
 
 

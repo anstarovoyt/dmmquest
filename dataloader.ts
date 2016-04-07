@@ -80,7 +80,8 @@ function login(secretCode:string):LoginInfo {
     if (secretCode == 'test') {
         return {
             authenticated: true,
-            token: secretCode
+            token: secretCode,
+            name:"Тестовая команда"
         }
     }
     return {authenticated: false}

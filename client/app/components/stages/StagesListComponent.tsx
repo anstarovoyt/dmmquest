@@ -1,6 +1,4 @@
-import * as React from "react"
-
-import {Link} from 'react-router';
+import * as React from "react";
 import {appStateStore} from "../../state/AppStateStore";
 import {appStateService} from "../../state/AppStateService";
 import {LoadingComponent} from "../common/LoadingComponent";

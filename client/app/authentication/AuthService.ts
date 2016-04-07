@@ -1,18 +1,19 @@
 import {authStore} from './AuthStore';
 import {authRequest} from "../communitation/Dispatcher";
+import {get} from "http";
 
 var auth = new class {
     login(secretCode:string):void {
         var token = this.getToken();
         if (token) {
             this.onChange({
-                authenticated:true,
-                token:token
+                authenticated: true,
+                token: token
             });
             return
         }
-        
-        authRequest({secretCode}, (resp) => {
+
+        authRequest({secretCode}, (resp:LoginInfo) => {
             if (resp.authenticated) {
                 this.storeLoginInfo(resp);
                 this.onChange(resp);
@@ -23,12 +24,18 @@ var auth = new class {
     }
 
     getToken():string {
-        return localStorage.authToken
+        var data = localStorage.auth;
+        return data == null ? null : data.authToken
+    }
+
+    getName():string {
+        var data = localStorage.auth;
+        return data == null ? null : data.name
     }
 
     logout():void {
         this.dropLoginInfo();
-        
+
         this.onChange({
             authenticated: false,
             token: null
@@ -36,21 +43,37 @@ var auth = new class {
     };
 
     loggedIn():boolean {
-        return !!localStorage.authToken
+        return !!localStorage.auth
     };
+
+    logginInfo():LoginInfo {
+        var authFromStore = localStorage.auth;
+        if (!authFromStore) {
+            return null;
+        }
+
+        return {
+            authenticated: true,
+            name: authFromStore.name,
+            token: authFromStore.authToken
+        }
+    }
 
     private onChange(result:LoginInfo) {
         authStore.emitChange(result);
     };
 
     private storeLoginInfo(result) {
-        localStorage.authToken = result.token;
+        localStorage.auth = {
+            authToken: result.token,
+            name: result.name
+        }
     }
-    
+
     private dropLoginInfo() {
-        delete localStorage.authToken;
+        delete localStorage.auth;
     }
-};
+}
 
 
-export  {auth}
+export {auth}
