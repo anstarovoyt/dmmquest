@@ -40,7 +40,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
         var state = this.state;
         if (state.questTexts) {
             var quests = this.state.questTexts.quests.map(item => {
-                return <QuestComponent saveValue={this.nestedValue} key={item.id} quest={item}
+                return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
             return (

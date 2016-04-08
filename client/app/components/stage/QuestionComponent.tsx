@@ -1,9 +1,8 @@
-import * as React from "react"
+import * as React from "react";
 import {saveAnswers} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
-
-export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, saveValue}, {value:string, isEnableSave:boolean}> {
+export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, savedValues}, {value:string, isEnableSave:boolean, savedMark:boolean}> {
 
 
     constructor(props:any) {
@@ -12,14 +11,17 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var value = this.getDefaultValue() || "";
         this.state = {
             value: value,
+            savedMark: false,
             isEnableSave: true
         }
-        
-        this.props.saveValue[this.props.quest.id] = value;
+
+        this.props.savedValues[this.props.quest.id] = value;
     }
 
 
     render() {
+        var savedHtmlClass = "done-mark" + (this.state.savedMark ? " view" : "");
+
 
         return (
             <div className="row">
@@ -39,7 +41,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                                   disabled={!this.state.isEnableSave}
 
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
-                                  <span className="glyphicon glyphicon-floppy-save"></span> Сохранить</button>
+                                  <span className="glyphicon glyphicon-floppy-save"></span> Сохранить<span
+                                  className={savedHtmlClass}>Ответ сохранен</span></button>
                             </span>
                     </div>
                 </div>
@@ -67,10 +70,11 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var newValue = e.target.value;
         var state = {
             value: newValue,
-            isEnableSave: this.state.isEnableSave
+            isEnableSave: this.state.isEnableSave,
+            savedMark: false
         };
 
-        this.props.saveValue[this.props.quest.id] = newValue;
+        this.props.savedValues[this.props.quest.id] = newValue;
 
         this.setState(state)
     }
@@ -82,7 +86,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var value = this.state.value;
         this.setState({
             value: value,
-            isEnableSave: false
+            isEnableSave: false,
+            savedMark: false
         });
         var answer:QuestAnswer = {
             id: quest.id,
@@ -96,10 +101,17 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
             appStateService.updateAnswer(stage, answer);
             this.setState({
                 value: value,
-                isEnableSave: true
+                isEnableSave: true,
+                savedMark: true
             });
 
-
+            setTimeout(() => {
+                this.setState({
+                    value: this.state.value,
+                    isEnableSave: this.state.isEnableSave,
+                    savedMark: false
+                })
+            }, 1000);
         })
     }
 }
