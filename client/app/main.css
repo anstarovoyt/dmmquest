@@ -240,3 +240,9 @@ h1 a {float: left;}
     top: 0;
     left: 0;
 }
+
+.logo-link {
+    content: url('logo.gif');
+    height: 30px;
+    width: 30px;
+}

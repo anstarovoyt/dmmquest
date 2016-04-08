@@ -46,10 +46,8 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
         }
         else {
             var id:string = this.props.params.id;
-            console.log(id);
-            console.log(JSON.stringify(state));
             if (id) {
-                var numberId = Number(id);
+                var numberId = id == 'bonus' ? state.stages.length - 1 : Number(id);
                 if (id) {
                     var stage = state.stages[numberId];
                     if (stage) {

@@ -13,11 +13,11 @@ export class HeaderComponent extends React.Component<any, any> {
 
             <div className="masthead clearfix">
                 <div className="inner">
-                    <h3 className="masthead-brand"><span className="glyphicon glyphicon-picture"></span></h3>
+                    <h3 className="masthead-brand"><Link className="logo-link" to="/"></Link></h3>
                     <ul className="nav masthead-nav">
-                        <li className="active"><Link to="/">Главная</Link></li>
-                        <li><a href="#">Эбаут</a></li>
-                        <li><a onClick={this.logout.bind(this)}>Выход</a></li>
+                        <li><Link to="/">Главная</Link></li>
+                        <li><Link to="/stage/bonus">Бонус</Link></li>
+                        <li><a href="#" onClick={this.logout.bind(this)}>Выход</a></li>
 
                     </ul>
                 </div>
