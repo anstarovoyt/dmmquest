@@ -57,7 +57,7 @@ function closeStage(stageId:number) {
         stage.isCompleted = true;
 
         var nextStage = getNextStage(appState, stage);
-        if (!nextStage.isCompleted) {
+        if (nextStage && !nextStage.isCompleted) {
             nextStage.isOpen = true;
             nextStage.isLocked = false;
         }

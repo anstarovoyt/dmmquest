@@ -43,6 +43,8 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
+            var isCompletedLevel = currentStage.isCompleted;
+            var buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
             return (
                 <div className="row">
                     <div className="col-lg-12">
@@ -56,10 +58,10 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                         <p className="lead"></p>
                         <div className="input-group">
                             <span className="input-group-btn">
-                              <button className="btn btn-info"
+                              <button className={buttonStyle}
                                       type="button"
                                       onClick={this.saveAnswers.bind(this)}
-                                      disabled={currentStage.isCompleted}>{currentStage.isCompleted ? "Уровень сдан" : "Сдать уровень" }</button>
+                                      disabled={currentStage.isCompleted}>{isCompletedLevel ? "Уровень сдан" : "Сдать уровень" }</button>
                             </span>
                         </div>
 

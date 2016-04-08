@@ -24,9 +24,6 @@ server
     .listen(PORT);
 
 server.post('/quest-texts', (req, res, next) => {
-    for(i=0;i<10000000;i++) {}
-
-    console.log('post accepted');
     var request:QuestTextsRequest = req.body;
 
     res.json(processQuestTexts(request));
@@ -113,6 +110,7 @@ function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
 
     return {
         success: true,
+        
         questTexts: {
             stageId: request.stageId,
             quests: questTexts.map(function (el, i) {

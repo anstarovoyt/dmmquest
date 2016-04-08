@@ -18,7 +18,6 @@ server
     .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
     .listen(PORT);
 server.post('/quest-texts', function (req, res, next) {
-    console.log('post accepted');
     var request = req.body;
     res.json(processQuestTexts(request));
 });
@@ -144,7 +143,7 @@ function closeStage(stageId) {
         stage.isOpen = false;
         stage.isCompleted = true;
         var nextStage = getNextStage(appState, stage);
-        if (!nextStage.isCompleted) {
+        if (nextStage && !nextStage.isCompleted) {
             nextStage.isOpen = true;
             nextStage.isLocked = false;
         }

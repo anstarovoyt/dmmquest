@@ -23,6 +23,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var savedHtmlClass = "done-mark" + (this.state.savedMark ? " view" : "");
 
 
+        var isCompleted = this.props.stage.isCompleted;
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -31,6 +32,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                     <p className="lead"></p>
                     <div className="input-group">
                         <input type="text"
+                               disabled={isCompleted}
                                className="form-control"
                                onChange={this.handlerChanged.bind(this)}
                                placeholder="Ваш ответ"
@@ -38,7 +40,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                             
                             <span className="input-group-btn">
                               <button
-                                  disabled={!this.state.isEnableSave}
+                                  disabled={!this.state.isEnableSave || isCompleted}
 
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
                                   <span className="glyphicon glyphicon-floppy-save"></span> Сохранить<span
