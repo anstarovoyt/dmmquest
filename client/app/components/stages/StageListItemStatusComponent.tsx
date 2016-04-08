@@ -10,12 +10,10 @@ export class StageListItemStatusComponent extends React.Component<{stage:Stage},
             </div>
         }
 
-        if (stage.isLocked) {
-            return <div className="alert alert-danger">Не открыт</div>
-        }
-        
         if (stage.isCompleted) {
             return <div className="alert alert-success"> Завершен</div>
         }
+
+        return <div className="alert alert-danger">Не открыт</div>
     }
 }

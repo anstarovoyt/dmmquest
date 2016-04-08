@@ -38,6 +38,7 @@ class AppStateService {
     private loadState() {
         loadState({token: auth.getToken()}, response => {
             this.state = response.state;
+            console.log('State')
             this.onChange();
         });
     }

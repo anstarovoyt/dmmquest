@@ -73,11 +73,23 @@ function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
         return {success: false};
     }
 
+    var questTexts = getQuestTexts(request.stageId);
+    if (!questTexts) {
+        return {
+            success: false
+        }
+    }
+
     return {
         success: true,
         questTexts: {
-            stageId: request.stageId,
-            quests: [{id: 0, text: "Foo1"}, {id: 1, text: "Foo2"}]
+            stageId:request.stageId,
+            quests:questTexts.map(function (el, i) {
+                return {
+                    id:i,
+                    text:el
+                }
+            })
         }
     }
 }

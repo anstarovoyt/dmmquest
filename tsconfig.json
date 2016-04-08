@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "sourceMap": true,
-    "outFile": "server.js"
+    "module": "commonjs"
   },
   "files": [
     "server",
@@ -11,7 +11,8 @@
     "client/app/state/AppState",
     "dataloader",
     "client/app/authentication/Auth.d.ts",
-    "client/app/state/Answers.d.ts"
+    "client/app/state/Answers.d.ts",
+    "data"
   ],
   "exclude": [
     "node_modules"
