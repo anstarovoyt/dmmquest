@@ -4,7 +4,6 @@ import {auth} from "../../authentication/AuthService";
 
 export class LoginForm extends React.Component<any, {secretCode:string, showError:boolean}> {
 
-
     constructor() {
         super();
         this.state = {
@@ -38,7 +37,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
                            type="text"
                            placeholder="Введите секретный код"/>
 			                <span className="input-group-btn">
-			                    <button className="btn btn-info" type="submit" >
+			                    <button className="btn btn-info" type="submit">
                                     <span className="glyphicon glyphicon-fire"></span> Вперед</button>
 			                </span>
                 </div>
