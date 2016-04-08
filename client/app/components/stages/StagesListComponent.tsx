@@ -47,10 +47,13 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
     render() {
 
         if (this.state.loading) {
-            return (<div className="col-lg-12">
-                    <h1>{auth.getName()}</h1>
+            return (
+                <div className="row">
+                    <div className="col-lg-12">
+                        <h1>{auth.getName()}</h1>
 
-                    <LoadingComponent/>
+                        <LoadingComponent/>
+                    </div>
                 </div>
             )
 
@@ -60,9 +63,11 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
             var result = stages.map(function (el) {
                 return <StageListItemComponent key={el.id} stage={el}/>
             })
-            return <div className="col-lg-12">
-                <h1>{auth.getName()}</h1>
-                {result}
+            return <div className="row">
+                <div className="col-lg-12">
+                    <h1>{auth.getName()}</h1>
+                    {result}
+                </div>
             </div>
         }
     }

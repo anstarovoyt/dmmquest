@@ -24,28 +24,23 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
     render() {
         var loginInfo = this.state.loginInfo;
         if (loginInfo && loginInfo.authenticated) {
-            return (<div className="cover-container">
-                    <HeaderComponent />
-
+            return (<div>
+                <HeaderComponent/>
+                <div className="cover-container">
                     <div className="inner cover">
-                        <div className="row">
-                            {this.props.children}
-                        </div>
+                        {this.props.children}
                     </div>
                     <FooterComponent />
                 </div>
-            )
+            </div>)
         }
 
         return (
-            <div className="site-wrapper">
-                <div className="site-wrapper-inner">
-                    <div className="cover-container">
-                        <LoginForm />
-                    </div>
+            <div className="site-wrapper-inner">
+                <div className="cover-container">
+                    <LoginForm />
                 </div>
             </div>
-        
         )
 
 

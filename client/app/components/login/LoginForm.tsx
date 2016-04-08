@@ -10,6 +10,17 @@ export class LoginForm extends React.Component<any, {secretCode:string}> {
         this.state = {secretCode: ""};
     }
 
+
+    componentWillMount():void {
+        document.body.classList.add('open');
+        document.getElementById('content').classList.add('site-wrapper')
+    }
+
+    componentWillUnmount():void {
+        document.body.classList.remove('open');
+        document.getElementById('content').classList.remove('site-wrapper')
+    }
+
     render() {
         return (
             <form className="inner cover" onSubmit={this.handleSubmit.bind(this)}>

@@ -31,25 +31,40 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
     render() {
         var currentStage = this.getCurrentStage();
 
-        if (this.state.questTexts) {
-            var todoItems = this.state.questTexts.quests.map(item => {
+        var state = this.state;
+        if (state.questTexts) {
+            var quests = this.state.questTexts.quests.map(item => {
                 return <QuestComponent key={item.id} quest={item} stage={this.props.stage}/>;
             });
             return (
-                <div className="col-lg-12">
-                    <h1><Link to="/">
-                        <span className="glyphicon glyphicon-arrow-left"></span>
-                    </Link>
-                        <span>Этап 1</span></h1>
-                    <ul>{todoItems}</ul>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <h1><Link to="/">
+                            <span className="glyphicon glyphicon-arrow-left"></span>
+                        </Link>
+                            <span>{currentStage.name}</span></h1>
+                        {quests}
+                    </div>
+                    <div className="col-lg-12 save-level">
+                        <p className="lead"></p>
+                        <div className="input-group">
+                            <span className="input-group-btn">
+                              <button className="btn btn-info" type="button"
+                                      disabled={currentStage.isCompleted}>{currentStage.isCompleted ? "Уровень сдан" : "Сдать уровень" }</button>
+                            </span>
+                        </div>
+
+                    </div>
                 </div>
             );
         }
 
         return (
-            <div className="col-lg-12">
-                <h1><span>{currentStage.name}</span></h1>
-                <LoadingComponent />
+            <div className="row">
+                <div className="col-lg-12">
+                    <h1><span>{currentStage.name}</span></h1>
+                    <LoadingComponent />
+                </div>
             </div>
         )
     }
