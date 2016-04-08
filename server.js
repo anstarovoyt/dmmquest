@@ -29,6 +29,12 @@ server.post('/state', function (req, res, next) {
 });
 server.post('/login', function (req, res, next) {
     var request = req.body;
+    if (!request.secretCode) {
+        res.json({
+            authenticated: false
+        });
+        return;
+    }
     console.log('login ' + request.secretCode);
     res.json(processLoginRequest(request));
 });
@@ -138,7 +144,7 @@ function closeStage(stageId) {
         stage.isOpen = false;
         stage.isCompleted = true;
         var nextStage = getNextStage(appState, stage);
-        if (nextStage && !nextStage.isCompleted) {
+        if (!nextStage.isCompleted) {
             nextStage.isOpen = true;
             nextStage.isLocked = false;
         }

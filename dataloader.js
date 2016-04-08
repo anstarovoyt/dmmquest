@@ -1,15 +1,18 @@
+var data = getData();
 var appState = (function () {
     var result = [];
     for (var count = 0; count < data.length; count++) {
         var el = data[count];
         var stage = {};
-        if (el.isBonus)
+        var isBonus = el.isBonus;
+        if (isBonus)
             stage.isBonus = true;
         stage.name = el.name;
-        stage.id = count++;
+        stage.id = count;
         stage.isCompleted = false;
-        stage.isLocked = false;
-        stage.isOpen = stage.id == 0;
+        var isFirst = stage.id == 0;
+        stage.isLocked = !isFirst && !isBonus;
+        stage.isOpen = isFirst || el.isBonus;
         result.push(stage);
     }
     return {
@@ -24,8 +27,12 @@ function setAnswers(stageId, answers) {
     var stage = appState.stages[stageId];
     for (var _i = 0, answers_1 = answers; _i < answers_1.length; _i++) {
         var answer = answers_1[_i];
+        if (!stage.questAnswers) {
+            stage.questAnswers = {};
+        }
         stage.questAnswers[answer.id] = answer;
     }
+    return true;
 }
 function closeStage(stageId) {
     var stage = appState.stages[stageId];

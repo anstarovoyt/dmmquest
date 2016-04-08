@@ -38,6 +38,14 @@ server.post('/state', (req, res, next) => {
 
 server.post('/login', (req, res, next) => {
     var request:LoginRequest = req.body;
+
+    if (!request.secretCode) {
+        res.json({
+            authenticated: false
+        });
+        return;
+    }
+
     console.log('login ' + request.secretCode);
     res.json(processLoginRequest(request));
 });
