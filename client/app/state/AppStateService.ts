@@ -27,8 +27,13 @@ class AppStateService {
         var newState = cloneAppState(this.state);
 
         var newUnChangedStage:Stage = newState.stages[stage.id];
-        newUnChangedStage.questAnswers[answer.id] = answer;
-        this.onChange();
+        var questAnswers = newUnChangedStage.questAnswers;
+        if (!questAnswers) {
+            questAnswers = {}
+            newUnChangedStage.questAnswers = questAnswers
+        }
+        questAnswers[answer.id] = answer;
+        this.setState(newState);
     }
 
     onChange() {
@@ -50,19 +55,20 @@ function cloneAppState(oldState:AppState):AppState {
     var oldStages = oldState.stages;
     var newStages:Stage[] = [];
     for (let cur of oldStages) {
-        var oldStage = cur;
+        var oldStage:Stage = cur;
         var newStage:any = {};
         if (oldStage.isBonus) newStage.isBonus = oldStage.isBonus;
         if (oldStage.isCompleted) newStage.isCompleted = oldStage.isCompleted;
         if (oldStage.isOpen) newStage.isOpen = oldStage.isOpen;
-
+        newStage.name = oldStage.name;
+        newStage.id = oldStage.id;
         var oldAnswers = oldStage.questAnswers;
         if (oldAnswers) {
             var newAnswers:any = {};
 
             for (var oldAnswerKey in oldAnswers) {
                 if (oldAnswers.hasOwnProperty(oldAnswerKey)) {
-                    var oldAnswer = oldAnswers[oldAnswerKey];
+                    var oldAnswer:QuestAnswer = oldAnswers[oldAnswerKey];
                     newAnswers[oldAnswerKey] = {
                         id: oldAnswer.id,
                         answer: oldAnswer.answer

@@ -38,11 +38,16 @@ function loadState():AppState {
     return appState;
 }
 
-function setAnswers(stageId:number, answers:QuestAnswer[]) {
+function setAnswers(stageId:number, answers:QuestAnswer[]):boolean {
     var stage:Stage = appState.stages[stageId];
     for (let answer of answers) {
+        if (!stage.questAnswers) {
+            stage.questAnswers = {}
+        }
         stage.questAnswers[answer.id] = answer;
     }
+    
+    return true;
 }
 
 function closeStage(stageId:number) {

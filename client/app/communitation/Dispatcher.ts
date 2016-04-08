@@ -27,3 +27,12 @@ export function loadState(toSend:AppStateRequest, successCallback:(res:AppStateR
         success: successCallback
     });
 }
+
+export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:AppStateResponse)=>void) {
+    reqwest({
+        url: '/save',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}

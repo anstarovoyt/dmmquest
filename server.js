@@ -32,6 +32,11 @@ server.post('/login', function (req, res, next) {
     console.log('login ' + request.secretCode);
     res.json(processLoginRequest(request));
 });
+server.post('/save', function (req, res, next) {
+    var request = req.body;
+    console.log(request);
+    res.json(processAnswerUpdate(request));
+});
 server.get('/stage/*', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
 });
@@ -47,6 +52,12 @@ function processStateRequest(req) {
         success: true,
         state: loadState()
     };
+}
+function processAnswerUpdate(req) {
+    if (!checkToken(req.token)) {
+        return { success: false };
+    }
+    return { success: setAnswers(req.stageId, req.answers) };
 }
 function processLoginRequest(req) {
     return login(req.secretCode);
@@ -107,8 +118,12 @@ function setAnswers(stageId, answers) {
     var stage = appState.stages[stageId];
     for (var _i = 0, answers_1 = answers; _i < answers_1.length; _i++) {
         var answer = answers_1[_i];
+        if (!stage.questAnswers) {
+            stage.questAnswers = {};
+        }
         stage.questAnswers[answer.id] = answer;
     }
+    return true;
 }
 function closeStage(stageId) {
     var stage = appState.stages[stageId];

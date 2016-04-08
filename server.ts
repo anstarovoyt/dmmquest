@@ -42,6 +42,11 @@ server.post('/login', (req, res, next) => {
     res.json(processLoginRequest(request));
 });
 
+server.post('/save', (req, res, next) => {
+    var request:AnswersUpdateRequest = req.body;
+    console.log(request);
+    res.json(processAnswerUpdate(request));
+});
 
 server.get('/stage/*', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
@@ -64,6 +69,14 @@ function processStateRequest(req:AppStateRequest):AppStateResponse {
     }
 }
 
+function processAnswerUpdate(req:AnswersUpdateRequest):AnswersUpdateResponse {
+    if (!checkToken(req.token)) {
+        return {success: false};
+    }
+
+    return {success: setAnswers(req.stageId, req.answers)}
+}
+
 function processLoginRequest(req:LoginRequest):LoginInfo {
     return login(req.secretCode);
 }
@@ -83,11 +96,11 @@ function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
     return {
         success: true,
         questTexts: {
-            stageId:request.stageId,
-            quests:questTexts.map(function (el, i) {
+            stageId: request.stageId,
+            quests: questTexts.map(function (el, i) {
                 return {
-                    id:i,
-                    text:el
+                    id: i,
+                    text: el
                 }
             })
         }
