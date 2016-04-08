@@ -30,7 +30,6 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
                     <div className="inner cover">
                         {this.props.children}
                     </div>
-                    <FooterComponent />
                 </div>
             </div>)
         }

@@ -13,7 +13,7 @@ export class HeaderComponent extends React.Component<any, any> {
 
             <div className="masthead clearfix">
                 <div className="inner">
-                    <h3 className="masthead-brand"><Link className="logo-link" to="/"></Link></h3>
+                    <h3 className="masthead-brand"><Link className="logo-picture" to="/"></Link></h3>
                     <ul className="nav masthead-nav">
                         <li><Link to="/">Главная</Link></li>
                         <li><Link to="/stage/bonus">Бонус</Link></li>

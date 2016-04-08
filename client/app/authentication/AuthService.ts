@@ -3,7 +3,7 @@ import {authRequest} from "../communitation/Dispatcher";
 import {get} from "http";
 
 var auth = new class {
-    login(secretCode:string):void {
+    login(secretCode:string, callback:() => {}):void {
         var token = this.getToken();
         if (token) {
             this.onChange({
