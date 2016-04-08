@@ -24,6 +24,8 @@ server
     .listen(PORT);
 
 server.post('/quest-texts', (req, res, next) => {
+    for(i=0;i<10000000;i++) {}
+
     console.log('post accepted');
     var request:QuestTextsRequest = req.body;
 
