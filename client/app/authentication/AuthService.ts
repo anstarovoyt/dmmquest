@@ -3,7 +3,7 @@ import {authRequest} from "../communitation/Dispatcher";
 import {get} from "http";
 
 var auth = new class {
-    login(secretCode:string, callback:() => void):void {
+    login(secretCode:string, callback:(result:boolean) => void):void {
         var token = this.getToken();
         if (token) {
             this.onChange({
@@ -14,10 +14,13 @@ var auth = new class {
         }
 
         authRequest({secretCode}, (resp:LoginInfo) => {
+            callback(resp.authenticated);
+            
             if (resp.authenticated) {
                 this.storeLoginInfo(resp);
                 this.onChange(resp);
             } else {
+                
                 this.onChange(resp);
             }
         });

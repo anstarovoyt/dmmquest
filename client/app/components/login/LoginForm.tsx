@@ -38,7 +38,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
                            type="text"
                            placeholder="Введите секретный код"/>
 			                <span className="input-group-btn">
-			                    <button className="btn btn-info" type="button">
+			                    <button className="btn btn-info" type="submit" >
                                     <span className="glyphicon glyphicon-fire"></span> Вперед</button>
 			                </span>
                 </div>
@@ -57,7 +57,13 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
 
     handleSubmit(e) {
         e.preventDefault();
-        auth.login(this.state.secretCode, ()=> {
+        auth.login(this.state.secretCode, (res)=> {
+            if (!res) {
+                this.setState({
+                    secretCode: "",
+                    showError: true
+                })
+            }
         });
     }
 
