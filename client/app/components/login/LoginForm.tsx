@@ -25,7 +25,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
     }
 
     render() {
-        var notAvailableClass = "not-avaliable" + (this.state.showError? " view" : "");
+        var notAvailableClass = "not-avaliable" + (this.state.showError ? " view" : "");
 
 
         return (
@@ -51,13 +51,14 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
     handleCodeChanged(event) {
         this.setState({
             secretCode: event.target.value,
-            showError:false
+            showError: false
         });
     }
 
     handleSubmit(e) {
         e.preventDefault();
-        auth.login(this.state.secretCode);
+        auth.login(this.state.secretCode, ()=> {
+        });
     }
 
 }
