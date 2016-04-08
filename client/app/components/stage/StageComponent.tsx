@@ -3,9 +3,15 @@ import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {Link} from 'react-router'
 import {QuestComponent} from "./QuestionComponent";
+import {complete} from "../../communitation/Dispatcher";
+import {auth} from "../../authentication/AuthService";
+import {appStateService} from "../../state/AppStateService";
+import {browserHistory} from 'react-router';
 
 export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
 
+
+    nestedValue = {};
 
     constructor(props:any) {
         super(props);
@@ -34,7 +40,8 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
         var state = this.state;
         if (state.questTexts) {
             var quests = this.state.questTexts.quests.map(item => {
-                return <QuestComponent key={item.id} quest={item} stage={this.props.stage}/>;
+                return <QuestComponent saveValue={this.nestedValue} key={item.id} quest={item}
+                                       stage={this.props.stage}/>;
             });
             return (
                 <div className="row">
@@ -49,7 +56,9 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                         <p className="lead"></p>
                         <div className="input-group">
                             <span className="input-group-btn">
-                              <button className="btn btn-info" type="button"
+                              <button className="btn btn-info"
+                                      type="button"
+                                      onClick={this.saveAnswers.bind(this)}
                                       disabled={currentStage.isCompleted}>{currentStage.isCompleted ? "Уровень сдан" : "Сдать уровень" }</button>
                             </span>
                         </div>
@@ -68,5 +77,28 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             </div>
         )
     }
+
+    private saveAnswers() {
+        var answers:QuestAnswer[] = [];
+        var nestedValue = this.nestedValue;
+        for (var value in nestedValue) {
+            if (nestedValue.hasOwnProperty(value)) {
+                answers.push({
+                    id: Number(value),
+                    answer: nestedValue[value]
+                })
+            }
+        }
+
+        complete({
+            stageId: this.props.stage.id,
+            token: auth.getToken(),
+            answers: answers
+        }, (r) => {
+            appStateService.setState(r);
+            browserHistory.push('/');
+        })
+    }
 }
+
 

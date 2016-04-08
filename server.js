@@ -37,6 +37,13 @@ server.post('/save', function (req, res, next) {
     console.log(request);
     res.json(processAnswerUpdate(request));
 });
+server.post('/complete', function (req, res, next) {
+    console.log('complete');
+    var request = req.body;
+    console.log(request);
+    var options = processAnswerUpdate(request);
+    res.json(closeStage(request.stageId));
+});
 server.get('/stage/*', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
 });
@@ -131,7 +138,7 @@ function closeStage(stageId) {
         stage.isOpen = false;
         stage.isCompleted = true;
         var nextStage = getNextStage(appState, stage);
-        if (!nextStage.isCompleted) {
+        if (nextStage && !nextStage.isCompleted) {
             nextStage.isOpen = true;
             nextStage.isLocked = false;
         }

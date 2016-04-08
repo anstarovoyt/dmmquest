@@ -48,6 +48,14 @@ server.post('/save', (req, res, next) => {
     res.json(processAnswerUpdate(request));
 });
 
+server.post('/complete', (req, res, next) => {
+    console.log('complete');
+    var request:AnswersUpdateRequest = req.body;
+    console.log(request);
+    var options = processAnswerUpdate(request);
+    res.json(closeStage(request.stageId));
+});
+
 server.get('/stage/*', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
 });

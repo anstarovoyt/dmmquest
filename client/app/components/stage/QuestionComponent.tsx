@@ -3,15 +3,19 @@ import {saveAnswers} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
-export class QuestComponent extends React.Component<{quest:Quest, stage:Stage}, {value:string, isEnableSave:boolean}> {
+export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, saveValue}, {value:string, isEnableSave:boolean}> {
 
 
-    constructor(props:{quest:Quest; stage:Stage}) {
+    constructor(props:any) {
         super(props);
+
+        var value = this.getDefaultValue() || "";
         this.state = {
-            value: this.getDefaultValue() || "",
+            value: value,
             isEnableSave: true
         }
+        
+        this.props.saveValue[this.props.quest.id] = value;
     }
 
 
@@ -60,10 +64,15 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage}, 
     }
 
     private handlerChanged(e) {
-        this.setState({
-            value: e.target.value,
+        var newValue = e.target.value;
+        var state = {
+            value: newValue,
             isEnableSave: this.state.isEnableSave
-        })
+        };
+
+        this.props.saveValue[this.props.quest.id] = newValue;
+
+        this.setState(state)
     }
 
     private saveAnswer() {

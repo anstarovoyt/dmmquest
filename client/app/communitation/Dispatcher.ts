@@ -36,3 +36,13 @@ export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:Ap
         success: successCallback
     });
 }
+
+
+export function complete(toSend:AnswersUpdateRequest, successCallback:(res:AppState)=>void) {
+    reqwest({
+        url: '/complete',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}
