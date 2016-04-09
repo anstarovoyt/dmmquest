@@ -60,9 +60,20 @@ var PARAMS_PER_TARGET = {
         output: {
             path: './dist'
         },
+
+        eval: 'cheap-source-map',
         plugins: [
             new CleanWebpackPlugin(['dist']),
-            new webpack.optimize.UglifyJsPlugin()
+            new webpack.DefinePlugin({
+                'process.env': {
+                    'NODE_ENV': JSON.stringify('production')
+                },
+            }),
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+            })
         ]
     }
 
