@@ -3,6 +3,7 @@ import {auth} from "../../authentication/AuthService";
 import {LoginForm} from "../login/LoginForm";
 import {authStore} from "../../authentication/AuthStore";
 import {HeaderComponent} from "../common/HeaderComponent";
+import {FooterComponent} from "../common/FooterComponent";
 
 export default class Placeholder extends React.Component<{ children:any }, {loginInfo:LoginInfo}> {
 
@@ -20,6 +21,7 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
 
 
     render() {
+
         var loginInfo = this.state.loginInfo;
         if (loginInfo && loginInfo.authenticated) {
             return (<div>
@@ -29,6 +31,7 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
                         {this.props.children}
                     </div>
                 </div>
+                <FooterComponent/>
             </div>)
         }
 
