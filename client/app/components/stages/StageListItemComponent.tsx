@@ -1,6 +1,5 @@
-import * as React from "react"
-
-import {Link} from 'react-router';
+import * as React from "react";
+var Link = require('react-router/lib/Link');
 import {StageListItemStatusComponent} from "./StageListItemStatusComponent";
 
 

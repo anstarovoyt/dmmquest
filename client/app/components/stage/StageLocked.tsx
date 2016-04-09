@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 var Link = require('react-router/lib/Link');
 
 

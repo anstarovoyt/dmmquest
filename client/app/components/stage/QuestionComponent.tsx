@@ -2,6 +2,7 @@ import * as React from "react";
 import {saveAnswers} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
+
 export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, savedValues}, {value:string, isEnableSave:boolean, savedMark:boolean}> {
 
 

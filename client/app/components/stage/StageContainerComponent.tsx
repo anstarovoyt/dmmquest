@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {appStateService} from "../../state/AppStateService";
 import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
