@@ -1,12 +1,12 @@
-import * as React from "react"
+import * as React from "react";
+import {PropTypes} from "react";
 import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
-import {Link} from 'react-router'
+import Link from "react-router/lib/Link";
 import {QuestComponent} from "./QuestionComponent";
 import {complete} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
-import {PropTypes} from 'react'
 
 export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
 
