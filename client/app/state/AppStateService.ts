@@ -60,6 +60,7 @@ function cloneAppState(oldState:AppState):AppState {
         if (oldStage.isBonus) newStage.isBonus = oldStage.isBonus;
         if (oldStage.isCompleted) newStage.isCompleted = oldStage.isCompleted;
         if (oldStage.isOpen) newStage.isOpen = oldStage.isOpen;
+        if (oldStage.isLocked) newStage.isLocked = oldStage.isLocked;
         newStage.name = oldStage.name;
         newStage.id = oldStage.id;
         var oldAnswers = oldStage.questAnswers;
