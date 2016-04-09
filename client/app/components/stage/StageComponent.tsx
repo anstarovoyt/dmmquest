@@ -3,7 +3,7 @@ import {PropTypes} from "react";
 import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {QuestComponent} from "./QuestionComponent";
-import {complete} from "../../communitation/Dispatcher";
+import {complete, saveAnswers} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
@@ -65,7 +65,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                               <button className={buttonStyle}
                                       type="button"
                                       onClick={this.saveAnswers.bind(this)}
-                                      disabled={currentStage.isCompleted}>{isCompletedLevel ? "Уровень сдан" : "Сдать уровень" }</button>
+                                      disabled={currentStage.isCompleted}>{ this.getButtonName(currentStage, isCompletedLevel) }</button>
                             </span>
                         </div>
 
@@ -84,6 +84,14 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
         )
     }
 
+    private getButtonName(currentStage:Stage, isCompletedLevel:boolean) {
+        if (currentStage && currentStage.isBonus) {
+            return "Сохранить ответы";
+        }
+
+        return isCompletedLevel ? "Уровень сдан" : "Сдать уровень";
+    }
+
     private saveAnswers() {
         var answers:QuestAnswer[] = [];
         var nestedValue = this.nestedValue;
@@ -96,13 +104,16 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             }
         }
 
+        var stage = this.props.stage;
         complete({
-            stageId: this.props.stage.id,
+            stageId: stage.id,
             token: auth.getToken(),
             answers: answers
         }, (r) => {
             appStateService.setState(r);
-            this.context["history"].push('/')
+            if (!stage.isBonus) {
+                this.context["history"].push('/');
+            }
         })
     }
 }

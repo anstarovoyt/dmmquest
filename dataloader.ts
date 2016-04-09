@@ -52,7 +52,7 @@ function setAnswers(stageId:number, answers:QuestAnswer[]):boolean {
 
 function closeStage(stageId:number) {
     var stage:Stage = appState.stages[stageId];
-    if (stage.isOpen) {
+    if (stage.isOpen && !stage.isBonus) {
         stage.isOpen = false;
         stage.isCompleted = true;
 

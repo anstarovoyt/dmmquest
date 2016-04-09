@@ -139,7 +139,7 @@ function setAnswers(stageId, answers) {
 }
 function closeStage(stageId) {
     var stage = appState.stages[stageId];
-    if (stage.isOpen) {
+    if (stage.isOpen && !stage.isBonus) {
         stage.isOpen = false;
         stage.isCompleted = true;
         var nextStage = getNextStage(appState, stage);
