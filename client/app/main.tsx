@@ -1,9 +1,14 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-// import "font-awesome/css/font-awesome.css";
 import "./main.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Router, Route, IndexRoute, useRouterHistory} from "react-router";
+
+//hack to reduce size
+var Router = require('react-router/lib/Router');
+var Route = require('react-router/lib/Route');
+var IndexRoute = require('react-router/lib/IndexRoute');
+var useRouterHistory:any = require('react-router/lib/useRouterHistory');
+
 import MainComponent from "./components/main/MainComponent";
 import {StagesListComponent} from "./components/stages/StagesListComponent";
 import {createHashHistory} from "history";

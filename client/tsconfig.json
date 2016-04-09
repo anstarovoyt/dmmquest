@@ -3,8 +3,9 @@
     "module": "commonjs",
     "target": "es5",
     "sourceMap": true,
-    "jsx": "react"
-//  , "noEmit": true
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
+    //  , "noEmit": true
   },
   "compileOnSave": false,
   "exclude": [

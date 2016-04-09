@@ -1,7 +1,7 @@
 import * as React from "react"
 import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
-import {Link} from 'react-router'
+var Link = require('react-router/lib/Link');
 import {QuestComponent} from "./QuestionComponent";
 import {complete} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
