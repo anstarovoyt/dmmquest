@@ -36,7 +36,7 @@ var DEFAULT_PARAMS = {
             inject: 'body'
         }),
         new webpack.optimize.DedupePlugin()
-    ].concat(_bootswatchWorkaround()),
+    ],
     debug: true,
     progress: true,
     colors: true
@@ -44,15 +44,6 @@ var DEFAULT_PARAMS = {
 
 var PARAMS_PER_TARGET = {
 
-    DEV: {
-        devtool: 'inline-source-map',
-        output: {
-            filename: '[name].js'
-        },
-        plugins: [
-            new OpenBrowserWebpackPlugin({ url: 'http://localhost:8081/' })
-        ]
-    },
 
     BUILD: {
         output: {
@@ -106,14 +97,4 @@ function _mergeArraysCustomizer(a, b) {
     if (_.isArray(a)) {
         return a.concat(b);
     }
-}
-
-function _bootswatchWorkaround() {
-    var extensions = ['eot', 'woff', 'woff2', 'ttf', 'svg'];
-
-    return extensions.map(function(ext) {
-        var regexp = new RegExp('^\.\.\/fonts\/glyphicons-halflings-regular\.' + ext + '$');
-        var dest = 'bootstrap/dist/fonts/glyphicons-halflings-regular.' + ext;
-        return new webpack.NormalModuleReplacementPlugin(regexp, dest);
-    });
 }
