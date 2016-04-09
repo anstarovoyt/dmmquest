@@ -1,5 +1,7 @@
 import {authStore} from './AuthStore';
 import {authRequest} from "../communitation/Dispatcher";
+import {get} from "http";
+
 var auth = new class {
     login(secretCode:string, callback:(result:boolean) => void):void {
         var token = this.getToken();

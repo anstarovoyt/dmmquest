@@ -1,6 +1,9 @@
-import * as React from "react";
+import * as React from "react"
+import {authStore} from "../../authentication/AuthStore";
 import {auth} from "../../authentication/AuthService";
-import Link from "react-router/lib/Link";
+
+import {Link} from 'react-router'
+
 
 export class HeaderComponent extends React.Component<any, any> {
 

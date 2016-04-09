@@ -1,5 +1,5 @@
 import * as React from "react"
-import Link from 'react-router/lib/Link'
+import {Link} from 'react-router'
 
 
 export class StageLocked extends React.Component<any, any> {

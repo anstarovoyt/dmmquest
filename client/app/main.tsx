@@ -3,15 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./main.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-import Router from 'react-router/lib/Router'
-import IndexRoute from 'react-router/lib/IndexRoute'
-import Route from 'react-router/lib/Route'
-import useRouterHistory from 'react-router/lib/useRouterHistory'
-
+import {Router, Route, IndexRoute, useRouterHistory} from "react-router";
 import MainComponent from "./components/main/MainComponent";
 import {StagesListComponent} from "./components/stages/StagesListComponent";
-import createHashHistory from "history/lib/createHashHistory";
+import {createHashHistory} from "history";
 import {StageContainerComponent} from "./components/stage/StageContainerComponent";
 
 

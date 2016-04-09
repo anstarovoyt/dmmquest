@@ -1,8 +1,10 @@
-import * as React from "react";
-import {auth} from "../../authentication/AuthService";
+import * as React from "react"
+
+import {auth} from '../../authentication/AuthService'
 import {LoginForm} from "../login/LoginForm";
-import {authStore} from "../../authentication/AuthStore";
+import {authStore} from "../../authentication/AuthStore"
 import {HeaderComponent} from "../common/HeaderComponent";
+import {FooterComponent} from "../common/FooterComponent";
 
 export default class Placeholder extends React.Component<{ children:any }, {loginInfo:LoginInfo}> {
 

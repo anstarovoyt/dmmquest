@@ -1,5 +1,6 @@
-import * as React from "react";
-import {Link} from "react-router";
+import * as React from "react"
+
+import {Link} from 'react-router';
 import {StageListItemStatusComponent} from "./StageListItemStatusComponent";
 
 
