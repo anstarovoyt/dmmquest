@@ -173,6 +173,13 @@ function login(secretCode) {
 }
 function getQuestTexts(stageId) {
     var result = data[stageId];
+    var stage = appState.stages[stageId];
+    if (!stage) {
+        return null;
+    }
+    if (stage.isLocked) {
+        return null;
+    }
     return result == null ? null : result.quests;
 }
 function getData() {
