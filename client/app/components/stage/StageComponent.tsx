@@ -6,15 +6,18 @@ import {QuestComponent} from "./QuestionComponent";
 import {complete} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
-import {browserHistory} from 'react-router';
+import {PropTypes} from 'react'
 
 export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
 
+    static contextTypes = {
+        history: PropTypes.object.isRequired
+    };
 
     nestedValue = {};
 
-    constructor(props:any) {
-        super(props);
+    constructor(props:any, context) {
+        super(props, context);
         this.state = {};
     }
 
@@ -98,7 +101,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             answers: answers
         }, (r) => {
             appStateService.setState(r);
-            browserHistory.push('/');
+            this.context["history"].push('/')
         })
     }
 }
