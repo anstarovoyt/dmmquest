@@ -24,7 +24,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var savedHtmlClass = "done-mark" + (this.state.savedMark ? " view" : "");
 
 
-        var isCompleted = this.props.stage.isCompleted;
+        var stage = this.props.stage;
+        var isCompleted = stage.status == StageStatus.COMPLETED;
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">

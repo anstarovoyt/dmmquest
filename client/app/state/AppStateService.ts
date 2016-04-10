@@ -29,8 +29,8 @@ class AppStateService {
         var newUnChangedStage:Stage = newState.stages[stage.id];
         var questAnswers = newUnChangedStage.questAnswers;
         if (!questAnswers) {
-            questAnswers = {}
-            newUnChangedStage.questAnswers = questAnswers
+            questAnswers = {};
+            newUnChangedStage.questAnswers = questAnswers;
         }
         questAnswers[answer.id] = answer;
         this.setState(newState);
@@ -57,10 +57,7 @@ function cloneAppState(oldState:AppState):AppState {
     for (let cur of oldStages) {
         var oldStage:Stage = cur;
         var newStage:any = {};
-        if (oldStage.isBonus) newStage.isBonus = oldStage.isBonus;
-        if (oldStage.isCompleted) newStage.isCompleted = oldStage.isCompleted;
-        if (oldStage.isOpen) newStage.isOpen = oldStage.isOpen;
-        if (oldStage.isLocked) newStage.isLocked = oldStage.isLocked;
+        newStage.status = oldStage.status;
         newStage.name = oldStage.name;
         newStage.id = oldStage.id;
         var oldAnswers = oldStage.questAnswers;

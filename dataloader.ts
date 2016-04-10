@@ -1,30 +1,35 @@
 interface RawStage {
     name:string,
-    isBonus?:boolean,
     quests:string[]
+    status?:StageStatus
 }
 
-var data = getData();
+var data = getDefaultData();
 
 var appState:AppState = (function () {
 
     var result:Stage[] = [];
 
+    var stages = data.stages;
 
-    for (var count = 0; count < data.length; count++) {
-        var el = data[count];
-        var stage:Stage = <any>{}
-        var isBonus = el.isBonus;
-        if (isBonus) stage.isBonus = true;
+    for (var count = 0; count < stages.length; count++) {
+        var el = stages[count];
+        var stage:Stage = <any>{};
         stage.name = el.name;
         stage.id = count;
-        stage.isCompleted = false;
+
         var isFirst = stage.id == 0;
-        stage.isLocked = !isFirst && !isBonus;
-        stage.isOpen = isFirst || el.isBonus;
+        stage.status = isFirst ? StageStatus.OPEN : StageStatus.LOCKED;
 
         result.push(stage);
     }
+
+    var bonus = data.bonus;
+    result.push({
+        name: bonus.name,
+        id: stages.length,
+        status: StageStatus.BONUS
+    });
 
 
     return {
@@ -46,20 +51,18 @@ function setAnswers(stageId:number, answers:QuestAnswer[]):boolean {
         }
         stage.questAnswers[answer.id] = answer;
     }
-    
+
     return true;
 }
 
 function closeStage(stageId:number) {
     var stage:Stage = appState.stages[stageId];
-    if (stage.isOpen && !stage.isBonus) {
-        stage.isOpen = false;
-        stage.isCompleted = true;
+    if (stage.status == StageStatus.OPEN) {
+        stage.status = StageStatus.COMPLETED;
 
         var nextStage = getNextStage(appState, stage);
-        if (nextStage && !nextStage.isCompleted) {
-            nextStage.isOpen = true;
-            nextStage.isLocked = false;
+        if (nextStage && nextStage.status == StageStatus.LOCKED) {
+            nextStage.status = StageStatus.OPEN;
         }
     }
 
@@ -67,13 +70,13 @@ function closeStage(stageId:number) {
 }
 
 function getNextStage(appState:AppState, stage:Stage):Stage {
-    if (stage.isBonus) {
+    if (stage.status == StageStatus.BONUS) {
         return null;
     }
     var number = stage.id;
 
     var nextStage = appState.stages[number + 1];
-    if (nextStage.isBonus) {
+    if (nextStage.status == StageStatus.BONUS) {
         return null;
     }
 
@@ -92,12 +95,19 @@ function login(secretCode:string):LoginInfo {
 }
 
 function getQuestTexts(stageId:number) {
-    var result = data[stageId];
+    var stages = data.stages;
+    let result;
+    if (stages.length > stageId) {
+        result = stages[stageId];
+    } else {
+        result = data.bonus;
+    }
+
     var stage = appState.stages[stageId];
     if (!stage) {
         return null;
     }
-    if (stage.isLocked) {
+    if (stage.status == StageStatus.LOCKED) {
         return null;
     }
 

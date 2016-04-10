@@ -47,7 +47,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
-            var isCompletedLevel = currentStage.isCompleted;
+            var isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
             var buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
             return (
                 <div className="row">
@@ -65,7 +65,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                               <button className={buttonStyle}
                                       type="button"
                                       onClick={this.saveAnswers.bind(this)}
-                                      disabled={currentStage.isCompleted}>{ this.getButtonName(currentStage, isCompletedLevel) }</button>
+                                      disabled={isCompletedLevel}>{ this.getButtonName(currentStage, isCompletedLevel) }</button>
                             </span>
                         </div>
 
@@ -85,7 +85,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
     }
 
     private getButtonName(currentStage:Stage, isCompletedLevel:boolean) {
-        if (currentStage && currentStage.isBonus) {
+        if (currentStage && currentStage.status == StageStatus.BONUS) {
             return "Сохранить ответы";
         }
 
@@ -111,7 +111,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             answers: answers
         }, (r) => {
             appStateService.setState(r);
-            if (!stage.isBonus) {
+            if (stage.status != StageStatus.BONUS) {
                 this.context["history"].push('/');
             }
         })

@@ -7,10 +7,7 @@ interface HasId {
 }
 
 interface Stage extends HasId {
-    isBonus?:boolean
-    isOpen?:boolean
-    isCompleted?:boolean
-    isLocked?:boolean
+    status:StageStatus
     name:string
     questAnswers?:{
         [id:number]:QuestAnswer
@@ -38,4 +35,11 @@ interface AppStateRequest {
 interface AppStateResponse {
     state?:AppState,
     success:boolean
+}
+
+declare const enum StageStatus {
+    LOCKED,
+    OPEN,
+    COMPLETED,
+    BONUS
 }

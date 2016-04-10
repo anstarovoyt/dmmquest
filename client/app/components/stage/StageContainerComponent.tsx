@@ -76,7 +76,7 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
             }
             var stage = state.stage;
             if (stage) {
-                if (stage.isLocked) {
+                if (stage.status == StageStatus.LOCKED) {
                     return <StageLocked />
                 }
                 return <StageComponent stage={stage}/>

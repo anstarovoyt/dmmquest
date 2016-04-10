@@ -101,23 +101,25 @@ function checkToken(token) {
     return true;
 }
 console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
-var data = getData();
+var data = getDefaultData();
 var appState = (function () {
     var result = [];
-    for (var count = 0; count < data.length; count++) {
-        var el = data[count];
+    var stages = data.stages;
+    for (var count = 0; count < stages.length; count++) {
+        var el = stages[count];
         var stage = {};
-        var isBonus = el.isBonus;
-        if (isBonus)
-            stage.isBonus = true;
         stage.name = el.name;
         stage.id = count;
-        stage.isCompleted = false;
         var isFirst = stage.id == 0;
-        stage.isLocked = !isFirst && !isBonus;
-        stage.isOpen = isFirst || el.isBonus;
+        stage.status = isFirst ? 1 /* OPEN */ : 0 /* LOCKED */;
         result.push(stage);
     }
+    var bonus = data.bonus;
+    result.push({
+        name: bonus.name,
+        id: stages.length,
+        status: 3 /* BONUS */
+    });
     return {
         stages: result
     };
@@ -139,24 +141,22 @@ function setAnswers(stageId, answers) {
 }
 function closeStage(stageId) {
     var stage = appState.stages[stageId];
-    if (stage.isOpen && !stage.isBonus) {
-        stage.isOpen = false;
-        stage.isCompleted = true;
+    if (stage.status == 1 /* OPEN */) {
+        stage.status = 2 /* COMPLETED */;
         var nextStage = getNextStage(appState, stage);
-        if (nextStage && !nextStage.isCompleted) {
-            nextStage.isOpen = true;
-            nextStage.isLocked = false;
+        if (nextStage && nextStage.status == 0 /* LOCKED */) {
+            nextStage.status = 1 /* OPEN */;
         }
     }
     return appState;
 }
 function getNextStage(appState, stage) {
-    if (stage.isBonus) {
+    if (stage.status == 3 /* BONUS */) {
         return null;
     }
     var number = stage.id;
     var nextStage = appState.stages[number + 1];
-    if (nextStage.isBonus) {
+    if (nextStage.status == 3 /* BONUS */) {
         return null;
     }
     return nextStage;
@@ -172,54 +172,61 @@ function login(secretCode) {
     return { authenticated: false };
 }
 function getQuestTexts(stageId) {
-    var result = data[stageId];
+    var stages = data.stages;
+    var result;
+    if (stages.length > stageId) {
+        result = stages[stageId];
+    }
+    else {
+        result = data.bonus;
+    }
     var stage = appState.stages[stageId];
     if (!stage) {
         return null;
     }
-    if (stage.isLocked) {
+    if (stage.status == 0 /* LOCKED */) {
         return null;
     }
     return result == null ? null : result.quests;
 }
-function getData() {
-    return [
-        {
-            name: "Этап один. О полевых растениях",
-            quests: [
-                "Это зеленое и растет на грядке в огроде у дедушки федора.",
-                "Это синее и не растет на грядке в огроде у дедушки федора.",
-                "Этоне растет вообще нигде, но может вас убить"
-            ]
-        },
-        {
-            name: "Этап два. О козлах отпущения",
-            quests: [
-                "Козлы это животные. Назовите еще хоть одно животное.",
-                "Жирафы не козлы. Докажите это утверждение в трех словах",
-                "Путь самурая непрост. А каков путь козла-самурая?"
-            ]
-        },
-        {
-            name: "Этап три. О программистах",
-            quests: [
-                "Как вы попали в сферу разработки ПО?",
-                "Какой был ваш первый язык программирования?",
-                "Сколько примерно будет 2^32?",
-                "Как сравнить две переменные типа double или float на равенство?",
-                "Что такое класс? Что такое объект? В чем разница?",
-                "Что такое член класса? Чем он отличается от других?",
-            ]
-        },
-        {
+function getDefaultData() {
+    return {
+        stages: [
+            {
+                name: "Этап один. О полевых растениях",
+                quests: [
+                    "Это зеленое и растет на грядке в огроде у дедушки федора.",
+                    "Это синее и не растет на грядке в огроде у дедушки федора.",
+                    "Этоне растет вообще нигде, но может вас убить"
+                ]
+            },
+            {
+                name: "Этап два. О козлах отпущения",
+                quests: [
+                    "Козлы это животные. Назовите еще хоть одно животное.",
+                    "Жирафы не козлы. Докажите это утверждение в трех словах",
+                    "Путь самурая непрост. А каков путь козла-самурая?"
+                ]
+            },
+            {
+                name: "Этап три. О программистах",
+                quests: [
+                    "Как вы попали в сферу разработки ПО?",
+                    "Какой был ваш первый язык программирования?",
+                    "Сколько примерно будет 2^32?",
+                    "Как сравнить две переменные типа double или float на равенство?",
+                    "Что такое класс? Что такое объект? В чем разница?",
+                    "Что такое член класса? Чем он отличается от других?",
+                ]
+            }],
+        bonus: {
             name: "Этап бонус. О программистах",
-            isBonus: true,
             quests: [
                 "Клонируйте овечку долли и докажите, что это ее копия",
                 "Сколько попугает в жирафе? А есть он ходит по диагонали?",
                 "Убейте какое-нибудь животное и пришлите фотографию"
             ]
         }
-    ];
+    };
 }
 //# sourceMappingURL=server.js.map
