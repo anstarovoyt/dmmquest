@@ -93,6 +93,10 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
     }
 
     private saveAnswers() {
+        if (!window.confirm('Вы действительно хотите завершить этап?')) {
+            return;
+        }
+
         var answers:QuestAnswer[] = [];
         var nestedValue = this.nestedValue;
         for (var value in nestedValue) {
