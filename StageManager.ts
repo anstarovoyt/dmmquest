@@ -19,7 +19,7 @@ class StageManager {
             if (!stage.questAnswers) {
                 stage.questAnswers = {}
             }
-            stage.questAnswers[answerId.id] = answerId;
+            stage.questAnswers[answer.id] = answer;
         }
 
         return stage;

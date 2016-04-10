@@ -11,3 +11,12 @@ interface GetTeamsResponse {
     teams?:TeamInfo[],
     success:boolean
 }
+
+interface AddTeamRequest {
+    token:string
+    teamName:string
+}
+
+interface AddTeamResponse {
+    success:boolean
+}

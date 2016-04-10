@@ -83,6 +83,11 @@ server.post('/teams', (req, res, next) => {
     res.json(processGetTeamsRequest(request));
 });
 
+server.post('/add-team', (req, res, next) => {
+    var request:AddTeamRequest = req.body;
+    res.json(processAddTeamRequest(request));
+});
+
 
 function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     var token = req.token;
@@ -170,6 +175,19 @@ function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
         success: true,
         teams: result
     }
+}
+
+function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
+    var team = teamManager.findTeamByToken(request.token);
+    if (!team || !team.admin) {
+        return {
+            success: false
+        };
+    }
+
+    var newTeam = teamManager.createTeam(request.teamName);
+    
+    return {success: !!newTeam}
 }
 
 

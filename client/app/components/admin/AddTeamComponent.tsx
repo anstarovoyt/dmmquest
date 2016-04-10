@@ -1,6 +1,8 @@
 import * as React from "react";
+import {addTeam} from "../../communitation/Dispatcher";
+import {auth} from "../../authentication/AuthService";
 
-export class AddTeamComponent extends React.Component<any, {value:string}> {
+export class AddTeamComponent extends React.Component<{reloadParent:() =>void}, {value:string}> {
 
     constructor(props:any, context:any) {
         super(props, context);
@@ -36,6 +38,16 @@ export class AddTeamComponent extends React.Component<any, {value:string}> {
     }
 
     add() {
-
+        var value = this.state.value;
+        if (value) {
+            addTeam({
+                teamName: value,
+                token: auth.getToken()
+            }, (res) => {
+                if (res.success) {
+                    this.props.reloadParent();
+                }
+            })
+        }
     }
 }

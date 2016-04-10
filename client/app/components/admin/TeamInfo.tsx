@@ -17,7 +17,6 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
                     <p><b>Секретный код</b>: {team.secretCode}</p>
                     <p><b>Токен</b>: {team.tokenId}</p>
                     <p><b>Начальный этап (отсчет от 1)</b>: {team.startFromStage + 1}</p>
-                    <h4>Состояние этапов:</h4>
                     {answers}
                 </div>
             </div>
@@ -42,7 +41,7 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
         var stageNumber = stage.status == StageStatus.BONUS ? "Бонус" : Number(stage.id) + 1;
         return <span key={stage.id}>
                 <b>Этап {stageNumber}</b>: {appStateService.getStageNameById(stage.id)}
-                    — {this.getStageStatusText(stage.status)}
+            — <b>{this.getStageStatusText(stage.status)}</b>
             <div>
                 {this.getAnswers(stage)}
             </div>
@@ -71,7 +70,8 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
         var questAnswers = stage.questAnswers;
         for (var answerId in questAnswers) {
             if (questAnswers.hasOwnProperty(answerId)) {
-                result.push(<p key={answerId}>&nbsp;&nbsp;&nbsp;Вопрос {Number(answerId) + 1} — {questAnswers[answerId].answer} </p>)
+                result.push(<p key={answerId}>&nbsp;&nbsp;&nbsp;Вопрос {Number(answerId) + 1}
+                    — {questAnswers[answerId].answer} </p>)
             }
         }
 

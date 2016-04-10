@@ -17,6 +17,11 @@ export class AdminComponent extends React.Component<any, {hasAccess:boolean, tea
     }
 
     componentDidMount() {
+        this.reloadState();
+    }
+
+
+    private reloadState() {
         loadTeam({
             token: auth.getToken()
         }, (res) => {
@@ -42,10 +47,15 @@ export class AdminComponent extends React.Component<any, {hasAccess:boolean, tea
         });
 
         return <div className="row">
-                <div className="col-lg-12">
-                    <AddTeamComponent/>
-                    {result}
+            <div className="col-lg-12">
+                <AddTeamComponent reloadParent={this.reloadState.bind(this)}/>
+                <div className="row">
+                    <div className="col-xs-12 col-md-8">
+                        <h4>Всего команд: {teams.length}</h4>
+                    </div>
                 </div>
+                {result}
             </div>
+        </div>
     }
 }

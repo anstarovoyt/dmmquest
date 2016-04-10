@@ -54,7 +54,7 @@ var StageManager = (function () {
             if (!stage.questAnswers) {
                 stage.questAnswers = {};
             }
-            stage.questAnswers[answerId.id] = answerId;
+            stage.questAnswers[answer.id] = answer;
         }
         return stage;
     };
@@ -328,6 +328,10 @@ server.post('/teams', function (req, res, next) {
     console.log(request);
     res.json(processGetTeamsRequest(request));
 });
+server.post('/add-team', function (req, res, next) {
+    var request = req.body;
+    res.json(processAddTeamRequest(request));
+});
 function processStateRequest(req) {
     var token = req.token;
     var team = checkToken(token);
@@ -402,6 +406,16 @@ function processGetTeamsRequest(request) {
         success: true,
         teams: result
     };
+}
+function processAddTeamRequest(request) {
+    var team = teamManager.findTeamByToken(request.token);
+    if (!team || !team.admin) {
+        return {
+            success: false
+        };
+    }
+    var newTeam = teamManager.createTeam(request.teamName);
+    return { success: !!newTeam };
 }
 function checkToken(token) {
     return teamManager.findTeamByCode(token);

@@ -55,3 +55,12 @@ export function loadTeam(toSend:GetTeamsRequest, successCallback:(res:GetTeamsRe
         success: successCallback
     });
 }
+
+export function addTeam(toSend:AddTeamRequest, successCallback:(res:AddTeamResponse)=>void) {
+    reqwest({
+        url: '/add-team',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}
