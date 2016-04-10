@@ -15,7 +15,7 @@ export class HeaderComponent extends React.Component<any, any> {
                     <h3 className="masthead-brand"><Link className="logo-picture" to="/"></Link></h3>
                     <ul className="nav masthead-nav">
                         <li><Link to="/">Главная</Link></li>
-                        <li><Link to="/stage/bonus">Бонус</Link></li>
+                        <li><Link to="/bonus">Бонус</Link></li>
                         <li><a href="#" onClick={this.logout.bind(this)}>Выход</a></li>
 
                     </ul>

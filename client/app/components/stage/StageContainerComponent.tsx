@@ -63,7 +63,7 @@ export class StageContainerComponent extends React.Component<any,StageStage > {
         }
     }
 
-    private getStageId() {
+    getStageId() {
         return (this.props as any).params.id;
     }
 
