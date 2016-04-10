@@ -23,8 +23,11 @@ TEAMS.push({
 
 class TeamManager {
     findTeamByCode(secretCode:string):Team {
+        if (!secretCode) {
+            return null;
+        }
         for (let team of TEAMS) {
-            if (team.secretCode == secretCode) {
+            if (team.secretCode.toLocaleLowerCase() == secretCode.toLocaleLowerCase()) {
                 return team;
             }
         }
