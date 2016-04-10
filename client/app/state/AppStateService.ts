@@ -23,13 +23,21 @@ class AppStateService {
         this.onChange();
     }
 
-    getStageName(stage:Stage) {
+    getStageNameById(stageId:string) {
         var app = this.fullState;
         if (!app) {
             return ""
         }
 
-        return app.stagesNames[stage.id];
+        return app.stagesNames[stageId];
+    }
+
+    getStageName(stage:Stage) {
+        if (!stage) {
+            return "";
+        }
+
+        return this.getStageNameById(stage.id);
     }
 
     updateStage(newStage:Stage) {
@@ -100,7 +108,7 @@ export function getStageById(state:AppState, stageId:string) {
             return stage;
         }
     }
-    
+
     if (stageId == 'bonus') {
         return state.bonus;
     }

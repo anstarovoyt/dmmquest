@@ -54,7 +54,7 @@ var StageManager = (function () {
             if (!stage.questAnswers) {
                 stage.questAnswers = {};
             }
-            stage.questAnswers[answer.id] = answer;
+            stage.questAnswers[answerId.id] = answerId;
         }
         return stage;
     };
@@ -183,9 +183,10 @@ var TeamImpl = (function () {
 }());
 var TEAMS = [];
 TEAMS.push({
-    name: "Самая тестовая команда",
+    name: "Тестовая админская команда",
     secretCode: "test",
     tokenId: "test",
+    admin: true,
     startFromStage: 0
 }, {
     name: "Самая тестовая команда 1",
@@ -235,7 +236,8 @@ var TeamManager = (function () {
             return {
                 authenticated: true,
                 name: team.name,
-                token: team.tokenId
+                token: team.tokenId,
+                admin: team.admin
             };
         }
         return { authenticated: false };
@@ -321,6 +323,11 @@ server.get('/stage/*', function (req, res, next) {
 server.get('/stages', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
 });
+server.post('/teams', function (req, res, next) {
+    var request = req.body;
+    console.log(request);
+    res.json(processGetTeamsRequest(request));
+});
 function processStateRequest(req) {
     var token = req.token;
     var team = checkToken(token);
@@ -373,6 +380,27 @@ function processQuestTextsRequest(request) {
                 };
             })
         }
+    };
+}
+function processGetTeamsRequest(request) {
+    var token = request.token;
+    var team = checkToken(token);
+    if (!team || !team.admin) {
+        return {
+            success: false
+        };
+    }
+    var result = [];
+    for (var _i = 0, TEAMS_3 = TEAMS; _i < TEAMS_3.length; _i++) {
+        var team = TEAMS_3[_i];
+        result.push({
+            team: team,
+            appState: stageManager.getAppState(team.tokenId)
+        });
+    }
+    return {
+        success: true,
+        teams: result
     };
 }
 function checkToken(token) {

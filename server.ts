@@ -77,6 +77,12 @@ server.get('/stages', function (req, res, next) {
     res.sendFile(path.join(__dirname, TARGET, '/index.html'));
 })
 
+server.post('/teams', (req, res, next) => {
+    var request:GetTeamsRequest = req.body;
+    console.log(request);
+    res.json(processGetTeamsRequest(request));
+});
+
 
 function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     var token = req.token;
@@ -141,6 +147,31 @@ function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse 
         }
     }
 }
+
+function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
+    var token = request.token;
+    var team = checkToken(token);
+    if (!team || !team.admin) {
+        return {
+            success: false
+        }
+    }
+
+    var result:TeamInfo[] = [];
+
+    for (var team of TEAMS) {
+        result.push({
+            team: team,
+            appState: stageManager.getAppState(team.tokenId)
+        });
+    }
+
+    return {
+        success: true,
+        teams: result
+    }
+}
+
 
 function checkToken(token:string):Team {
     return teamManager.findTeamByCode(token);

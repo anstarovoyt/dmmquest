@@ -13,7 +13,8 @@
     "client/app/state/QuestTexts",
     "client/app/state/AppState",
     "client/app/authentication/Auth.d.ts",
-    "client/app/state/Answers.d.ts"
+    "client/app/state/Answers.d.ts",
+    "client/app/components/admin/Admin.d.ts"
   ],
   "exclude": [
     "node_modules"

@@ -8,16 +8,20 @@ export class HeaderComponent extends React.Component<any, any> {
 
     render() {
 
+        var buttons = []
+        buttons.push(<li key="/"><Link to="/">Главная</Link></li>);
+        buttons.push(<li key="/bonus"><Link to="/bonus">Бонус</Link></li>);
+        if (auth.isAdmin()) {
+            buttons.push(<li key="/admin"><Link to="/admin">Админ</Link></li>);
+        }
+        buttons.push(<li key="/logout"><a href="#" onClick={this.logout.bind(this)}>Выход</a></li>);
         return     <div className="header-wrap">
 
             <div className="masthead clearfix">
                 <div className="inner">
                     <h3 className="masthead-brand"><Link className="logo-picture" to="/"></Link></h3>
                     <ul className="nav masthead-nav">
-                        <li><Link to="/">Главная</Link></li>
-                        <li><Link to="/bonus">Бонус</Link></li>
-                        <li><a href="#" onClick={this.logout.bind(this)}>Выход</a></li>
-
+                        {buttons}
                     </ul>
                 </div>
             </div>

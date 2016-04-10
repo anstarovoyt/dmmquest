@@ -6,6 +6,7 @@ import MainComponent from "./components/main/MainComponent";
 import {StagesListComponent} from "./components/stages/StagesListComponent";
 import {StageContainerComponent} from "./components/stage/StageContainerComponent";
 import {BonusStageContainerComponent} from "./components/stage/BonusStageContainer";
+import {AdminComponent} from "./components/admin/AdminComponent";
 
 //hack to reduce size
 var Router = require('react-router/lib/Router');
@@ -27,6 +28,7 @@ function renderRouter() {
                 <Route path="/stages" component={StagesListComponent}/>
                 <Route path="/stage/:id" component={StageContainerComponent}/>
                 <Route path="/bonus" component={BonusStageContainerComponent}/>
+                <Route path="/admin" component={AdminComponent}/>
             </Route>
         </Router>
     ), document.getElementById('content'));

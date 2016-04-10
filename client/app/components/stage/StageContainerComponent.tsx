@@ -6,7 +6,7 @@ import {LoadingComponent} from "../common/LoadingComponent";
 import {StageLocked} from "./StageLocked";
 type StageStage = {stage:Stage, loading:boolean, available:boolean};
 
-export class StageContainerComponent extends React.Component<any,StageStage > {
+export class StageContainerComponent extends React.Component<any,StageStage> {
 
     private _changeListener:(p:AppState)=>void;
 

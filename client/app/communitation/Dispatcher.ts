@@ -46,3 +46,12 @@ export function complete(toSend:AnswersUpdateRequest, successCallback:(res:AppSt
         success: successCallback
     });
 }
+
+export function loadTeam(toSend:GetTeamsRequest, successCallback:(res:GetTeamsResponse)=>void) {
+    reqwest({
+        url: '/teams',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}

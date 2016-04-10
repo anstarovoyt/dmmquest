@@ -8,9 +8,10 @@ class TeamImpl implements Team {
 var TEAMS:Team[] = [];
 
 TEAMS.push({
-        name: "Самая тестовая команда",
+        name: "Тестовая админская команда",
         secretCode: "test",
         tokenId: "test",
+        admin: true,
         startFromStage: 0
     },
     {
@@ -65,7 +66,8 @@ class TeamManager {
             return {
                 authenticated: true,
                 name: team.name,
-                token: team.tokenId
+                token: team.tokenId,
+                admin: team.admin
             }
         }
         return {authenticated: false}

@@ -59,5 +59,6 @@ interface Team {
     name:string,
     secretCode:string,
     tokenId:string,
-    startFromStage:number
+    startFromStage:number,
+    admin?:boolean
 }

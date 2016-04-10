@@ -4,6 +4,7 @@ import {questService} from "../state/QuestService";
 import {appStateService} from "../state/AppStateService";
 
 var auth = new class {
+
     login(secretCode:string, callback:(result:boolean) => void):void {
         var token = this.getToken();
         if (token) {
@@ -35,10 +36,14 @@ var auth = new class {
         return localStorage.authName;
     }
 
+    isAdmin() {
+        return localStorage.admin;
+    }
+
     logout():void {
         this.dropLoginInfo();
         appStateService.clean();
-        
+
         this.onChange({
             authenticated: false,
             token: null
@@ -58,7 +63,8 @@ var auth = new class {
         return {
             authenticated: true,
             name: localStorage.authName,
-            token: localStorage.authToken
+            token: localStorage.authToken,
+            admin: localStorage.admin
         }
     }
 
@@ -66,15 +72,19 @@ var auth = new class {
         authStore.emitChange(result);
     };
 
-    private storeLoginInfo(result) {
+    private storeLoginInfo(result:LoginInfo) {
         console.log('store ' + JSON.stringify(result));
-        localStorage.authToken = result.token
-        localStorage.authName = result.name
+        localStorage.authToken = result.token;
+        localStorage.authName = result.name;
+        if (result.admin) {
+            localStorage.admin = true;
+        }
     }
 
     private dropLoginInfo() {
         delete localStorage.authToken;
         delete localStorage.authName;
+        delete localStorage.admin;
     }
 }
 
