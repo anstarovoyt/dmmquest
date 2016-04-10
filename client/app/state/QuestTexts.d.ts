@@ -1,6 +1,6 @@
 interface QuestTextsRequest {
 	token: string
-	stageId: number
+	stageId: string
 }
 
 interface QuestTextsResponse {

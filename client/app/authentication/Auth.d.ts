@@ -1,8 +1,6 @@
 interface Storage {
-    auth: {
-        authToken:string,
-        name:string
-    }
+    authToken: string
+    authName: string
 }
 
 interface LoginInfo {

@@ -3,7 +3,7 @@ import {PropTypes} from "react";
 import {questService} from "../../state/QuestService";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {QuestComponent} from "./QuestionComponent";
-import {complete, saveAnswers} from "../../communitation/Dispatcher";
+import {complete} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
@@ -55,7 +55,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                         <h1><Link to="/">
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
-                            <span>{currentStage.name}</span></h1>
+                            <span>{appStateService.getStageName(currentStage)}</span></h1>
                         {quests}
                     </div>
                     <div className="col-lg-12 save-level">
@@ -77,7 +77,7 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
         return (
             <div className="row">
                 <div className="col-lg-12">
-                    <h1><span>{currentStage.name}</span></h1>
+                    <h1><span>{appStateService.getStageName(currentStage)}</span></h1>
                     <LoadingComponent />
                 </div>
             </div>
@@ -105,9 +105,10 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
         }
 
         var stage = this.props.stage;
+        var token = auth.getToken();
         complete({
             stageId: stage.id,
-            token: auth.getToken(),
+            token: token,
             answers: answers
         }, (r) => {
             appStateService.setState(r);

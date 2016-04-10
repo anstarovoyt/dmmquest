@@ -26,7 +26,7 @@ server
 server.post('/quest-texts', (req, res, next) => {
     var request:QuestTextsRequest = req.body;
 
-    res.json(processQuestTexts(request));
+    res.json(processQuestTextsRequest(request));
 });
 
 server.post('/state', (req, res, next) => {
@@ -52,15 +52,21 @@ server.post('/login', (req, res, next) => {
 server.post('/save', (req, res, next) => {
     var request:AnswersUpdateRequest = req.body;
     console.log(request);
-    res.json(processAnswerUpdate(request));
+    res.json(processAnswerUpdateRequest(request));
 });
 
 server.post('/complete', (req, res, next) => {
-    console.log('complete');
     var request:AnswersUpdateRequest = req.body;
-    console.log(request);
-    var options = processAnswerUpdate(request);
-    res.json(closeStage(request.stageId));
+
+    var token = request.token;
+    var options = processAnswerUpdateRequest(request);
+    if (!options.success) {
+        res.json({
+            authenticated: false
+        });
+        return;
+    }
+    res.json(stageManager.closeStage(token, request.stageId));
 });
 
 server.get('/stage/*', function (req, res, next) {
@@ -72,36 +78,49 @@ server.get('/stages', function (req, res, next) {
 })
 
 
-function processStateRequest(req:AppStateRequest):AppStateResponse {
+function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     var token = req.token;
-    if (!checkToken(token)) {
+    var team = checkToken(token);
+    if (!team) {
+        console.log('no team found');
         return {success: false}
     }
 
     return {
         success: true,
-        state: loadState()
+        state: {
+            appState: stageManager.getAppState(token),
+            stagesNames: stageManager.getStagesNames()
+        }
     }
 }
 
-function processAnswerUpdate(req:AnswersUpdateRequest):AnswersUpdateResponse {
-    if (!checkToken(req.token)) {
+function processAnswerUpdateRequest(req:AnswersUpdateRequest):AnswersUpdateResponse {
+    var token = req.token;
+    var team = checkToken(token);
+
+    if (!team) {
         return {success: false};
     }
 
-    return {success: setAnswers(req.stageId, req.answers)}
+    var answers = stageManager.setAnswers(token, req.stageId, req.answers);
+    return {
+        success: !!answers,
+        stage: answers
+    }
 }
 
 function processLoginRequest(req:LoginRequest):LoginInfo {
-    return login(req.secretCode);
+    return teamManager.login(req.secretCode);
 }
 
-function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
-    if (!checkToken(request.token)) {
+function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse {
+    var token = request.token;
+    if (!checkToken(token)) {
         return {success: false};
     }
 
-    var questTexts = getQuestTexts(request.stageId);
+    var questTexts = stageManager.getQuestionTexts(token, request.stageId);
     if (!questTexts) {
         return {
             success: false
@@ -110,7 +129,7 @@ function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
 
     return {
         success: true,
-        
+
         questTexts: {
             stageId: request.stageId,
             quests: questTexts.map(function (el, i) {
@@ -123,8 +142,8 @@ function processQuestTexts(request:QuestTextsRequest):QuestTextsResponse {
     }
 }
 
-function checkToken(token:string):boolean {
-    return true;
+function checkToken(token:string):Team {
+    return teamManager.findTeamByCode(token);
 }
 
 

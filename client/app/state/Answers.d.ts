@@ -1,9 +1,10 @@
 interface AnswersUpdateRequest {
     token:string,
-    stageId:number;
+    stageId:string;
     answers:QuestAnswer[]
 }
 
 interface AnswersUpdateResponse {
     success:boolean
+    stage?:Stage
 }

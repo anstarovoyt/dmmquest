@@ -136,7 +136,7 @@ declare var Buffer: {
     isEncoding(encoding: string): boolean;
     /**
      * Gives the actual byte length of a string. encoding defaults to 'utf8'.
-     * This is not the same as String.prototype.length since that returns the number of characters in a string.
+     * This is not the same as String.prototype.length since that returns the showNumber of characters in a string.
      *
      * @param string string to test.
      * @param encoding encoding used to evaluate (defaults to 'utf8')

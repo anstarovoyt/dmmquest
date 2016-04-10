@@ -19,7 +19,7 @@ export function authRequest(toSend:LoginRequest, callback:(info:LoginInfo) => vo
     });
 }
 
-export function loadState(toSend:AppStateRequest, successCallback:(res:AppStateResponse)=>void) {
+export function loadState(toSend:AppStateRequest, successCallback:(res:FullAppStateResponse)=>void) {
     reqwest({
         url: '/state',
         method: 'post',
@@ -28,7 +28,7 @@ export function loadState(toSend:AppStateRequest, successCallback:(res:AppStateR
     });
 }
 
-export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:AppStateResponse)=>void) {
+export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:AnswersUpdateResponse)=>void) {
     reqwest({
         url: '/save',
         method: 'post',

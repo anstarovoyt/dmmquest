@@ -1,5 +1,7 @@
 import {authStore} from "./AuthStore";
 import {authRequest} from "../communitation/Dispatcher";
+import {questService} from "../state/QuestService";
+import {appStateService} from "../state/AppStateService";
 
 var auth = new class {
     login(secretCode:string, callback:(result:boolean) => void):void {
@@ -14,30 +16,29 @@ var auth = new class {
 
         authRequest({secretCode}, (resp:LoginInfo) => {
             callback(resp.authenticated);
-            
+
             if (resp.authenticated) {
                 this.storeLoginInfo(resp);
                 this.onChange(resp);
             } else {
-                
+
                 this.onChange(resp);
             }
         });
     }
 
     getToken():string {
-        var data = localStorage.auth;
-        return data == null ? null : data.authToken
+        return localStorage.authToken;
     }
 
     getName():string {
-        var data = localStorage.auth;
-        return data == null ? null : data.name
+        return localStorage.authName;
     }
 
     logout():void {
         this.dropLoginInfo();
-
+        appStateService.clean();
+        
         this.onChange({
             authenticated: false,
             token: null
@@ -45,19 +46,19 @@ var auth = new class {
     };
 
     loggedIn():boolean {
-        return !!localStorage.auth
+        return !!localStorage.authToken
     };
 
     logginInfo():LoginInfo {
-        var authFromStore = localStorage.auth;
+        var authFromStore = localStorage.authToken;
         if (!authFromStore) {
             return null;
         }
 
         return {
             authenticated: true,
-            name: authFromStore.name,
-            token: authFromStore.authToken
+            name: localStorage.authName,
+            token: localStorage.authToken
         }
     }
 
@@ -66,14 +67,14 @@ var auth = new class {
     };
 
     private storeLoginInfo(result) {
-        localStorage.auth = {
-            authToken: result.token,
-            name: result.name
-        }
+        console.log('store ' + JSON.stringify(result));
+        localStorage.authToken = result.token
+        localStorage.authName = result.name
     }
 
     private dropLoginInfo() {
-        delete localStorage.auth;
+        delete localStorage.authToken;
+        delete localStorage.authName;
     }
 }
 

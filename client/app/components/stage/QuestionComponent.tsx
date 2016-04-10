@@ -102,20 +102,22 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
             stageId: stage.id,
             answers: [answer]
         }, (res) => {
-            appStateService.updateAnswer(stage, answer);
-            this.setState({
-                value: value,
-                isEnableSave: true,
-                savedMark: true
-            });
-
-            setTimeout(() => {
+            if (res.success) {
+                appStateService.updateStage(res.stage);
                 this.setState({
-                    value: this.state.value,
-                    isEnableSave: this.state.isEnableSave,
-                    savedMark: false
-                })
-            }, 1000);
+                    value: value,
+                    isEnableSave: true,
+                    savedMark: true
+                });
+
+                setTimeout(() => {
+                    this.setState({
+                        value: this.state.value,
+                        isEnableSave: this.state.isEnableSave,
+                        savedMark: false
+                    })
+                }, 1000);
+            }
         })
     }
 }

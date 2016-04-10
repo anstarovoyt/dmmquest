@@ -222,7 +222,7 @@ declare module "express-serve-static-core" {
             * Unspecified ranges such as "0-" require
             * knowledge of your resource length. In
             * the case of a byte range this is of course
-            * the total number of bytes. If the Range
+            * the total showNumber of bytes. If the Range
             * header field is not given `null` is returned,
             * `-1` when unsatisfiable, `-2` when syntactically invalid.
             *

@@ -1,6 +1,7 @@
 import * as React from "react";
 var Link = require('react-router/lib/Link');
 import {StageListItemStatusComponent} from "./StageListItemStatusComponent";
+import {appStateService} from "../../state/AppStateService";
 
 
 export class StageListItemComponent extends React.Component<{stage:Stage}, any> {
@@ -26,6 +27,6 @@ export class StageListItemComponent extends React.Component<{stage:Stage}, any> 
 
 
     getName(stage:Stage) {
-        return stage.name;
+        return appStateService.getStageName(stage);
     }
 }

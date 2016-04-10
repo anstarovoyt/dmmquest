@@ -6,18 +6,18 @@ import {StageListItemComponent} from "./StageListItemComponent";
 import {auth} from "../../authentication/AuthService";
 
 
-export class StagesListComponent extends React.Component<any, {stages:Stage[],loading:boolean}> {
+export class StagesListComponent extends React.Component<any, {stages:Stage[], bonus:Stage, loading:boolean}> {
 
     private _changeListener;
 
     constructor(props:any, context:any) {
         super(props, context);
 
-        var state:AppState = appStateService.getState();
+        var state:AppState = appStateService.getAppState();
         if (!state) {
-            this.state = {loading: true, stages: null};
+            this.state = {loading: true, stages: null, bonus: null};
         } else {
-            this.state = {stages: state.stages, loading: false}
+            this.state = {stages: state.stages, bonus: state.bonus, loading: false}
         }
     }
 
@@ -25,9 +25,10 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
     _onChange(appState:AppState) {
         console.log('update state stage container');
 
-        var state = appState == null ? {loading: false, stages: null} : {
+        var state = appState == null ? {loading: false, stages: null, bonus: null} : {
             stages: appState.stages,
-            loading: false
+            loading: false,
+            bonus: appState.bonus
         };
         this.setState(state);
     }
@@ -46,7 +47,8 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
 
     render() {
 
-        if (this.state.loading) {
+        var state = this.state;
+        if (state.loading || !state.stages) {
             return (
                 <div className="row">
                     <div className="col-lg-12">
@@ -56,19 +58,24 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[],lo
                     </div>
                 </div>
             )
+        }
 
-        }
+
         var stages = this.state.stages;
-        if (stages) {
-            var result = stages.map(function (el) {
-                return <StageListItemComponent key={el.id} stage={el}/>
-            })
-            return <div className="row">
-                <div className="col-lg-12">
-                    <h1>{auth.getName()}</h1>
-                    {result}
-                </div>
-            </div>
+        var result = stages.map(function (el) {
+            return <StageListItemComponent key={el.id} stage={el}/>
+        })
+
+        let el = state.bonus;
+        if (el) {
+            result.push(<StageListItemComponent key={el.id} stage={el}/>)
         }
+
+        return <div className="row">
+            <div className="col-lg-12">
+                <h1>{auth.getName()}</h1>
+                {result}
+            </div>
+        </div>
     }
 }

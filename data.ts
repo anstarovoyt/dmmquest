@@ -1,3 +1,10 @@
+interface RawStage {
+    name:string,
+    quests:string[]
+    status?:StageStatus
+}
+
+
 function getDefaultData():{stages:RawStage[],bonus:RawStage} {
     return {
         stages: [
@@ -39,3 +46,5 @@ function getDefaultData():{stages:RawStage[],bonus:RawStage} {
         }
     }
 }
+
+var defaultData =getDefaultData();

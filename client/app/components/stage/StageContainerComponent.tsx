@@ -1,21 +1,19 @@
 import * as React from "react";
-import {appStateService} from "../../state/AppStateService";
+import {appStateService, getStageById} from "../../state/AppStateService";
 import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageLocked} from "./StageLocked";
-
-
 type StageStage = {stage:Stage, loading:boolean, available:boolean};
 
-export class StageContainerComponent extends React.Component<{params:any},StageStage > {
+export class StageContainerComponent extends React.Component<any,StageStage > {
 
     private _changeListener:(p:AppState)=>void;
 
 
     constructor(props:any, context:any) {
         super(props, context);
-        var state:AppState = appStateService.getState();
+        var state:AppState = appStateService.getAppState();
         this.state = this.getStageByAppState(state);
     }
 
@@ -45,17 +43,14 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
             };
         }
         else {
-            var id:string = this.props.params.id;
+            var id:string = this.getStageId();
             if (id) {
-                var numberId = id == 'bonus' ? state.stages.length - 1 : Number(id);
-                if (id) {
-                    var stage = state.stages[numberId];
-                    if (stage) {
-                        return {
-                            stage,
-                            loading: false,
-                            available: true
-                        }
+                var stage = getStageById(state, id);
+                if (stage) {
+                    return {
+                        stage,
+                        loading: false,
+                        available: true
                     }
                 }
             }
@@ -66,6 +61,10 @@ export class StageContainerComponent extends React.Component<{params:any},StageS
             loading: false,
             stage: null
         }
+    }
+
+    private getStageId() {
+        return (this.props as any).params.id;
     }
 
     render() {

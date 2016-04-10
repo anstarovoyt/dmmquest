@@ -5,14 +5,15 @@
     "outFile": "server.js"
   },
   "files": [
+    "data",
+    "StageManager.ts",
+    "TeamManager.ts",
     "server",
     "./client/typings/express/express",
     "client/app/state/QuestTexts",
     "client/app/state/AppState",
-    "dataloader",
     "client/app/authentication/Auth.d.ts",
-    "client/app/state/Answers.d.ts",
-    "data"
+    "client/app/state/Answers.d.ts"
   ],
   "exclude": [
     "node_modules"
