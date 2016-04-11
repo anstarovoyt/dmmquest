@@ -19,8 +19,10 @@ server.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
+
 server
     .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
+    .use('/statics', express.static(__dirname + '/statics'))
     .listen(PORT);
 
 server.post('/quest-texts', (req, res, next) => {
@@ -186,7 +188,7 @@ function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
     }
 
     var newTeam = teamManager.createTeam(request.teamName);
-    
+
     return {success: !!newTeam}
 }
 

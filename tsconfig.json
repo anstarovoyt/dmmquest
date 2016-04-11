@@ -5,6 +5,7 @@
     "outFile": "server.js"
   },
   "files": [
+    "all-text",
     "data",
     "StageManager.ts",
     "TeamManager.ts",

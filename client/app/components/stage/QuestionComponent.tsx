@@ -26,11 +26,13 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
 
         var stage = this.props.stage;
         var isCompleted = stage.status == StageStatus.COMPLETED;
+        var text = {__html:this.props.quest.text};
+
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
-                    <p>{this.props.quest.text}</p>
+                    <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
                     <div className="input-group">
                         <input type="text"

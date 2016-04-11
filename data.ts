@@ -4,8 +4,13 @@ interface RawStage {
     status?:StageStatus
 }
 
+declare var all_text:{stages:RawStage[],bonus:RawStage};
 
 function getDefaultData():{stages:RawStage[],bonus:RawStage} {
+    if (all_text) {
+        return all_text;
+    }
+
     return {
         stages: [
             {
@@ -47,4 +52,4 @@ function getDefaultData():{stages:RawStage[],bonus:RawStage} {
     }
 }
 
-var defaultData =getDefaultData();
+var defaultData = getDefaultData();
