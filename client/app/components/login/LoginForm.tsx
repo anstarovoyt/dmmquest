@@ -25,7 +25,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
 
     render() {
         var notAvailableClass = "not-avaliable" + (this.state.showError ? " view" : "");
-        var errorNoLocalStorage = "not-avaliable" + (typeof localStorage == 'undefined' || auth.noLocalStorage ? " view" : "");
+        var errorNoLocalStorage = "not-avaliable" + (typeof localStorage == 'undefined' || auth.noLocalStorage() ? " view" : "");
 
 
         return (

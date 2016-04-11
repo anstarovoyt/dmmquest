@@ -108,7 +108,7 @@ var auth = new class {
         }
     }
 
-    get noLocalStorage() {
+    noLocalStorage() {
         return this._noLocalStorage;
     }
 
