@@ -116,7 +116,7 @@ var all_text:{stages:RawStage[],bonus:RawStage} = {
             `
 На каком животном изображён пацифистский значок?
 <br>
-<img style='height: auto;width: auto; max-width: 250px;max-height: 250px;' src='/statics/triangle.png'/>
+<img style='height: auto;width: auto; max-width: 250px;max-height: 250px;' src='/statics/clocks.jpg'/>
 <br>
 <a style="text-decoration:underline !important" href="https://pp.vk.me/c636221/v636221285/753/RcWhArFApUM.jpg">High resolution link</a>
 <br>
