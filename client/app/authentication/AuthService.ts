@@ -30,8 +30,8 @@ var auth = new class {
                         authenticated: false
                     }
                 }
-                callback(resp.authenticated);
-                this.onChange(resp);
+                callback(res.authenticated);
+                this.onChange(res);
             } else {
                 callback(resp.authenticated);
                 this.onChange(resp);
