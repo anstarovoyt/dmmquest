@@ -81,9 +81,7 @@ h1 a {float: left;}
     width: 100%;
     display: block;
 }
-.row .row:hover {
-    background: rgba(51, 51, 51, 0.2);
-}
+
 .col-xs-12 {
     width: 70%;
 }
