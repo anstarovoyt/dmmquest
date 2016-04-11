@@ -25,7 +25,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
 
     render() {
         var notAvailableClass = "not-avaliable" + (this.state.showError ? " view" : "");
-        var errorNoLocalStorage ="not-avaliable" + (typeof localStorage == 'undefined' ? " view" : "");
+        var errorNoLocalStorage = "not-avaliable" + (typeof localStorage == 'undefined' || auth.noLocalStorage ? " view" : "");
 
 
         return (
@@ -43,7 +43,8 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
 			                </span>
                 </div>
                 <p className={notAvailableClass}>Код введен неверно</p>
-                <p className={errorNoLocalStorage}>Возможны проблемы со входом из-за старого браузера или режима приватности</p>
+                <p className={errorNoLocalStorage}>
+                    Возможны проблемы со входом из-за старого браузера или режима приватности</p>
             </form>
 
         )

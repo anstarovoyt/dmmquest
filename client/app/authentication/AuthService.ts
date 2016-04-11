@@ -5,6 +5,8 @@ import {appStateService} from "../state/AppStateService";
 
 var auth = new class {
 
+    private _noLocalStorage;
+
     login(secretCode:string, callback:(result:boolean) => void):void {
         var token = this.getToken();
         if (token) {
@@ -86,22 +88,32 @@ var auth = new class {
 
     private storeLoginInfo(result:LoginInfo) {
         if (typeof localStorage == "undefined") {
+            this._noLocalStorage = true;
             return;
         }
 
         console.log('store ' + JSON.stringify(result));
-        localStorage.authToken = result.token;
-        localStorage.authName = result.name;
-        if (result.admin) {
-            localStorage.admin = true;
+        try {
+            localStorage.authToken = result.token;
+            localStorage.authName = result.name;
+            if (result.admin) {
+                localStorage.admin = true;
+            }
+        } catch (e) {
+            //safari 'private mode'
+            this._noLocalStorage = true;
         }
+    }
+
+    get noLocalStorage() {
+        return this._noLocalStorage;
     }
 
     private dropLoginInfo() {
         if (typeof localStorage == "undefined") {
             return;
         }
-        
+
         delete localStorage.authToken;
         delete localStorage.authName;
         delete localStorage.admin;
