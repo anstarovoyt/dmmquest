@@ -55,7 +55,7 @@ var all_text:{stages:RawStage[],bonus:RawStage} = {
 Попробуем вспомнить теорию вероятности. 
 <br>
 <br>
-<img style='height: auto;width: auto; max-width: 500px;max-height: 500px;' src='/statics/formula.png'/>    
+<img style='height: auto;width: auto; max-width: 300px;max-height: 300px;' src='/statics/formula.png'/>    
 <br>
 <br>
 Так и быть, от вас не требуется применить это неравенство, но хотя бы автора припомните? :) 
