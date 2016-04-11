@@ -29,6 +29,10 @@ var auth = new class {
     }
 
     getToken():string {
+        if (typeof localStorage == "undefined") {
+            return null;
+        }
+
         return localStorage.authToken;
     }
 
@@ -51,10 +55,18 @@ var auth = new class {
     };
 
     loggedIn():boolean {
+        if (typeof localStorage == "undefined") {
+            return false;
+        }
+
         return !!localStorage.authToken
     };
 
     logginInfo():LoginInfo {
+        if (typeof localStorage == "undefined") {
+            return null;
+        }
+
         var authFromStore = localStorage.authToken;
         if (!authFromStore) {
             return null;
@@ -73,6 +85,10 @@ var auth = new class {
     };
 
     private storeLoginInfo(result:LoginInfo) {
+        if (typeof localStorage == "undefined") {
+            return;
+        }
+
         console.log('store ' + JSON.stringify(result));
         localStorage.authToken = result.token;
         localStorage.authName = result.name;
@@ -82,6 +98,10 @@ var auth = new class {
     }
 
     private dropLoginInfo() {
+        if (typeof localStorage == "undefined") {
+            return;
+        }
+        
         delete localStorage.authToken;
         delete localStorage.authName;
         delete localStorage.admin;
