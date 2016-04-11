@@ -18,13 +18,22 @@ var auth = new class {
         }
 
         authRequest({secretCode}, (resp:LoginInfo) => {
-            callback(resp.authenticated);
 
+            var res = resp;
             if (resp.authenticated) {
-                this.storeLoginInfo(resp);
+                try {
+                    this.storeLoginInfo(resp);
+                } catch (e) {
+                    //safari 'private mode'
+                    this._noLocalStorage = true;
+                    res = {
+                        authenticated: false
+                    }
+                }
+                callback(resp.authenticated);
                 this.onChange(resp);
             } else {
-
+                callback(resp.authenticated);
                 this.onChange(resp);
             }
         });
@@ -92,18 +101,10 @@ var auth = new class {
             return;
         }
 
-        console.log('store ' + JSON.stringify(result));
-        try {
-            localStorage.authToken = result.token;
-            localStorage.authName = result.name;
-            if (result.admin) {
-                localStorage.admin = true;
-            }
-        } catch (e) {
-            //safari 'private mode'
-            this._noLocalStorage = true;
-
-            throw e;
+        localStorage.authToken = result.token;
+        localStorage.authName = result.name;
+        if (result.admin) {
+            localStorage.admin = true;
         }
     }
 
