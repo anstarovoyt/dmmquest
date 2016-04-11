@@ -102,6 +102,8 @@ var auth = new class {
         } catch (e) {
             //safari 'private mode'
             this._noLocalStorage = true;
+
+            throw e;
         }
     }
 
