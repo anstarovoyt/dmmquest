@@ -26,7 +26,7 @@ var all_text:{stages:RawStage[],bonus:RawStage} = {
         {
             name: "Этап «Физра не в Павлике»",
             quests: [
-                "Сколько ещё говядины надо добавить, чтобы про них можно было петь песню?<br><img style='height: auto;width: auto; max-width: 300px;max-height: 300px;' src='/statics/letters.png'/>",
+                "Сколько ещё говядины надо добавить, чтобы про них можно было петь песню?<br><img style='height: auto;width: auto; max-width: 250px;max-height: 250px;' src='/statics/letters.png'/>",
                 "Опытный программист найдёт это место вслепую (2,5) (2,8) (2,7) (1,9) (2,4) (2,9) (3,7)         (2,7) (3,8) (2,7) (2,6) (2,7) (1,6) (2,2). Идите к зданию полному opium des volkes. Сколько трёхмерных гауссиан перед вами?",
                 `Здесь
 <br>
