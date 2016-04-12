@@ -61,6 +61,6 @@ interface Team {
     tokenId:string,
     startFromStage:number,
     firstLoginDate?:Date,
-    endQuest?:Date,
+    endQuestDate?:Date,
     admin?:boolean
 }

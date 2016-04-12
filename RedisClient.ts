@@ -25,8 +25,10 @@ var initTeams = () => {
                 var items = JSON.parse(value);
                 if (items.firstLoginDate) {
                     var firstLoginDate:any = items.firstLoginDate;
+                    var endDate:any = items.endQuestDate;
                     //fix date after serialization
                     items.firstLoginDate = new Date(firstLoginDate);
+                    items.endQuestDate = new Date(endDate);
                 }
                 console.log(items);
                 TEAMS_CACHE.push(items);
