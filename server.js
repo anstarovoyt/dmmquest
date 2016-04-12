@@ -44,9 +44,9 @@ var all_text = {
             "\n\n1,00 7,00 <br>\n1,00 2,00 <br>\n4,00 7,00 <br>\n4,00 2,00 <br>\n5,00 1,20 <br>\n5,00 2,00 <br>\n7,00 7,00 <br>\n7,00 2,00 <br>\n10,00 7,00 <br>\n10,00 2,00 <br>\n12,00 4,50 <br>\n12,00 2,00 <br>\n12,00 7,00 <br>\n15,00 7,00 <br>\n15,00 2,00 <br>\n16,50 5,00 <br>\n16,50 2,00 <br>\n18,00 3,50 <br>\n19,50 5,00 <br>\n19,50 2,00 <br>\n21,00 7,00 <br>\n21,00 2,00 <br>\n24,00 7,00 <br>\n24,00 2,00 <br>\n<br>\n\u0412\u0430\u043C \u043D\u0443\u0436\u0435\u043D \u0446\u0435\u043D\u0442\u0440\u0430\u043B\u044C\u043D\u044B\u0439 \u0432\u0445\u043E\u0434. \u041D\u0430\u0437\u043E\u0432\u0438\u0442\u0435 \u0441\u043E\u0441\u0435\u0434\u0435\u0439 \u0442\u043E\u0433\u043E, \u0447\u0435\u0439 \u0442\u0440\u0443\u0434 \u0431\u0435\u0441\u043F\u043E\u043B\u0435\u0437\u0435\u043D. \n<br>\n<br>\n2 \u0431\u0430\u043B\u043B\u0430\n\n            ",
             "\u0421\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0444\u043E\u0442\u043E \u0432\u0441\u0435\u0439 \u043A\u043E\u043C\u0430\u043D\u0434\u043E\u0439 \u0441 \u0442\u0435\u043A\u0443\u0449\u0438\u043C \u043D\u043E\u043C\u0435\u0440\u043E\u043C \u0414\u041C\u041C. <br><br> 0,5 \u0431\u0430\u043B\u043B\u0430",
             "\u0421\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0444\u043E\u0442\u043E \u0441 \u0447\u0438\u0441\u043B\u0430\u043C\u0438 \u0438\u0437 \u043F\u043E\u0441\u043B\u0435\u0434\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u0438 A000055 oeis \u0431\u043E\u043B\u044C\u0448\u0435 40 \u043D\u0430 \u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0438\u0445 \u043E\u0431\u044A\u0435\u043A\u0442\u0430\u0445. \u041E\u0434\u043D\u043E \u0447\u0438\u0441\u043B\u043E \u0434\u043E\u043B\u0436\u043D\u043E \u0432\u0441\u0442\u0440\u0435\u0447\u0430\u0442\u044C\u0441\u044F \u043D\u0435 \u0447\u0430\u0449\u0435 \u043E\u0434\u043D\u043E\u0433\u043E \u0440\u0430\u0437\u0430.<br><br> \u0417\u0430 \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E 0,2 \u0431\u0430\u043B\u043B\u0430, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 5 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439",
-            "\u041F\u0435\u0440\u0435\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u043F\u0435\u0441\u043D\u044E \u042D\u043A\u0441\u043F\u043E\u043D\u0430\u0442 \u043D\u0430 \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u043B\u0430\u0434 (\u043A\u0443\u043F\u043B\u0435\u0442+\u043F\u0440\u0438\u043F\u0435\u0432), \u0437\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043D\u0430 \u0432\u0438\u0434\u0435\u043E \u0438 \u043F\u0440\u0438\u0448\u043B\u0438\u0442\u0435 \u043D\u0430\u043C. <br><br> \u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 2 \u0431\u0430\u043B\u043B\u0430 \u043D\u0430 \u0443\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0436\u044E\u0440\u0438",
+            "\u041F\u0435\u0440\u0435\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u043F\u0435\u0441\u043D\u044E \u042D\u043A\u0441\u043F\u043E\u043D\u0430\u0442 \u043D\u0430 \u043C\u0430\u0442\u0435\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438\u0439 \u043B\u0430\u0434 (\u043A\u0443\u043F\u043B\u0435\u0442+\u043F\u0440\u0438\u043F\u0435\u0432), \u0437\u0430\u043F\u0438\u0448\u0438\u0442\u0435 \u043D\u0430 \u0432\u0438\u0434\u0435\u043E \u0438 \u043F\u0440\u0438\u0448\u043B\u0438\u0442\u0435 \u043D\u0430\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0443/\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0432\u0438\u0434\u0435\u043E. <br><br> \u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 2 \u0431\u0430\u043B\u043B\u0430 \u043D\u0430 \u0443\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0436\u044E\u0440\u0438",
             "\u0421\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0444\u043E\u0442\u043E \u0441 \u043B\u044E\u0431\u043E\u0439 \u043D\u0430\u0434\u043F\u0438\u0441\u044C\u044E \u0438\u043B\u0438 \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u043C, \u0438\u043C\u0435\u044E\u0449\u0438\u043C \u043E\u0442\u043D\u043E\u0448\u0435\u043D\u0438\u0435 \u043A \u0430\u043B\u0433\u0435\u0431\u0440\u0435 \u0438\u043B\u0438 \u043C\u0430\u0442\u0430\u043D\u0430\u043B\u0438\u0437\u0443. \u041D\u0435 \u0431\u043E\u043B\u044C\u0448\u0435 \u043E\u0434\u043D\u043E\u0433\u043E \u043E\u0434\u0438\u043D\u0430\u043A\u043E\u0432\u043E\u0433\u043E \u043E\u0431\u044A\u0435\u043A\u0442\u0430. <br><br>\u0417\u0430 \u043E\u0434\u043D\u043E \u0444\u043E\u0442\u043E 0,1 \u0431\u0430\u043B\u043B\u0430, \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 5 \u0444\u043E\u0442\u043E\u0433\u0440\u0430\u0444\u0438\u0439",
-            "\u0421\u043D\u0438\u043C\u0438\u0442\u0435 \u0440\u0435\u043A\u043B\u0430\u043C\u0443 \u0432\u0430\u0448\u0435\u0433\u043E \u043B\u044E\u0431\u0438\u043C\u043E\u0433\u043E \u0443\u0447\u0435\u0431\u043D\u043E\u0433\u043E \u043A\u0443\u0440\u0441\u0430 \u043D\u0430 \u043C\u0430\u0442\u043C\u0435\u0445\u0435 \u0438 \u043F\u0440\u0438\u0448\u043B\u0438\u0442\u0435 \u043D\u0430\u043C. <br><br> \u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 1 \u0431\u0430\u043B\u043B \u043D\u0430 \u0443\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0436\u044E\u0440\u0438",
+            "\u0421\u043D\u0438\u043C\u0438\u0442\u0435 \u0440\u0435\u043A\u043B\u0430\u043C\u0443 \u0432\u0430\u0448\u0435\u0433\u043E \u043B\u044E\u0431\u0438\u043C\u043E\u0433\u043E \u0443\u0447\u0435\u0431\u043D\u043E\u0433\u043E \u043A\u0443\u0440\u0441\u0430 \u043D\u0430 \u043C\u0430\u0442\u043C\u0435\u0445\u0435 \u0438 \u043F\u0440\u0438\u0448\u043B\u0438\u0442\u0435 \u043D\u0430\u043C \u0441\u0441\u044B\u043B\u043A\u0443 \u043D\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043A\u0443/\u043F\u0440\u043E\u0441\u043C\u043E\u0442\u0440 \u0432\u0438\u0434\u0435\u043E. <br><br> \u041C\u0430\u043A\u0441\u0438\u043C\u0443\u043C 1 \u0431\u0430\u043B\u043B \u043D\u0430 \u0443\u0441\u043C\u043E\u0442\u0440\u0435\u043D\u0438\u0435 \u0436\u044E\u0440\u0438",
             "\u041F\u0440\u0438\u043D\u0435\u0441\u0442\u0438 NPC \u0448\u0442\u0440\u0430\u0444 \u043D\u0430 \u0438\u043C\u044F \u043E\u0434\u043D\u043E\u0433\u043E \u0438\u0437 \u0438\u0433\u0440\u043E\u043A\u043E\u0432 \u0434\u0430\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 17 \u0430\u043F\u0440\u0435\u043B\u044F <br> 0,5 \u0431\u0430\u043B\u043B\u0430\n <br>\n \u0434\u044B\u043D\u044E \u0438\u043B\u0438 \u0430\u0440\u0431\u0443\u0437, \n <br>\n 0,5 \u0431\u0430\u043B\u043B\u0430"
         ]
     }
@@ -112,6 +112,7 @@ var StageManager = (function () {
             }
             stage.questAnswers[answer.id] = answer;
         }
+        client.hset(APP_STATE_KEY, token, JSON.stringify(this.getAppState(token)));
         return stage;
     };
     StageManager.prototype.getStagesNames = function () {
@@ -127,7 +128,9 @@ var StageManager = (function () {
         if (nextStage && nextStage.status == 0 /* LOCKED */) {
             nextStage.status = 1 /* OPEN */;
         }
-        return this.getAppState(token);
+        var appState = this.getAppState(token);
+        client.hset(APP_STATE_KEY, token, JSON.stringify(appState));
+        return appState;
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
         var appState = this.getAppState(token);
@@ -173,36 +176,7 @@ var StageManager = (function () {
         if (!team) {
             return;
         }
-        var stages = [];
-        var appState = {
-            bonus: null,
-            stages: stages
-        };
-        var defaultStages = defaultData.stages;
-        var startFromStage = team.startFromStage;
-        var pushNumber = 0;
-        for (var i = startFromStage; i < defaultStages.length; i++) {
-            var status = i == startFromStage ? 1 /* OPEN */ : 0 /* LOCKED */;
-            stages.push({
-                id: String(i),
-                status: status,
-                showNumber: pushNumber++
-            });
-        }
-        for (var i = 0; i < startFromStage; i++) {
-            stages.push({
-                id: String(i),
-                status: 0 /* LOCKED */,
-                showNumber: pushNumber++
-            });
-        }
-        appState.bonus = {
-            id: "bonus",
-            status: 3 /* BONUS */,
-            showNumber: pushNumber++
-        };
-        this.states[token] = appState;
-        return appState;
+        return createDefaultStateObject(team);
     };
     return StageManager;
 }());
@@ -232,24 +206,104 @@ function getStagesNames() {
     return result;
 }
 var stageManager = new StageManager();
-var TeamImpl = (function () {
-    function TeamImpl() {
-    }
-    return TeamImpl;
-}());
-var TEAMS = [];
-TEAMS.push({
-    name: "Тестовая админская команда",
-    secretCode: "test",
-    tokenId: "test",
-    admin: true,
-    startFromStage: 0
-}, {
-    name: "Самая тестовая команда 1",
-    secretCode: "test2",
-    tokenId: "test2",
-    startFromStage: 1
+var redis = require("redis");
+var portArg = process.env.REDIS_URL;
+var client = portArg ? redis.createClient(portArg) : redis.createClient();
+client.on("error", function (err) {
+    console.log("Error " + err);
 });
+console.log('start redis client');
+var TEAMS_KEY = "teams";
+var APP_STATE_KEY = "app_state";
+var TEAMS_CACHE = [];
+var initTeams = function () {
+    client.hgetall(TEAMS_KEY, function (err, object) {
+        console.log('get object ' + object);
+        for (var l in object) {
+            if (object.hasOwnProperty(l)) {
+                var value = object[l];
+                console.log(value);
+                TEAMS_CACHE.push(JSON.parse(value));
+            }
+        }
+    });
+    client.hgetall(APP_STATE_KEY, function (err, object) {
+        console.log('get object ' + object);
+        for (var l in object) {
+            if (object.hasOwnProperty(l)) {
+                var value = object[l];
+                console.log(value);
+                stageManager.states[l] = JSON.parse(value);
+            }
+        }
+    });
+};
+client.exists(TEAMS_KEY, function (err, reply) {
+    if (reply) {
+        initTeams();
+        return;
+    }
+    var defaultTeams = getDefaultTeams();
+    var toPush = {};
+    var multi = client.multi();
+    for (var _i = 0, defaultTeams_1 = defaultTeams; _i < defaultTeams_1.length; _i++) {
+        var team = defaultTeams_1[_i];
+        multi.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team));
+        multi.hset(APP_STATE_KEY, team.tokenId, JSON.stringify(createDefaultStateObject(team)));
+        TEAMS_CACHE.push(team);
+    }
+    multi.exec(function (res) {
+        console.log('Inited database state');
+    });
+});
+function getDefaultTeams() {
+    var teams = [];
+    teams.push({
+        name: "Тестовая админская команда",
+        secretCode: "test",
+        tokenId: "test",
+        admin: true,
+        startFromStage: 0
+    }, {
+        name: "Самая тестовая команда 1",
+        secretCode: "test2",
+        tokenId: "test2",
+        startFromStage: 1
+    });
+    return teams;
+}
+function createDefaultStateObject(team) {
+    var stages = [];
+    var appState = {
+        bonus: null,
+        stages: stages
+    };
+    var defaultStages = defaultData.stages;
+    var startFromStage = team.startFromStage;
+    var pushNumber = 0;
+    for (var i = startFromStage; i < defaultStages.length; i++) {
+        var status = i == startFromStage ? 1 /* OPEN */ : 0 /* LOCKED */;
+        stages.push({
+            id: String(i),
+            status: status,
+            showNumber: pushNumber++
+        });
+    }
+    for (var i = 0; i < startFromStage; i++) {
+        stages.push({
+            id: String(i),
+            status: 0 /* LOCKED */,
+            showNumber: pushNumber++
+        });
+    }
+    appState.bonus = {
+        id: "bonus",
+        status: 3 /* BONUS */,
+        showNumber: pushNumber++
+    };
+    stageManager.states[team.tokenId] = appState;
+    return appState;
+}
 var TeamManager = (function () {
     function TeamManager() {
     }
@@ -257,8 +311,8 @@ var TeamManager = (function () {
         if (!secretCode) {
             return null;
         }
-        for (var _i = 0, TEAMS_1 = TEAMS; _i < TEAMS_1.length; _i++) {
-            var team = TEAMS_1[_i];
+        for (var _i = 0, TEAMS_CACHE_1 = TEAMS_CACHE; _i < TEAMS_CACHE_1.length; _i++) {
+            var team = TEAMS_CACHE_1[_i];
             if (team.secretCode.toLocaleLowerCase() == secretCode.toLocaleLowerCase()) {
                 return team;
             }
@@ -266,8 +320,8 @@ var TeamManager = (function () {
         return null;
     };
     TeamManager.prototype.findTeamByToken = function (tokenId) {
-        for (var _i = 0, TEAMS_2 = TEAMS; _i < TEAMS_2.length; _i++) {
-            var team = TEAMS_2[_i];
+        for (var _i = 0, TEAMS_CACHE_2 = TEAMS_CACHE; _i < TEAMS_CACHE_2.length; _i++) {
+            var team = TEAMS_CACHE_2[_i];
             if (team.tokenId == tokenId) {
                 return team;
             }
@@ -283,11 +337,14 @@ var TeamManager = (function () {
             tokenId: secretCode,
             startFromStage: newStartFrom
         };
-        TEAMS.push(team);
+        TEAMS_CACHE.push(team);
+        var token = team.tokenId;
+        client.hset(TEAMS_KEY, token, JSON.stringify(team));
+        client.hset(APP_STATE_KEY, token, JSON.stringify(stageManager.getAppState(token)));
         return team;
     };
     TeamManager.prototype.listTeams = function () {
-        return TEAMS;
+        return TEAMS_CACHE;
     };
     TeamManager.prototype.login = function (secretCode) {
         var team = this.findTeamByCode(secretCode);
@@ -302,7 +359,7 @@ var TeamManager = (function () {
         return { authenticated: false };
     };
     TeamManager.prototype.getNextStartFromStage = function () {
-        var lastTeam = TEAMS[TEAMS.length - 1];
+        var lastTeam = TEAMS_CACHE[TEAMS_CACHE.length - 1];
         var startFromStage = lastTeam.startFromStage;
         var nextStage = startFromStage + 1;
         if (nextStage < defaultData.stages.length) {
@@ -455,11 +512,11 @@ function processGetTeamsRequest(request) {
         };
     }
     var result = [];
-    for (var _i = 0, TEAMS_3 = TEAMS; _i < TEAMS_3.length; _i++) {
-        var team = TEAMS_3[_i];
+    for (var _i = 0, TEAMS_CACHE_3 = TEAMS_CACHE; _i < TEAMS_CACHE_3.length; _i++) {
+        var cur = TEAMS_CACHE_3[_i];
         result.push({
-            team: team,
-            appState: stageManager.getAppState(team.tokenId)
+            team: cur,
+            appState: stageManager.getAppState(cur.tokenId)
         });
     }
     return {

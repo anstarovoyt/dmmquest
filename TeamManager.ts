@@ -1,32 +1,9 @@
-class TeamImpl implements Team {
-    name:string;
-    secretCode:string;
-    tokenId:string;
-    startFromStage:number;
-}
-
-var TEAMS:Team[] = [];
-
-TEAMS.push({
-        name: "Тестовая админская команда",
-        secretCode: "test",
-        tokenId: "test",
-        admin: true,
-        startFromStage: 0
-    },
-    {
-        name: "Самая тестовая команда 1",
-        secretCode: "test2",
-        tokenId: "test2",
-        startFromStage: 1
-    });
-
 class TeamManager {
     findTeamByCode(secretCode:string):Team {
         if (!secretCode) {
             return null;
         }
-        for (let team of TEAMS) {
+        for (let team of TEAMS_CACHE) {
             if (team.secretCode.toLocaleLowerCase() == secretCode.toLocaleLowerCase()) {
                 return team;
             }
@@ -35,7 +12,7 @@ class TeamManager {
     }
 
     findTeamByToken(tokenId:string):Team {
-        for (let team of TEAMS) {
+        for (let team of TEAMS_CACHE) {
             if (team.tokenId == tokenId) {
                 return team;
             }
@@ -54,13 +31,17 @@ class TeamManager {
             startFromStage: newStartFrom
         }
 
-        TEAMS.push(team);
+        TEAMS_CACHE.push(team);
+
+        var token = team.tokenId;
+        client.hset(TEAMS_KEY, token, JSON.stringify(team));
+        client.hset(APP_STATE_KEY, token, JSON.stringify(stageManager.getAppState(token)));
 
         return team;
     }
 
     listTeams():Team[] {
-        return TEAMS;
+        return TEAMS_CACHE;
     }
 
     login(secretCode:string):LoginInfo {
@@ -77,7 +58,7 @@ class TeamManager {
     }
 
     private getNextStartFromStage() {
-        var lastTeam = TEAMS[TEAMS.length - 1];
+        var lastTeam = TEAMS_CACHE[TEAMS_CACHE.length - 1];
         var startFromStage = lastTeam.startFromStage;
         var nextStage = startFromStage + 1;
         if (nextStage < defaultData.stages.length) {

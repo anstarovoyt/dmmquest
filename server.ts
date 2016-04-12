@@ -166,10 +166,10 @@ function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
 
     var result:TeamInfo[] = [];
 
-    for (var team of TEAMS) {
+    for (var cur of TEAMS_CACHE) {
         result.push({
-            team: team,
-            appState: stageManager.getAppState(team.tokenId)
+            team: cur,
+            appState: stageManager.getAppState(cur.tokenId)
         });
     }
 

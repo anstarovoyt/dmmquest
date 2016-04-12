@@ -1,6 +1,6 @@
 class StageManager {
 
-    private states:{
+    states:{
         [token:string]:AppState;
     } = {};
 
@@ -22,6 +22,8 @@ class StageManager {
             stage.questAnswers[answer.id] = answer;
         }
 
+        client.hset(APP_STATE_KEY, token, JSON.stringify(this.getAppState(token)));
+
         return stage;
     }
 
@@ -42,7 +44,9 @@ class StageManager {
             nextStage.status = StageStatus.OPEN;
         }
 
-        return this.getAppState(token);
+        var appState = this.getAppState(token);
+        client.hset(APP_STATE_KEY, token, JSON.stringify(appState));
+        return appState;
     }
 
 
@@ -105,44 +109,9 @@ class StageManager {
             return;
         }
 
-
-        var stages:Stage[] = [];
-        var appState:AppState = {
-            bonus: null,
-            stages
-        }
-
-        var defaultStages = defaultData.stages;
-        var startFromStage = team.startFromStage;
-        var pushNumber:number = 0;
-        for (var i = startFromStage; i < defaultStages.length; i++) {
-            var status = i == startFromStage ? StageStatus.OPEN : StageStatus.LOCKED;
-            stages.push({
-                id: String(i),
-
-                status: status,
-                showNumber: pushNumber++
-            });
-        }
-
-        for (var i = 0; i < startFromStage; i++) {
-            stages.push({
-                id: String(i),
-                status: StageStatus.LOCKED,
-                showNumber: pushNumber++
-            });
-        }
-
-        appState.bonus = {
-            id: "bonus",
-            status: StageStatus.BONUS,
-            showNumber: pushNumber++
-        }
-
-        this.states[token] = appState;
-
-        return appState;
+        return createDefaultStateObject(team);
     }
+
 }
 
 function getStageById(state:AppState, stageId:string) {
@@ -176,5 +145,6 @@ function getStagesNames() {
 
     return result;
 }
+
 
 var stageManager = new StageManager();
