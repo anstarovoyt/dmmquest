@@ -14,31 +14,41 @@ const APP_STATE_KEY = "app_state";
 var TEAMS_CACHE:Team[] = [];
 
 var initTeams = () => {
-    client.hgetall(TEAMS_KEY, function (err, object) {
+
+    var multi = client.multi();
+
+    multi.hgetall(TEAMS_KEY, function (err, object) {
         console.log('get object ' + object);
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
-                console.log(value);
-                TEAMS_CACHE.push(JSON.parse(value));
+                var items = JSON.parse(value);
+                if (items.firstLoginDate) {
+                    var firstLoginDate:any = items.firstLoginDate;
+                    //fix date after serialization
+                    items.firstLoginDate = new Date(firstLoginDate);
+                }
+                console.log(items);
+                TEAMS_CACHE.push(items);
 
                 //todo load state
             }
         }
     });
 
-    client.hgetall(APP_STATE_KEY, function (err, object) {
-        console.log('get object ' + object);
+    multi.hgetall(APP_STATE_KEY, function (err, object) {
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
                 console.log(value);
                 stageManager.states[l] = JSON.parse(value);
-
-                //todo load state
             }
         }
     });
+
+    multi.exec(() => {
+        initServer();
+    })
 }
 
 
@@ -58,8 +68,9 @@ client.exists(TEAMS_KEY, function (err, reply) {
         TEAMS_CACHE.push(team);
     }
 
-    multi.exec(function (res) {
+    multi.exec(() => {
         console.log('Inited database state');
+        initServer();
     })
 });
 

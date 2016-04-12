@@ -17,6 +17,9 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
                     <p><b>Секретный код</b>: {team.secretCode}</p>
                     <p><b>Токен</b>: {team.tokenId}</p>
                     <p><b>Начальный этап (отсчет от 1)</b>: {team.startFromStage + 1}</p>
+                    <p>Время первого логина {team.firstLoginDate ? team.firstLoginDate : " — не определено"} <br />
+                        Ожидаемое время окончания {team.endQuest ? team.endQuest : " — не определено"}
+                    </p>
                     {answers}
                 </div>
             </div>

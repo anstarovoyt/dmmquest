@@ -22,8 +22,7 @@ class StageManager {
             stage.questAnswers[answer.id] = answer;
         }
 
-        client.hset(APP_STATE_KEY, token, JSON.stringify(this.getAppState(token)));
-
+        this.saveAppStateToDB(token, this.getAppState(token));
         return stage;
     }
 
@@ -45,7 +44,8 @@ class StageManager {
         }
 
         var appState = this.getAppState(token);
-        client.hset(APP_STATE_KEY, token, JSON.stringify(appState));
+
+        this.saveAppStateToDB(token, appState);
         return appState;
     }
 
@@ -110,6 +110,10 @@ class StageManager {
         }
 
         return createDefaultStateObject(team);
+    }
+
+    saveAppStateToDB(token:string, state:AppState) {
+        client.hset(APP_STATE_KEY, token, JSON.stringify(state));
     }
 
 }

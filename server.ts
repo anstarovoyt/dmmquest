@@ -12,83 +12,88 @@ var TARGET_PATH_MAPPING = {
 
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
-var server = express();
+function initServer() {
+    console.log('Start creating server');
+    var server = express();
 
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-    extended: true
-}));
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+        extended: true
+    }));
 
 
-server
-    .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
-    .use('/statics', express.static(__dirname + '/statics'))
-    .listen(PORT);
+    server
+        .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
+        .use('/statics', express.static(__dirname + '/statics'))
+        .listen(PORT);
 
-server.post('/quest-texts', (req, res, next) => {
-    var request:QuestTextsRequest = req.body;
+    server.post('/quest-texts', (req, res, next) => {
+        var request:QuestTextsRequest = req.body;
 
-    res.json(processQuestTextsRequest(request));
-});
+        res.json(processQuestTextsRequest(request));
+    });
 
-server.post('/state', (req, res, next) => {
-    console.log('requested state');
-    var request:AppStateRequest = req.body;
-    res.json(processStateRequest(request));
-});
+    server.post('/state', (req, res, next) => {
+        console.log('requested state');
+        var request:AppStateRequest = req.body;
+        res.json(processStateRequest(request));
+    });
 
-server.post('/login', (req, res, next) => {
-    var request:LoginRequest = req.body;
+    server.post('/login', (req, res, next) => {
+        var request:LoginRequest = req.body;
 
-    if (!request.secretCode) {
-        res.json({
-            authenticated: false
-        });
-        return;
-    }
+        if (!request.secretCode) {
+            res.json({
+                authenticated: false
+            });
+            return;
+        }
 
-    console.log('login ' + request.secretCode);
-    res.json(processLoginRequest(request));
-});
+        console.log('login ' + request.secretCode);
+        res.json(processLoginRequest(request));
+    });
 
-server.post('/save', (req, res, next) => {
-    var request:AnswersUpdateRequest = req.body;
-    console.log(request);
-    res.json(processAnswerUpdateRequest(request));
-});
+    server.post('/save', (req, res, next) => {
+        var request:AnswersUpdateRequest = req.body;
+        console.log(request);
+        res.json(processAnswerUpdateRequest(request));
+    });
 
-server.post('/complete', (req, res, next) => {
-    var request:AnswersUpdateRequest = req.body;
+    server.post('/complete', (req, res, next) => {
+        var request:AnswersUpdateRequest = req.body;
 
-    var token = request.token;
-    var options = processAnswerUpdateRequest(request);
-    if (!options.success) {
-        res.json({
-            authenticated: false
-        });
-        return;
-    }
-    res.json(stageManager.closeStage(token, request.stageId));
-});
+        var token = request.token;
+        var options = processAnswerUpdateRequest(request);
+        if (!options.success) {
+            res.json({
+                authenticated: false
+            });
+            return;
+        }
+        res.json(stageManager.closeStage(token, request.stageId));
+    });
 
-server.get('/stage/*', function (req, res, next) {
-    res.sendFile(path.join(__dirname, TARGET, '/index.html'));
-});
+    server.get('/stage/*', function (req, res, next) {
+        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+    });
 
-server.get('/stages', function (req, res, next) {
-    res.sendFile(path.join(__dirname, TARGET, '/index.html'));
-})
+    server.get('/stages', function (req, res, next) {
+        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+    })
 
-server.post('/teams', (req, res, next) => {
-    var request:GetTeamsRequest = req.body;
-    console.log(request);
-    res.json(processGetTeamsRequest(request));
-});
+    server.post('/teams', (req, res, next) => {
+        var request:GetTeamsRequest = req.body;
+        console.log(request);
+        res.json(processGetTeamsRequest(request));
+    });
 
-server.post('/add-team', (req, res, next) => {
-    var request:AddTeamRequest = req.body;
-    res.json(processAddTeamRequest(request));
-});
+    server.post('/add-team', (req, res, next) => {
+        var request:AddTeamRequest = req.body;
+        res.json(processAddTeamRequest(request));
+    });
+
+    console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
+}
 
 
 function processStateRequest(req:AppStateRequest):FullAppStateResponse {
@@ -196,6 +201,3 @@ function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
 function checkToken(token:string):Team {
     return teamManager.findTeamByCode(token);
 }
-
-
-console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);

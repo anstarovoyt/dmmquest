@@ -112,7 +112,7 @@ var StageManager = (function () {
             }
             stage.questAnswers[answer.id] = answer;
         }
-        client.hset(APP_STATE_KEY, token, JSON.stringify(this.getAppState(token)));
+        this.saveAppStateToDB(token, this.getAppState(token));
         return stage;
     };
     StageManager.prototype.getStagesNames = function () {
@@ -129,7 +129,7 @@ var StageManager = (function () {
             nextStage.status = 1 /* OPEN */;
         }
         var appState = this.getAppState(token);
-        client.hset(APP_STATE_KEY, token, JSON.stringify(appState));
+        this.saveAppStateToDB(token, appState);
         return appState;
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
@@ -178,6 +178,9 @@ var StageManager = (function () {
         }
         return createDefaultStateObject(team);
     };
+    StageManager.prototype.saveAppStateToDB = function (token, state) {
+        client.hset(APP_STATE_KEY, token, JSON.stringify(state));
+    };
     return StageManager;
 }());
 function getStageById(state, stageId) {
@@ -217,18 +220,24 @@ var TEAMS_KEY = "teams";
 var APP_STATE_KEY = "app_state";
 var TEAMS_CACHE = [];
 var initTeams = function () {
-    client.hgetall(TEAMS_KEY, function (err, object) {
+    var multi = client.multi();
+    multi.hgetall(TEAMS_KEY, function (err, object) {
         console.log('get object ' + object);
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
-                console.log(value);
-                TEAMS_CACHE.push(JSON.parse(value));
+                var items = JSON.parse(value);
+                if (items.firstLoginDate) {
+                    var firstLoginDate = items.firstLoginDate;
+                    //fix date after serialization
+                    items.firstLoginDate = new Date(firstLoginDate);
+                }
+                console.log(items);
+                TEAMS_CACHE.push(items);
             }
         }
     });
-    client.hgetall(APP_STATE_KEY, function (err, object) {
-        console.log('get object ' + object);
+    multi.hgetall(APP_STATE_KEY, function (err, object) {
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
@@ -236,6 +245,9 @@ var initTeams = function () {
                 stageManager.states[l] = JSON.parse(value);
             }
         }
+    });
+    multi.exec(function () {
+        initServer();
     });
 };
 client.exists(TEAMS_KEY, function (err, reply) {
@@ -252,8 +264,9 @@ client.exists(TEAMS_KEY, function (err, reply) {
         multi.hset(APP_STATE_KEY, team.tokenId, JSON.stringify(createDefaultStateObject(team)));
         TEAMS_CACHE.push(team);
     }
-    multi.exec(function (res) {
+    multi.exec(function () {
         console.log('Inited database state');
+        initServer();
     });
 });
 function getDefaultTeams() {
@@ -304,6 +317,7 @@ function createDefaultStateObject(team) {
     stageManager.states[team.tokenId] = appState;
     return appState;
 }
+var COUNT_HOURS_TO_SOLVE = 6;
 var TeamManager = (function () {
     function TeamManager() {
     }
@@ -339,8 +353,8 @@ var TeamManager = (function () {
         };
         TEAMS_CACHE.push(team);
         var token = team.tokenId;
-        client.hset(TEAMS_KEY, token, JSON.stringify(team));
-        client.hset(APP_STATE_KEY, token, JSON.stringify(stageManager.getAppState(token)));
+        this.saveTeamToDB(team);
+        stageManager.saveAppStateToDB(token, (stageManager.getAppState(token)));
         return team;
     };
     TeamManager.prototype.listTeams = function () {
@@ -349,6 +363,13 @@ var TeamManager = (function () {
     TeamManager.prototype.login = function (secretCode) {
         var team = this.findTeamByCode(secretCode);
         if (team) {
+            if (!team.firstLoginDate && !team.admin) {
+                team.firstLoginDate = new Date();
+                var copiedDate = new Date();
+                copiedDate.setTime(team.firstLoginDate.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
+                team.endQuest = copiedDate;
+                this.saveTeamToDB(team);
+            }
             return {
                 authenticated: true,
                 name: team.name,
@@ -366,6 +387,9 @@ var TeamManager = (function () {
             return nextStage;
         }
         return 0;
+    };
+    TeamManager.prototype.saveTeamToDB = function (team, callback) {
+        client.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
     };
     TeamManager.makeid = function () {
         var text = "";
@@ -388,67 +412,71 @@ var TARGET_PATH_MAPPING = {
     DIST: './dist'
 };
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
-var server = express();
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({
-    extended: true
-}));
-server
-    .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
-    .use('/statics', express.static(__dirname + '/statics'))
-    .listen(PORT);
-server.post('/quest-texts', function (req, res, next) {
-    var request = req.body;
-    res.json(processQuestTextsRequest(request));
-});
-server.post('/state', function (req, res, next) {
-    console.log('requested state');
-    var request = req.body;
-    res.json(processStateRequest(request));
-});
-server.post('/login', function (req, res, next) {
-    var request = req.body;
-    if (!request.secretCode) {
-        res.json({
-            authenticated: false
-        });
-        return;
-    }
-    console.log('login ' + request.secretCode);
-    res.json(processLoginRequest(request));
-});
-server.post('/save', function (req, res, next) {
-    var request = req.body;
-    console.log(request);
-    res.json(processAnswerUpdateRequest(request));
-});
-server.post('/complete', function (req, res, next) {
-    var request = req.body;
-    var token = request.token;
-    var options = processAnswerUpdateRequest(request);
-    if (!options.success) {
-        res.json({
-            authenticated: false
-        });
-        return;
-    }
-    res.json(stageManager.closeStage(token, request.stageId));
-});
-server.get('/stage/*', function (req, res, next) {
-    res.sendFile(path.join(__dirname, TARGET, '/index.html'));
-});
-server.get('/stages', function (req, res, next) {
-    res.sendFile(path.join(__dirname, TARGET, '/index.html'));
-});
-server.post('/teams', function (req, res, next) {
-    var request = req.body;
-    console.log(request);
-    res.json(processGetTeamsRequest(request));
-});
-server.post('/add-team', function (req, res, next) {
-    var request = req.body;
-    res.json(processAddTeamRequest(request));
-});
+function initServer() {
+    console.log('Start creating server');
+    var server = express();
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    server
+        .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
+        .use('/statics', express.static(__dirname + '/statics'))
+        .listen(PORT);
+    server.post('/quest-texts', function (req, res, next) {
+        var request = req.body;
+        res.json(processQuestTextsRequest(request));
+    });
+    server.post('/state', function (req, res, next) {
+        console.log('requested state');
+        var request = req.body;
+        res.json(processStateRequest(request));
+    });
+    server.post('/login', function (req, res, next) {
+        var request = req.body;
+        if (!request.secretCode) {
+            res.json({
+                authenticated: false
+            });
+            return;
+        }
+        console.log('login ' + request.secretCode);
+        res.json(processLoginRequest(request));
+    });
+    server.post('/save', function (req, res, next) {
+        var request = req.body;
+        console.log(request);
+        res.json(processAnswerUpdateRequest(request));
+    });
+    server.post('/complete', function (req, res, next) {
+        var request = req.body;
+        var token = request.token;
+        var options = processAnswerUpdateRequest(request);
+        if (!options.success) {
+            res.json({
+                authenticated: false
+            });
+            return;
+        }
+        res.json(stageManager.closeStage(token, request.stageId));
+    });
+    server.get('/stage/*', function (req, res, next) {
+        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+    });
+    server.get('/stages', function (req, res, next) {
+        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+    });
+    server.post('/teams', function (req, res, next) {
+        var request = req.body;
+        console.log(request);
+        res.json(processGetTeamsRequest(request));
+    });
+    server.post('/add-team', function (req, res, next) {
+        var request = req.body;
+        res.json(processAddTeamRequest(request));
+    });
+    console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
+}
 function processStateRequest(req) {
     var token = req.token;
     var team = checkToken(token);
@@ -537,5 +565,4 @@ function processAddTeamRequest(request) {
 function checkToken(token) {
     return teamManager.findTeamByCode(token);
 }
-console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
 //# sourceMappingURL=server.js.map

@@ -60,5 +60,7 @@ interface Team {
     secretCode:string,
     tokenId:string,
     startFromStage:number,
+    firstLoginDate?:Date,
+    endQuest?:Date,
     admin?:boolean
 }
