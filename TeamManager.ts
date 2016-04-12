@@ -53,9 +53,9 @@ class TeamManager {
             if (!team.firstLoginDate && !team.admin) {
                 var date = new Date();
 
-                var copiedDate = date;
-                copiedDate.setTime(date.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
-                team.endQuestDate = copiedDate;
+                var endDate = new Date(); //new object!
+                endDate.setTime(date.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
+                team.endQuestDate = endDate;
                 team.firstLoginDate = date;
 
                 this.saveTeamToDB(team);
