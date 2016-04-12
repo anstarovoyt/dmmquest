@@ -3,7 +3,9 @@ interface GetTeamsRequest {
 }
 
 interface TeamInfo {
-    team:Team,
+    team:TeamSimple,
+    firstLoginDateEkbTimezone?:string,
+    endQuestEkbTimezone?:string,
     appState:AppState
 }
 

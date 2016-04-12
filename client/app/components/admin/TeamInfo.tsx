@@ -17,8 +17,10 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
                     <p><b>Секретный код</b>: {team.secretCode}</p>
                     <p><b>Токен</b>: {team.tokenId}</p>
                     <p><b>Начальный этап (отсчет от 1)</b>: {team.startFromStage + 1}</p>
-                    <p>Время первого логина {team.firstLoginDate ? team.firstLoginDate : " — не определено"} <br />
-                        Ожидаемое время окончания {team.endQuestDate ? team.endQuestDate : " — не определено"}
+                    <p>
+                        Время первого логина {teamInfo.firstLoginDateEkbTimezone ? teamInfo.firstLoginDateEkbTimezone : " — не определено"}
+                        <br />
+                        Ожидаемое время окончания {teamInfo.endQuestEkbTimezone ? teamInfo.endQuestEkbTimezone : " — не определено"}
                     </p>
                     {answers}
                 </div>

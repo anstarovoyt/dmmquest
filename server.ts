@@ -3,7 +3,7 @@ var express = require('express');
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var path = require('path');
-
+var moment = require('moment-timezone');
 var PORT = process.env.PORT || 8080;
 var TARGET_PATH_MAPPING = {
     BUILD: './build',
@@ -172,10 +172,23 @@ function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
     var result:TeamInfo[] = [];
 
     for (var cur of TEAMS_CACHE) {
-        result.push({
+        var teamSimple:TeamSimple = {
+            admin: cur.admin,
+            name: cur.name,
+            secretCode: cur.secretCode,
+            startFromStage: cur.startFromStage,
+            tokenId: cur.tokenId
+        }
+
+        var info:TeamInfo = {
             team: cur,
             appState: stageManager.getAppState(cur.tokenId)
-        });
+        };
+        if (cur.firstLoginDate) {
+            info.firstLoginDateEkbTimezone = moment(cur.firstLoginDate).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
+            info.endQuestEkbTimezone = moment(cur.endQuestDate).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
+        }
+        result.push(info);
     }
 
     return {
