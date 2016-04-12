@@ -51,10 +51,13 @@ class TeamManager {
         var team = this.findTeamByCode(secretCode);
         if (team) {
             if (!team.firstLoginDate && !team.admin) {
-                team.firstLoginDate = new Date();
-                var copiedDate = new Date();
-                copiedDate.setTime(team.firstLoginDate.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
+                var date = new Date();
+
+                var copiedDate = date;
+                copiedDate.setTime(date.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = copiedDate;
+                team.firstLoginDate = date;
+
                 this.saveTeamToDB(team);
             }
 
