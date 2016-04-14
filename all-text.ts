@@ -80,7 +80,7 @@ var all_text:{stages:RawStage[],bonus:RawStage} = {
  <br>
  Мира 22:
  <br>
-<img style='height: auto;width: auto; max-width: 300px;max-height: 300px;' src='/statics/point.jpg'/>  
+<img style='height: auto;width: auto; max-width: 250px;max-height: 250px;' src='/statics/point.jpg'/>  
 <a style="text-decoration:underline !important" href="https://pp.vk.me/c630219/v630219250/23f16/Z_6q4GDzGYE.jpg">High resolution link</a>
                 `
 
