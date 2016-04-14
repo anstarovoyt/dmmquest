@@ -76,20 +76,25 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadPar
         var stageNumber = stage.status == StageStatus.BONUS ? "Бонус" : Number(stage.id) + 1;
         return <span key={stage.id}>
                 <b>Этап {stageNumber}</b>: {appStateService.getStageNameById(stage.id)}
-            — <b>{this.getStageStatusText(stage.status)}</b>
+            — <b>{this.getStageStatusText(stage)}</b>
             <div>
                 {this.getAnswers(stage)}
             </div>
                 </span>
     }
 
-    getStageStatusText(status:StageStatus) {
+    getStageStatusText(stage) {
+        var status = stage.status;
         if (status == StageStatus.OPEN) {
             return "В процессе"
         }
 
         if (status == StageStatus.COMPLETED) {
-            return "Сдан"
+            var res = "Сдан";
+            if (stage.closedTime) {
+                res += " (" + stage.closedTime +")";
+            }
+            return res;
         }
 
         if (status == StageStatus.BONUS) {

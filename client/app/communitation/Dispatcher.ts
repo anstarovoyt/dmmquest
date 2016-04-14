@@ -5,6 +5,11 @@ export function loadQuestions(toSend:QuestTextsRequest, successCallback:(res:Que
         url: '/quest-texts',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     })
 }
@@ -15,6 +20,11 @@ export function authRequest(toSend:LoginRequest, callback:(info:LoginInfo) => vo
         url: '/login',
         method: 'post',
         data: toSend,
+        error: () => {
+            callback({
+                authenticated: false
+            })
+        },
         success: callback
     });
 }
@@ -24,6 +34,11 @@ export function loadState(toSend:AppStateRequest, successCallback:(res:FullAppSt
         url: '/state',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }
@@ -33,6 +48,11 @@ export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:An
         url: '/save',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }
@@ -43,6 +63,11 @@ export function complete(toSend:AnswersUpdateRequest, successCallback:(res:Compl
         url: '/complete',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }
@@ -52,6 +77,11 @@ export function loadTeam(toSend:TeamsRequest, successCallback:(res:TeamsResponse
         url: '/teams',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }
@@ -61,6 +91,11 @@ export function addTeam(toSend:AddTeamRequest, successCallback:(res:AddTeamRespo
         url: '/add-team',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }
@@ -69,6 +104,11 @@ export function removeTeam(toSend:RemoveTeamRequest, successCallback:(res:Remove
     reqwest({
         url: '/remove-team',
         method: 'post',
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         data: toSend,
         success: successCallback
     });
@@ -79,6 +119,11 @@ export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetR
         url: '/rest-time',
         method: 'post',
         data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
         success: successCallback
     });
 }

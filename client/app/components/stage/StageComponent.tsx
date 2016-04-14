@@ -9,8 +9,18 @@ import {appStateService} from "../../state/AppStateService";
 
 var Link = require('react-router/lib/Link');
 
+const enum LoadState {
+    NOT_LOADED,
+    LOADED,
+    ERROR
+}
+
 export class StageComponent extends React.Component<{stage:Stage},
-    {questTexts?:QuestTexts, stage?:Stage, isEnableSave:boolean, savedMark:ActionState}> {
+    {questTexts?:QuestTexts,
+        stage?:Stage,
+        isEnableSave:boolean,
+        savedMark:ActionState,
+        loadState:LoadState}> {
 
     static contextTypes = {
         history: PropTypes.object.isRequired
@@ -26,7 +36,8 @@ export class StageComponent extends React.Component<{stage:Stage},
         super(props, context);
         this.state = {
             isEnableSave: true,
-            savedMark: ActionState.NO
+            savedMark: ActionState.NO,
+            loadState: LoadState.NOT_LOADED
         }
     }
 
@@ -41,12 +52,23 @@ export class StageComponent extends React.Component<{stage:Stage},
     componentDidMount() {
         var currentStage = this.getCurrentStage();
         questService.getAsyncQuestTexts(currentStage, (res) => {
-            this.setState({
-                questTexts: res,
-                stage: currentStage,
-                isEnableSave: true,
-                savedMark: ActionState.NO
-            })
+            if (res.success) {
+                this.setState({
+                    questTexts: res.texts,
+                    stage: currentStage,
+                    isEnableSave: true,
+                    savedMark: ActionState.NO,
+                    loadState: LoadState.LOADED
+                })
+            } else {
+                this.setState({
+                    questTexts: res.texts,
+                    stage: currentStage,
+                    isEnableSave: true,
+                    savedMark: ActionState.NO,
+                    loadState: LoadState.ERROR
+                })
+            }
         })
     }
 
@@ -59,17 +81,18 @@ export class StageComponent extends React.Component<{stage:Stage},
         var currentStage = this.getCurrentStage();
 
         var state = this.state;
-        if (state.questTexts) {
+        var stageName = appStateService.getStageName(currentStage);
+        var hasQuestion = state.questTexts;
+        if (hasQuestion) {
             var quests = state.questTexts.quests.map(item => {
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
             var isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
             var buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
-            var stageName = appStateService.getStageName(currentStage);
+
 
             var savedMark = this.state.savedMark;
-
             var savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
 
 
@@ -113,8 +136,13 @@ export class StageComponent extends React.Component<{stage:Stage},
         return (
             <div className="row">
                 <div className="col-lg-12">
-                    <h1><span>{appStateService.getStageName(currentStage)}</span></h1>
-                    <LoadingComponent />
+                    <h1><Link to="/">
+                        <span className="glyphicon glyphicon-arrow-left"></span>
+                    </Link>
+                            <span>{stageName} {currentStage.status == StageStatus.BONUS ?
+                                (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
+                    {this.state.loadState == LoadState.ERROR ?
+                        <span>Ошибка загрузки данных. Попробуйте обновить страницу</span>: <LoadingComponent />}
                 </div>
             </div>
         )
@@ -125,7 +153,7 @@ export class StageComponent extends React.Component<{stage:Stage},
             return "Сохранить ответы";
         }
 
-        return isCompletedLevel ? "Уровень сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
+        return isCompletedLevel ? "Этап сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
     }
 
     private saveAnswers() {
@@ -157,7 +185,8 @@ export class StageComponent extends React.Component<{stage:Stage},
             questTexts: this.state.questTexts,
             stage: this.state.stage,
             isEnableSave: false,
-            savedMark: ActionState.NO
+            savedMark: ActionState.NO,
+            loadState: this.state.loadState
         })
 
         complete({
@@ -176,7 +205,8 @@ export class StageComponent extends React.Component<{stage:Stage},
                     questTexts: this.state.questTexts,
                     stage: this.state.stage,
                     isEnableSave: true,
-                    savedMark: ActionState.SAVED
+                    savedMark: ActionState.SAVED,
+                    loadState: this.state.loadState
                 })
 
             } else {
@@ -184,7 +214,8 @@ export class StageComponent extends React.Component<{stage:Stage},
                     questTexts: this.state.questTexts,
                     stage: this.state.stage,
                     isEnableSave: true,
-                    savedMark: ActionState.ERROR
+                    savedMark: ActionState.ERROR,
+                    loadState: this.state.loadState
                 })
             }
 
@@ -193,7 +224,8 @@ export class StageComponent extends React.Component<{stage:Stage},
                     questTexts: this.state.questTexts,
                     stage: this.state.stage,
                     isEnableSave: true,
-                    savedMark: ActionState.NO
+                    savedMark: ActionState.NO,
+                    loadState: this.state.loadState
                 });
 
                 this.timeOutMarker = null;

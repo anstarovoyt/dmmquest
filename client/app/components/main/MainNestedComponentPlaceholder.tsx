@@ -16,7 +16,6 @@ export default class Placeholder extends React.Component<{ children:any }, {logi
 
     _onChange(loginInfo:LoginInfo) {
         this.setState({loginInfo});
-        console.log('update holder')
     }
 
 

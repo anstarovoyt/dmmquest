@@ -2,7 +2,7 @@ import {auth} from "../authentication/AuthService";
 import {loadQuestions} from "../communitation/Dispatcher";
 
 class QuestService {
-    
+
     questTexts:{
         [id:string]:QuestTexts
     } = {};
@@ -10,7 +10,7 @@ class QuestService {
     getAsyncQuestTexts(stage:Stage, result:ProcessQuestTexts) {
         var questText:QuestTexts = this.questTexts[stage.id];
         if (questText != null) {
-            result(questText);
+            result({success: true, texts: questText});
             return;
         }
 
@@ -19,12 +19,12 @@ class QuestService {
         var self = this;
 
         var successCallback = (res:QuestTextsResponse) => {
-            if (res != null && res.success) {
-                console.log(stage);
+            var success = res != null && res.success;
+            if (success) {
                 self.questTexts[stage.id] = res.questTexts;
             }
 
-            result(res.questTexts);
+            result({success: success, texts: res.questTexts});
         }
 
         loadQuestions(toSend, successCallback);

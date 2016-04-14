@@ -32,7 +32,6 @@ export class TimerComponent extends React.Component<any, {rest:number, isComplet
         getRestTime({
             token: auth.getToken()
         }, (res) => {
-            console.log('Sync time with server');
             if (res.success) {
 
                 var value:any = res.restTimeInSeconds ? res.restTimeInSeconds : -1;

@@ -1,11 +1,11 @@
 interface QuestTextsRequest {
-	token: string
-	stageId: string
+    token:string
+    stageId:string
 }
 
 interface QuestTextsResponse {
-	success: boolean
-	questTexts?: QuestTexts
+    success:boolean
+    questTexts?:QuestTexts
 }
 
-type ProcessQuestTexts = (req: QuestTexts) => void;
+type ProcessQuestTexts = (res:{success:boolean; texts:QuestTexts})=>void;

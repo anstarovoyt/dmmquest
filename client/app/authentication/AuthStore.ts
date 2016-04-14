@@ -15,7 +15,6 @@ class AuthStore extends EventEmitter {
 	}
 
 	removeChangeListener(cb: (p:LoginInfo) => void) {
-		console.log('remove listener');
 		this.removeListener('CHANGE', cb);
 	}
 }

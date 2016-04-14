@@ -49,6 +49,7 @@ class StageManager {
 
 
         stage.status = StageStatus.COMPLETED;
+        stage.closedTime = toEkbString(new Date());
         var appState = this.getAppState(token);
         var nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
@@ -58,6 +59,7 @@ class StageManager {
         if (stage.last) {
             //close bonus if the stage is last
             appState.bonus.status = StageStatus.COMPLETED;
+            appState.bonus.closedTime = toEkbString(new Date());
         }
 
         var info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
@@ -79,7 +81,8 @@ class StageManager {
             return null;
         }
 
-        if (stage.status == StageStatus.BONUS) {
+        if (stage.status == StageStatus.BONUS ||
+            stageId == "bonus") {
             return defaultData.bonus.quests;
         }
 

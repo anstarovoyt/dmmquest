@@ -48,7 +48,6 @@ function initServer() {
             return;
         }
 
-        console.log('login ' + request.secretCode);
         res.json(processLoginRequest(request));
     });
 
@@ -88,13 +87,11 @@ function initServer() {
 
     server.post('/teams', (req, res, next) => {
         var request:TeamsRequest = req.body;
-        console.log(request);
         res.json(processGetTeamsRequest(request));
     });
 
     server.post('/remove-team', (req, res, next) => {
         var request:RemoveTeamRequest = req.body;
-        console.log("Remove:" + request);
         res.json(processRemoveTeamRequest(request));
     });
 
@@ -118,7 +115,7 @@ function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     var token = req.token;
     var team = checkToken(token);
     if (!team) {
-        console.log('no team found');
+        log('Internal error. No team for token ' + token);
         return {success: false}
     }
 

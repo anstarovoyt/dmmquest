@@ -15,7 +15,6 @@ class AppStateStore extends EventEmitter {
     }
 
     removeChangeListener(cb: (p:AppState) => void) {
-        console.log('remove listener');
         this.removeListener('CHANGE', cb);
     }
 }

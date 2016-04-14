@@ -23,8 +23,6 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[], b
 
 
     _onChange(appState:AppState) {
-        console.log('update state stage container');
-
         var state = appState == null ? {loading: false, stages: null, bonus: null} : {
             stages: appState.stages,
             loading: false,

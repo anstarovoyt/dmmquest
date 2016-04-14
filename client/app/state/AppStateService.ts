@@ -68,10 +68,8 @@ class AppStateService {
 
     private loadFullState() {
         var token = auth.getToken();
-        console.log('load full state: ' + token);
         loadState({token: token}, response => {
             this.fullState = response.state;
-            console.log('State');
             this.onChange();
         });
     }

@@ -18,7 +18,6 @@ export class StageContainerComponent extends React.Component<any,StageStage> {
     }
 
     _onChange(appState:AppState) {
-        console.log('update state stage container');
         this.setState(this.getStageByAppState(appState));
     }
 
@@ -34,7 +33,6 @@ export class StageContainerComponent extends React.Component<any,StageStage> {
     }
 
     private getStageByAppState(state:AppState):StageStage {
-        console.log('test state');
         if (!state) {
             return {
                 loading: true,

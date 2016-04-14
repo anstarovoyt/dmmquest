@@ -19,7 +19,8 @@ interface Stage {
     id:string
     status:StageStatus,
     showNumber:number,
-    last?:boolean
+    last?:boolean,
+    closedTime?:string,
     questAnswers?:{
         [id:number]:QuestAnswer
     }
@@ -72,7 +73,7 @@ interface TeamSimple {
 
 
 interface CompleteStageResponse {
-    res:AppState,
+    res?:AppState,
     success:boolean
 }
 
