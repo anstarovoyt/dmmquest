@@ -1,5 +1,6 @@
 import * as React from "react";
 import {auth} from "../../authentication/AuthService";
+import {TimerComponent} from "./TimerComponent";
 
 var Link = require('react-router/lib/Link');
 
@@ -20,6 +21,7 @@ export class HeaderComponent extends React.Component<any, any> {
             <div className="masthead clearfix">
                 <div className="inner">
                     <h3 className="masthead-brand"><Link className="logo-picture" to="/"></Link></h3>
+                    <TimerComponent/>
                     <ul className="nav masthead-nav">
                         {buttons}
                     </ul>

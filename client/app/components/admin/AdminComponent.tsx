@@ -42,13 +42,16 @@ export class AdminComponent extends React.Component<any, {hasAccess:boolean, tea
         if (!teams) {
             return <LoadingComponent/>
         }
+
+        var reloadParent = this.reloadState.bind(this);
         var result = teams.map(function (team) {
-            return <TeamInfoComponent key={team.team.secretCode} info={team}/>
+            return <TeamInfoComponent reloadParent={reloadParent} key={team.team.secretCode} info={team}/>
         });
+
 
         return <div className="row">
             <div className="col-lg-12">
-                <AddTeamComponent reloadParent={this.reloadState.bind(this)}/>
+                <AddTeamComponent reloadParent={reloadParent}/>
                 <div className="row">
                     <div className="col-xs-12 col-md-8">
                         <h4>Всего команд: {teams.length}</h4>

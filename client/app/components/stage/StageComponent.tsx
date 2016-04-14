@@ -9,26 +9,43 @@ import {appStateService} from "../../state/AppStateService";
 
 var Link = require('react-router/lib/Link');
 
-export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:QuestTexts, stage?:Stage}> {
+export class StageComponent extends React.Component<{stage:Stage},
+    {questTexts?:QuestTexts, stage?:Stage, isEnableSave:boolean, savedMark:ActionState}> {
 
     static contextTypes = {
         history: PropTypes.object.isRequired
     };
 
+    private timeOutMarker = null;
+
+    private popupText = "";
+
     nestedValue = {};
 
     constructor(props:any, context) {
         super(props, context);
-        this.state = {};
+        this.state = {
+            isEnableSave: true,
+            savedMark: ActionState.NO
+        }
     }
 
+
+    componentWillUnmount():void {
+        if (this.timeOutMarker != null) {
+            clearTimeout(this.timeOutMarker);
+            this.timeOutMarker = null;
+        }
+    }
 
     componentDidMount() {
         var currentStage = this.getCurrentStage();
         questService.getAsyncQuestTexts(currentStage, (res) => {
             this.setState({
                 questTexts: res,
-                stage: currentStage
+                stage: currentStage,
+                isEnableSave: true,
+                savedMark: ActionState.NO
             })
         })
     }
@@ -43,19 +60,33 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
 
         var state = this.state;
         if (state.questTexts) {
-            var quests = this.state.questTexts.quests.map(item => {
+            var quests = state.questTexts.quests.map(item => {
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
             var isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
             var buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
+            var stageName = appStateService.getStageName(currentStage);
+
+            var savedMark = this.state.savedMark;
+
+            var savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+
+
+            if (savedMark == ActionState.ERROR) {
+                this.popupText = "Ошибка при отправке";
+            } else if (savedMark == ActionState.SAVED) {
+                this.popupText = "Ответы сохранены";
+            }
+
             return (
                 <div className="row">
                     <div className="col-lg-12">
                         <h1><Link to="/">
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
-                            <span>{appStateService.getStageName(currentStage)}</span></h1>
+                            <span>{stageName} {currentStage.status == StageStatus.BONUS ?
+                                (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
                         {quests}
                     </div>
                     <div className="col-lg-12 save-level">
@@ -65,7 +96,12 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
                               <button className={buttonStyle}
                                       type="button"
                                       onClick={this.saveAnswers.bind(this)}
-                                      disabled={isCompletedLevel}>{ this.getButtonName(currentStage, isCompletedLevel) }</button>
+                                      disabled={!this.state.isEnableSave || isCompletedLevel}>
+                                  { this.getButtonName(currentStage, isCompletedLevel) }
+                                  {savedMark == ActionState.NO ? "" :
+                                      <span className={savedHtmlClass}>{this.popupText}</span>}
+                              </button>
+
                             </span>
                         </div>
 
@@ -89,11 +125,17 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             return "Сохранить ответы";
         }
 
-        return isCompletedLevel ? "Уровень сдан" : "Сдать уровень";
+        return isCompletedLevel ? "Уровень сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
     }
 
     private saveAnswers() {
-        if (!window.confirm('Вы действительно хотите завершить этап?')) {
+        var stage = this.props.stage;
+        if (!stage) {
+            return;
+        }
+
+
+        if (stage.status == StageStatus.OPEN && !window.confirm('Вы действительно хотите завершить этап?')) {
             return;
         }
 
@@ -108,17 +150,54 @@ export class StageComponent extends React.Component<{stage:Stage}, {questTexts?:
             }
         }
 
-        var stage = this.props.stage;
+
         var token = auth.getToken();
+
+        this.setState({
+            questTexts: this.state.questTexts,
+            stage: this.state.stage,
+            isEnableSave: false,
+            savedMark: ActionState.NO
+        })
+
         complete({
             stageId: stage.id,
             token: token,
             answers: answers
         }, (r) => {
-            appStateService.setState(r);
-            if (stage.status != StageStatus.BONUS) {
-                this.context["history"].push('/');
+            if (r.success) {
+                appStateService.setState(r.res);
+                if (stage.status != StageStatus.BONUS) {
+                    this.context["history"].push('/');
+                    return;
+                }
+
+                this.setState({
+                    questTexts: this.state.questTexts,
+                    stage: this.state.stage,
+                    isEnableSave: true,
+                    savedMark: ActionState.SAVED
+                })
+
+            } else {
+                this.setState({
+                    questTexts: this.state.questTexts,
+                    stage: this.state.stage,
+                    isEnableSave: true,
+                    savedMark: ActionState.ERROR
+                })
             }
+
+            this.timeOutMarker = setTimeout(() => {
+                this.setState({
+                    questTexts: this.state.questTexts,
+                    stage: this.state.stage,
+                    isEnableSave: true,
+                    savedMark: ActionState.NO
+                });
+
+                this.timeOutMarker = null;
+            }, 1000);
         })
     }
 }

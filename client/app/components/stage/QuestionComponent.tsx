@@ -3,16 +3,21 @@ import {saveAnswers} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
-export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, savedValues}, {value:string, isEnableSave:boolean, savedMark:boolean}> {
 
+export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, savedValues},
+    {value:string, isEnableSave:boolean, savedMark:ActionState}> {
 
+    private timeOutMarker = null;
+
+    popupText = "";
+    
     constructor(props:any) {
         super(props);
 
         var value = this.getDefaultValue() || "";
         this.state = {
             value: value,
-            savedMark: false,
+            savedMark: ActionState.NO,
             isEnableSave: true
         }
 
@@ -20,14 +25,26 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
 
-    render() {
-        var savedHtmlClass = "done-mark" + (this.state.savedMark ? " view" : "");
+    componentWillUnmount():void {
+        if (this.timeOutMarker != null) {
+            clearTimeout(this.timeOutMarker);
+            this.timeOutMarker = null;
+        }
+    }
 
+    render() {
+        var savedMark = this.state.savedMark;
+        var savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+
+        if (savedMark == ActionState.ERROR) {
+            this.popupText = "Ошибка при отправке";
+        } else if (savedMark == ActionState.SAVED) {
+            this.popupText = "Ответы сохранены";
+        }
 
         var stage = this.props.stage;
         var isCompleted = stage.status == StageStatus.COMPLETED;
-        var text = {__html:this.props.quest.text};
-
+        var text = {__html: this.props.quest.text};
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -41,14 +58,13 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                                onChange={this.handlerChanged.bind(this)}
                                placeholder="Ваш ответ"
                                value={this.state.value}/>
-                            
+
                             <span className="input-group-btn">
                               <button
                                   disabled={!this.state.isEnableSave || isCompleted}
-
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
                                   <span className="glyphicon glyphicon-floppy-save"></span> Сохранить<span
-                                  className={savedHtmlClass}>Ответ сохранен</span></button>
+                                  className={savedHtmlClass}> {this.popupText} </span></button>
                             </span>
                     </div>
                 </div>
@@ -77,7 +93,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var state = {
             value: newValue,
             isEnableSave: this.state.isEnableSave,
-            savedMark: false
+            savedMark: ActionState.NO
         };
 
         this.props.savedValues[this.props.quest.id] = newValue;
@@ -86,14 +102,13 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     private saveAnswer() {
-
         var quest:Quest = this.props.quest;
         var stage = this.props.stage;
         var value = this.state.value;
         this.setState({
             value: value,
             isEnableSave: false,
-            savedMark: false
+            savedMark: ActionState.NO
         });
         var answer:QuestAnswer = {
             id: quest.id,
@@ -109,17 +124,25 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                 this.setState({
                     value: value,
                     isEnableSave: true,
-                    savedMark: true
+                    savedMark: ActionState.SAVED
+                });
+            } else {
+                this.setState({
+                    value: value,
+                    isEnableSave: true,
+                    savedMark: ActionState.ERROR
+                });
+            }
+
+            this.timeOutMarker = setTimeout(() => {
+                this.setState({
+                    value: this.state.value,
+                    isEnableSave: this.state.isEnableSave,
+                    savedMark: ActionState.NO
                 });
 
-                setTimeout(() => {
-                    this.setState({
-                        value: this.state.value,
-                        isEnableSave: this.state.isEnableSave,
-                        savedMark: false
-                    })
-                }, 1000);
-            }
+                this.timeOutMarker = null;
+            }, 1000);
         })
     }
 }

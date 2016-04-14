@@ -312,3 +312,24 @@ h1 a {float: left;}
     top: 24px;
     transition: all .2s ease;
 }
+
+.timer {
+    height: 85px;
+    display: table;
+    vertical-align: middle;
+    width: 100%;
+}
+.timer p {
+    display: table-cell;
+    height: 85px;
+    vertical-align: middle;
+    color: #f1f1f1;
+    font-family: inherit;
+    font-size: 20px;
+    text-align: center;
+}
+@media (min-width: 992px) {
+    .col-md-4.timer {
+        width: 33.33333333%;
+    }
+}

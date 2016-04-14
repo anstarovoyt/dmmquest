@@ -5,6 +5,6 @@ interface AnswersUpdateRequest {
 }
 
 interface AnswersUpdateResponse {
-    success:boolean
+    success:boolean,
     stage?:Stage
 }

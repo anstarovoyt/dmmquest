@@ -18,7 +18,8 @@ interface HasId {
 interface Stage {
     id:string
     status:StageStatus,
-    showNumber:number
+    showNumber:number,
+    last?:boolean
     questAnswers?:{
         [id:number]:QuestAnswer
     }
@@ -68,3 +69,27 @@ interface TeamSimple {
 
     admin?:boolean
 }
+
+
+interface CompleteStageResponse {
+    res:AppState,
+    success:boolean
+}
+
+declare const enum ActionState {
+    NO,
+    SAVED,
+    ERROR,
+    TIMEOUT
+}
+
+interface GetRestTimeRequest {
+    token:string
+}
+
+interface GetRestTimeResponse {
+    success:boolean,
+    restTimeInSeconds?:string
+    isCompleted?:boolean
+}
+

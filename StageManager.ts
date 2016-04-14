@@ -14,6 +14,10 @@ class StageManager {
         if (!stage) {
             return null;
         }
+        if (stage.status == StageStatus.COMPLETED ||
+            stage.status == StageStatus.LOCKED) {
+            return null;
+        }
 
         for (let answer of answers) {
             if (!stage.questAnswers) {
@@ -22,7 +26,13 @@ class StageManager {
             stage.questAnswers[answer.id] = answer;
         }
 
-        this.saveAppStateToDB(token, this.getAppState(token));
+
+        var stagesName = this.stagesNames[stageId];
+        log('Updated answers for stage ' + stagesName + '. Answers: ' + JSON.stringify(answers));
+
+        this.saveAppStateToDB(token, this.getAppState(token), () => {
+            log('Saved new answers to DB for ' + stagesName);
+        });
         return stage;
     }
 
@@ -33,19 +43,31 @@ class StageManager {
 
     closeStage(token:string, stageId:string):AppState {
         var stage:Stage = this.getStage(token, stageId);
-        if (stage.status != StageStatus.OPEN) {
+        if (!stage || stage.status != StageStatus.OPEN) {
             return this.getAppState(token);
         }
 
+
         stage.status = StageStatus.COMPLETED;
-        var nextStage = this.getNextStage(token, stage);
+        var appState = this.getAppState(token);
+        var nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
             nextStage.status = StageStatus.OPEN;
         }
 
+        if (stage.last) {
+            //close bonus if the stage is last
+            appState.bonus.status = StageStatus.COMPLETED;
+        }
+
+        var info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
+        log('Closed stage ' + info);
+
         var appState = this.getAppState(token);
 
-        this.saveAppStateToDB(token, appState);
+        this.saveAppStateToDB(token, appState, () => {
+            log('Update app state for ' + info)
+        });
         return appState;
     }
 
@@ -67,8 +89,7 @@ class StageManager {
         return stageInfo && stageInfo.quests;
     }
 
-    getNextStage(token:string, stage:Stage):Stage {
-        var appState = this.getAppState(token);
+    getNextStage(appState:AppState, stage:Stage):Stage {
         if (stage.status == StageStatus.BONUS) {
             return null;
         }
@@ -103,17 +124,17 @@ class StageManager {
     }
 
     createAppState(token:string) {
-        console.log('Create state:' + token)
+        log('Init state:' + token);
         var team = teamManager.findTeamByToken(token);
         if (!team) {
             return;
         }
 
-        return createDefaultStateObject(team);
+        return initDefaultStateObject(team);
     }
 
-    saveAppStateToDB(token:string, state:AppState) {
-        client.hset(APP_STATE_KEY, token, JSON.stringify(state));
+    saveAppStateToDB(token:string, state:AppState, callback?:(res) => void) {
+        client.hset(APP_STATE_KEY, token, JSON.stringify(state), callback);
     }
 
 }

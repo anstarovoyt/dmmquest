@@ -1,8 +1,9 @@
 import * as React from "react";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
+import {removeTeam} from "../../communitation/Dispatcher";
 
-export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
+export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadParent:() => void}, any> {
 
     render() {
         var teamInfo = this.props.info;
@@ -23,9 +24,37 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
                         Ожидаемое время окончания {teamInfo.endQuestEkbTimezone ? teamInfo.endQuestEkbTimezone : " — не определено"}
                     </p>
                     {answers}
+
+                    <br />
+                    <br />
+                    <div>
+                        {team.tokenId == auth.getToken() ? <h4>Это вы</h4> :
+                            <h4><a href="#"
+                                   onClick={this.removeTeam.bind(this)}>Удалить</a>
+                            </h4>}
+
+                    </div>
                 </div>
+
             </div>
         )
+    }
+
+    removeTeam(e) {
+        e.preventDefault();
+        if (!window.confirm('Вы действительно хотите удалить команду?')) {
+            return;
+        }
+        var teamInfo = this.props.info;
+        var team = teamInfo.team;
+        removeTeam({
+            teamTokenId: team.tokenId,
+            token: auth.getToken()
+        }, (res) => {
+            if (res.success) {
+                this.props.reloadParent();
+            }
+        })
     }
 
     getStatus() {
@@ -41,6 +70,7 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo}, any> {
 
         return result;
     }
+
 
     getStageElement(stage:Stage) {
         var stageNumber = stage.status == StageStatus.BONUS ? "Бонус" : Number(stage.id) + 1;

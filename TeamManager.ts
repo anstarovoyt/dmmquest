@@ -23,6 +23,32 @@ class TeamManager {
         return null;
     }
 
+    removeTeam(tokenId):boolean {
+        var team = this.findTeamByToken(tokenId);
+        if (!team) {
+            return false;
+        }
+
+        var index = TEAMS_CACHE.indexOf(team);
+        if (index == -1) {
+            return false;
+        }
+
+        TEAMS_CACHE.splice(index, 1);
+        delete stageManager.states[tokenId];
+        log('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
+
+        var multi = client.multi();
+        multi.hdel(TEAMS_KEY, team.tokenId);
+        multi.hdel(APP_STATE_KEY, team.tokenId);
+        multi.exec(() => {
+            log('ALERT: Removed team and state from database ' + team.name);
+        });
+
+        return true;
+
+    }
+
     createTeam(name:string):Team {
         var secretCode = TeamManager.makeid();
         var newStartFrom = this.getNextStartFromStage();
@@ -36,9 +62,13 @@ class TeamManager {
         TEAMS_CACHE.push(team);
 
         var token = team.tokenId;
-
-        this.saveTeamToDB(team);
-        stageManager.saveAppStateToDB(token, (stageManager.getAppState(token)));
+        log('Added team to app: ' + team.name + ' ' + team.secretCode);
+        this.saveTeamToDB(team, () => {
+            log('Saved team to database: ' + team.name);
+        });
+        stageManager.saveAppStateToDB(token, (stageManager.getAppState(token)), () => {
+            log('Saved state to database: ' + team.name);
+        });
 
         return team;
     }
@@ -58,6 +88,7 @@ class TeamManager {
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
 
+                log('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate))
                 this.saveTeamToDB(team);
             }
 
@@ -68,6 +99,7 @@ class TeamManager {
                 admin: team.admin
             }
         }
+        
         return {authenticated: false}
     }
 

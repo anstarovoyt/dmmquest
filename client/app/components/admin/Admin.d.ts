@@ -1,5 +1,14 @@
-interface GetTeamsRequest {
+interface TeamsRequest {
     token:string
+}
+
+interface RemoveTeamRequest {
+    token:string,
+    teamTokenId:string
+}
+
+interface RemoveTeamResponse {
+    success:boolean
 }
 
 interface TeamInfo {
@@ -9,7 +18,7 @@ interface TeamInfo {
     appState:AppState
 }
 
-interface GetTeamsResponse {
+interface TeamsResponse {
     teams?:TeamInfo[],
     success:boolean
 }

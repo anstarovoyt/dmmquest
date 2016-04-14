@@ -38,7 +38,7 @@ export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:An
 }
 
 
-export function complete(toSend:AnswersUpdateRequest, successCallback:(res:AppState)=>void) {
+export function complete(toSend:AnswersUpdateRequest, successCallback:(res:CompleteStageResponse)=>void) {
     reqwest({
         url: '/complete',
         method: 'post',
@@ -47,7 +47,7 @@ export function complete(toSend:AnswersUpdateRequest, successCallback:(res:AppSt
     });
 }
 
-export function loadTeam(toSend:GetTeamsRequest, successCallback:(res:GetTeamsResponse)=>void) {
+export function loadTeam(toSend:TeamsRequest, successCallback:(res:TeamsResponse)=>void) {
     reqwest({
         url: '/teams',
         method: 'post',
@@ -59,6 +59,24 @@ export function loadTeam(toSend:GetTeamsRequest, successCallback:(res:GetTeamsRe
 export function addTeam(toSend:AddTeamRequest, successCallback:(res:AddTeamResponse)=>void) {
     reqwest({
         url: '/add-team',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}
+
+export function removeTeam(toSend:RemoveTeamRequest, successCallback:(res:RemoveTeamResponse)=>void) {
+    reqwest({
+        url: '/remove-team',
+        method: 'post',
+        data: toSend,
+        success: successCallback
+    });
+}
+
+export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetRestTimeResponse)=>void) {
+    reqwest({
+        url: '/rest-time',
         method: 'post',
         data: toSend,
         success: successCallback

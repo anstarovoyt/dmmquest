@@ -13,7 +13,7 @@ var TARGET_PATH_MAPPING = {
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
 function initServer() {
-    console.log('Start creating server');
+    log('Start creating server');
     var server = express();
 
     server.use(bodyParser.json());
@@ -34,7 +34,6 @@ function initServer() {
     });
 
     server.post('/state', (req, res, next) => {
-        console.log('requested state');
         var request:AppStateRequest = req.body;
         res.json(processStateRequest(request));
     });
@@ -55,7 +54,8 @@ function initServer() {
 
     server.post('/save', (req, res, next) => {
         var request:AnswersUpdateRequest = req.body;
-        console.log(request);
+
+
         res.json(processAnswerUpdateRequest(request));
     });
 
@@ -66,11 +66,16 @@ function initServer() {
         var options = processAnswerUpdateRequest(request);
         if (!options.success) {
             res.json({
-                authenticated: false
+                success: false
             });
             return;
         }
-        res.json(stageManager.closeStage(token, request.stageId));
+        var result = stageManager.closeStage(token, request.stageId);
+        var response:CompleteStageResponse = {
+            res: result,
+            success: true
+        };
+        res.json(response);
     });
 
     server.get('/stage/*', function (req, res, next) {
@@ -82,17 +87,30 @@ function initServer() {
     })
 
     server.post('/teams', (req, res, next) => {
-        var request:GetTeamsRequest = req.body;
+        var request:TeamsRequest = req.body;
         console.log(request);
         res.json(processGetTeamsRequest(request));
     });
+
+    server.post('/remove-team', (req, res, next) => {
+        var request:RemoveTeamRequest = req.body;
+        console.log("Remove:" + request);
+        res.json(processRemoveTeamRequest(request));
+    });
+
 
     server.post('/add-team', (req, res, next) => {
         var request:AddTeamRequest = req.body;
         res.json(processAddTeamRequest(request));
     });
 
-    console.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
+    server.post('/rest-time', (req, res, next) => {
+        var request:GetRestTimeRequest = req.body;
+        res.json(getRestTime(request));
+    });
+
+
+    log('Created server for: ' + TARGET + ', listening on port ' + PORT);
 }
 
 
@@ -160,7 +178,23 @@ function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse 
     }
 }
 
-function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
+function processRemoveTeamRequest(request:RemoveTeamRequest):RemoveTeamResponse {
+    var token = request.token;
+    var team = checkToken(token);
+    if (!team || !team.admin) {
+        return {
+            success: false
+        }
+    }
+
+    var result = teamManager.removeTeam(request.teamTokenId);
+
+    return {
+        success: result
+    }
+}
+
+function processGetTeamsRequest(request:TeamsRequest):TeamsResponse {
     var token = request.token;
     var team = checkToken(token);
     if (!team || !team.admin) {
@@ -185,8 +219,8 @@ function processGetTeamsRequest(request:GetTeamsRequest):GetTeamsResponse {
             appState: stageManager.getAppState(cur.tokenId)
         };
         if (cur.firstLoginDate) {
-            info.firstLoginDateEkbTimezone = moment(cur.firstLoginDate).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
-            info.endQuestEkbTimezone = moment(cur.endQuestDate).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
+            info.firstLoginDateEkbTimezone = toEkbString(cur.firstLoginDate);
+            info.endQuestEkbTimezone = toEkbString(cur.endQuestDate);
         }
         result.push(info);
     }
@@ -213,4 +247,40 @@ function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
 
 function checkToken(token:string):Team {
     return teamManager.findTeamByCode(token);
+}
+
+function toEkbString(date) {
+    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm")
+}
+
+
+function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
+    var token = request.token;
+    var team = checkToken(token);
+    if (!team) {
+        return {
+            success: false
+        }
+    }
+
+    if (!team.endQuestDate) {
+        return {
+            restTimeInSeconds: "-1",
+            success: true
+        }
+    }
+
+    var result = diffWithCurrentTime(team);
+    return {
+        success: true,
+        restTimeInSeconds:String(result),
+        isCompleted: result <= 0
+    }
+}
+
+function diffWithCurrentTime(team:Team) {
+    var currentTime = moment();
+    var endTime = moment(team.endQuestDate);
+
+    return endTime.diff(currentTime, 'seconds');
 }

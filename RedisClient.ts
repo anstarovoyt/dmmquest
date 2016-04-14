@@ -3,10 +3,10 @@ var portArg = process.env.REDIS_URL;
 var client = portArg ? redis.createClient(portArg) : redis.createClient();
 
 client.on("error", function (err) {
-    console.log("Error " + err);
+    log('Error start redis listener');
 });
 
-console.log('start redis client')
+log('Start redis client');
 
 const TEAMS_KEY = "teams";
 const APP_STATE_KEY = "app_state";
@@ -14,11 +14,10 @@ const APP_STATE_KEY = "app_state";
 var TEAMS_CACHE:Team[] = [];
 
 var initTeams = () => {
-
     var multi = client.multi();
 
     multi.hgetall(TEAMS_KEY, function (err, object) {
-        console.log('get object ' + object);
+        var count = 0;
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
@@ -30,20 +29,23 @@ var initTeams = () => {
                     items.firstLoginDate = new Date(firstLoginDate);
                     items.endQuestDate = new Date(endDate);
                 }
-                console.log(items);
-                TEAMS_CACHE.push(items);
+                log('Load team ' + (count++) + ": " + items.name + ' token: ' + items.tokenId);
 
-                //todo load state
+                TEAMS_CACHE.push(items);
             }
         }
     });
 
     multi.hgetall(APP_STATE_KEY, function (err, object) {
+        if (!object) {
+            log('ERROR! No states');
+        }
+        var count = 0;
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
-                console.log(value);
                 stageManager.states[l] = JSON.parse(value);
+                log('Load state for team ' + (count++) + ': with token ' + l);
             }
         }
     });
@@ -55,24 +57,27 @@ var initTeams = () => {
 
 
 client.exists(TEAMS_KEY, function (err, reply) {
-    if (reply) {
-        initTeams();
-        return;
-    }
-
+    log('Database ' + reply ? "initialized" : "empty");
     var defaultTeams = getDefaultTeams();
 
     var toPush = {};
     var multi = client.multi();
     for (var team of defaultTeams) {
         multi.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team));
-        multi.hset(APP_STATE_KEY, team.tokenId, JSON.stringify(createDefaultStateObject(team)));
-        TEAMS_CACHE.push(team);
+        multi.hset(APP_STATE_KEY, team.tokenId, JSON.stringify(initDefaultStateObject(team)));
+        if (!reply) {
+            TEAMS_CACHE.push(team);
+        }
+
+        log('Update or store default team: ' + team.name + ' token: ' + team.secretCode)
     }
 
     multi.exec(() => {
-        console.log('Inited database state');
-        initServer();
+        if (reply) {
+            initTeams();
+        } else {
+            initServer();
+        }
     })
 });
 
@@ -82,15 +87,15 @@ function getDefaultTeams() {
 
     teams.push({
             name: "Тестовая админская команда",
-            secretCode: "test",
-            tokenId: "test",
+            secretCode: "test!test",
+            tokenId: "test!test",
             admin: true,
             startFromStage: 0
         },
         {
             name: "Самая тестовая команда 1",
-            secretCode: "test2",
-            tokenId: "test2",
+            secretCode: "test2!test",
+            tokenId: "test2!test",
             startFromStage: 1
         });
 
@@ -98,7 +103,7 @@ function getDefaultTeams() {
 
 }
 
-function createDefaultStateObject(team:Team) {
+function initDefaultStateObject(team:Team) {
 
 
     var stages:Stage[] = [];
@@ -121,12 +126,15 @@ function createDefaultStateObject(team:Team) {
     }
 
     for (var i = 0; i < startFromStage; i++) {
-        stages.push({
+        var item:Stage = {
             id: String(i),
             status: StageStatus.LOCKED,
             showNumber: pushNumber++
-        });
+        };
+        stages.push(item);
     }
+
+    stages[stages.length - 1].last = true;
 
     appState.bonus = {
         id: "bonus",
@@ -139,6 +147,8 @@ function createDefaultStateObject(team:Team) {
     return appState;
 }
 
-
+function log(message:string) {
+    console.log('DMM QUEST: ' + message);
+}
 
 
