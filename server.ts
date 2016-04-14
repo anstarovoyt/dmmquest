@@ -135,7 +135,7 @@ function processAnswerUpdateRequest(req:AnswersUpdateRequest):AnswersUpdateRespo
     var token = req.token;
     var team = checkToken(token);
 
-    if (!team) {
+    if (!team || !checkTime(team)) {
         return {success: false};
     }
 
@@ -273,9 +273,13 @@ function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
     var result = diffWithCurrentTime(team);
     return {
         success: true,
-        restTimeInSeconds:String(result),
+        restTimeInSeconds: String(result),
         isCompleted: result <= 0
     }
+}
+
+function checkTime(team:Team) {
+    return diffWithCurrentTime(team) > 0;
 }
 
 function diffWithCurrentTime(team:Team) {
