@@ -279,6 +279,9 @@ function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
 }
 
 function checkTime(team:Team) {
+    if (!team.endQuestDate) {
+        return true;
+    }
     return diffWithCurrentTime(team) > 0;
 }
 
