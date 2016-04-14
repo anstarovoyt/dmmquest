@@ -74,7 +74,7 @@ class StageManager {
     }
 
 
-    getQuestionTexts(token:string, stageId:string) {
+    getQuestionTexts(token:string, stageId:string):(string|{type:QuestType, text:string})[] {
         var appState = this.getAppState(token);
         var stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {

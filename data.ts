@@ -1,6 +1,6 @@
 interface RawStage {
     name:string,
-    quests:string[]
+    quests:(string|{type:QuestType, text:string})[]
     status?:StageStatus
 }
 

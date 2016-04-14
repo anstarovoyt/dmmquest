@@ -3,6 +3,12 @@ interface QuestTextsRequest {
     stageId:string
 }
 
+declare const enum QuestType {
+    TEXT,
+    UPLOAD,
+    UPLOAD_5
+}
+
 interface QuestTextsResponse {
     success:boolean
     questTexts?:QuestTexts

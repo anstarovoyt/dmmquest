@@ -149,7 +149,8 @@ function processLoginRequest(req:LoginRequest):LoginInfo {
 
 function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse {
     var token = request.token;
-    if (!checkToken(token)) {
+    var team = checkToken(token);
+    if (!team) {
         return {success: false};
     }
 
@@ -166,10 +167,24 @@ function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse 
         questTexts: {
             stageId: request.stageId,
             quests: questTexts.map(function (el, i) {
-                return {
-                    id: i,
-                    text: el
+                var text;
+                var type;
+                if (typeof el === "string") {
+                    text = el;
+                } else {
+                    text = el.text;
+                    type = el.type;
                 }
+
+                var result:Quest = {
+                    id: i,
+                    text: text
+                };
+                if (type) {
+                    result.type = type;
+                }
+
+                return result
             })
         }
     }

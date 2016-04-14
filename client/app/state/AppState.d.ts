@@ -37,7 +37,8 @@ interface QuestTexts {
 }
 
 interface Quest extends HasId {
-    text:string
+    text:string,
+    type?:QuestType
 }
 
 interface AppStateRequest {
