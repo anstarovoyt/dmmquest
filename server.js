@@ -559,6 +559,17 @@ function initServer() {
         var request = req.body;
         res.json(getRestTime(request));
     });
+    server.post('/sign_s3', function (req, response, next) {
+        var request = req.body;
+        var team = checkToken(request.token);
+        if (!team) {
+            return;
+        }
+        processGetAWS(request, function (result) {
+            console.log('aws req: ' + JSON.stringify(result));
+            response.json(result);
+        });
+    });
     log('Created server for: ' + TARGET + ', listening on port ' + PORT);
 }
 function processStateRequest(req) {
@@ -722,5 +733,42 @@ function diffWithCurrentTime(team) {
     var currentTime = moment();
     var endTime = moment(team.endQuestDate);
     return endTime.diff(currentTime, 'seconds');
+}
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || "AKIAIUDMKMJ4VTFWIBCQ";
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || "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";
+var S3_BUCKET = process.env.S3_BUCKET || "dmmquest";
+var aws = require('aws-sdk');
+function processGetAWS(request, callback) {
+    aws.config.update({
+        accessKeyId: AWS_ACCESS_KEY,
+        secretAccessKey: AWS_SECRET_KEY,
+        signatureVersion: 'v4',
+        region: 'eu-central-1'
+    });
+    var s3 = new aws.S3();
+    var url = request.token + '/stage_' + request.stageId + '/quest_' + request.questId + '/' + request.fileName;
+    var s3_params = {
+        Bucket: S3_BUCKET,
+        Key: url,
+        Expires: 60,
+        ContentType: request.fileType,
+        ACL: 'public-read'
+    };
+    s3.getSignedUrl('putObject', s3_params, function (err, data) {
+        var result;
+        if (err) {
+            result = {
+                success: false
+            };
+        }
+        else {
+            result = {
+                sign: data,
+                url: 'https://' + S3_BUCKET + '.s3.amazonaws.com/' + url,
+                success: true
+            };
+        }
+        callback(result);
+    });
 }
 //# sourceMappingURL=server.js.map

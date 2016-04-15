@@ -95,3 +95,27 @@ interface GetRestTimeResponse {
     isCompleted?:boolean
 }
 
+interface AWSSendFileRequest {
+    url:string
+    sign:string
+    file
+}
+
+interface AWSSendFileResponse {
+    success:boolean
+    url?:string,
+}
+
+interface GetAWSSignRequest {
+    token:string,
+    fileName:string,
+    fileType:string,
+    stageId:string,
+    questId:number
+}
+
+interface GetAWSSignResponse {
+    url?:string,
+    sign?:string,
+    success:boolean
+}

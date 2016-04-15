@@ -106,6 +106,19 @@ function initServer() {
         res.json(getRestTime(request));
     });
 
+    server.post('/sign_s3', (req, response, next) => {
+        var request:GetAWSSignRequest = req.body;
+        var team = checkToken(request.token);
+        if (!team) {
+            return;
+        }
+
+        processGetAWS(request, (result) => {
+            console.log('aws req: ' + JSON.stringify(result));
+            response.json(result);
+        })
+    });
+
 
     log('Created server for: ' + TARGET + ', listening on port ' + PORT);
 }

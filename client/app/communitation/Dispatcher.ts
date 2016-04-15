@@ -127,3 +127,38 @@ export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetR
         success: successCallback
     });
 }
+
+export function uploadFileToAWS(toSend:AWSSendFileRequest, successCallback:(res:AWSSendFileResponse)=>void) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", toSend.sign);
+    xhr.setRequestHeader('x-amz-acl', 'public-read');
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            successCallback({
+                success: true,
+                url: toSend.url
+            })
+        }
+    };
+    xhr.onerror = function (e) {
+        console.log(e);
+        successCallback({
+            success: false
+        })
+    };
+    xhr.send(toSend.file);
+}
+
+export function getAWSSign(toSend:GetAWSSignRequest, successCallback:(res:GetAWSSignResponse)=>void) {
+    reqwest({
+        url: '/sign_s3',
+        method: 'post',
+        data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
+        success: successCallback
+    });
+}
