@@ -28,10 +28,14 @@ class StageManager {
 
 
         var stagesName = this.stagesNames[stageId];
-        log('Updated answers for stage ' + stagesName + '. Answers: ' + JSON.stringify(answers));
+        log('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
 
-        this.saveAppStateToDB(token, this.getAppState(token), () => {
-            log('Saved new answers to DB for ' + stagesName);
+        this.saveAppStateToDB(token, this.getAppState(token), (err) => {
+            if (!err) {
+                log('Saved new answers "' + token + '" to DB for ' + stagesName);
+            } else {
+                log('ALERT! Erorr save new answers to DB for ' + stagesName);
+            }
         });
         return stage;
     }
@@ -63,12 +67,16 @@ class StageManager {
         }
 
         var info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
-        log('Closed stage ' + info);
+        log('Closed stage token ' + token + ' stage ' + info);
 
         var appState = this.getAppState(token);
 
-        this.saveAppStateToDB(token, appState, () => {
-            log('Update app state for ' + info)
+        this.saveAppStateToDB(token, appState, (err) => {
+            if (!err) {
+                log('Update app state for ' + info)
+            } else {
+                log('ALERT: Error update app state for ' + info)
+            }
         });
         return appState;
     }
@@ -90,6 +98,50 @@ class StageManager {
 
 
         return stageInfo && stageInfo.quests;
+    }
+
+    unlockLastStage(tokenId:string):boolean {
+
+        var appState = this.getAppState(tokenId);
+        var team = teamManager.findTeamByToken(tokenId);
+        if (!team) {
+            log('Unlock request for incorrect team ' + team.tokenId);
+            return false;
+        }
+        var lastCompletedStage:Stage = null;
+        var number = 0;
+        var stages = appState.stages;
+        for (var stage of stages) {
+            number++;
+            if (stage.status == StageStatus.COMPLETED) {
+                lastCompletedStage = stage;
+            }
+        }
+
+        if (lastCompletedStage == null) {
+            return false;
+        }
+
+        lastCompletedStage.status = StageStatus.OPEN;
+        log('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
+        delete lastCompletedStage.closedTime;
+
+        if (number == stages.length &&
+            appState.bonus.status == StageStatus.COMPLETED) {
+            appState.bonus.status = StageStatus.BONUS;
+            delete lastCompletedStage.closedTime;
+            log('Unlocked bonus for ' + tokenId);
+        }
+
+        this.saveAppStateToDB(team.tokenId, appState, (err) => {
+            if (!err) {
+                log('Update unlock stage for ' + team.tokenId + "  stage " + this.stagesNames[lastCompletedStage.id]);
+            } else {
+                log('ALERT: Error update unlock stage for ' + team.tokenId)
+            }
+        })
+
+        return true;
     }
 
     getNextStage(appState:AppState, stage:Stage):Stage {

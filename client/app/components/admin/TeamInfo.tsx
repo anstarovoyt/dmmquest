@@ -1,7 +1,7 @@
 import * as React from "react";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
-import {removeTeam} from "../../communitation/Dispatcher";
+import {removeTeam, unlockLastStage} from "../../communitation/Dispatcher";
 
 export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadParent:() => void}, any> {
 
@@ -11,6 +11,8 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadPar
         var team = teamInfo.team;
 
         var answers = this.getStatus();
+
+        var unlockElement = this.getUnlockElement();
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -28,6 +30,7 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadPar
                     <br />
                     <br />
                     <div>
+                        {unlockElement ? <h4>{unlockElement}</h4> : ""}
                         {team.tokenId == auth.getToken() ? <h4>Это вы</h4> :
                             <h4><a href="#"
                                    onClick={this.removeTeam.bind(this)}>Удалить</a>
@@ -38,6 +41,41 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadPar
 
             </div>
         )
+    }
+
+    getUnlockElement() {
+        var teamInfo = this.props.info;
+
+        var lastCompletedStage:Stage = null;
+        for (var stage of teamInfo.appState.stages) {
+            if (stage.status == StageStatus.COMPLETED) {
+                lastCompletedStage = stage;
+            }
+        }
+
+        if (lastCompletedStage == null) {
+            return null;
+        }
+
+
+        return <a href="#"
+                  onClick={this.unlockLastStage.bind(this)}>Разблокировать последний этап</a>
+    }
+
+    unlockLastStage(e) {
+        e.preventDefault();
+        if (!window.confirm('Вы действительно хотите закрытый разблокировать этап?')) {
+            return;
+        }
+
+        unlockLastStage({
+            teamTokenId: this.props.info.team.tokenId,
+            token: auth.getToken()
+        }, (res) => {
+            if (res.success) {
+                this.props.reloadParent();
+            }
+        })
     }
 
     removeTeam(e) {
@@ -92,7 +130,7 @@ export class TeamInfoComponent extends React.Component<{info:TeamInfo, reloadPar
         if (status == StageStatus.COMPLETED) {
             var res = "Сдан";
             if (stage.closedTime) {
-                res += " (" + stage.closedTime +")";
+                res += " (" + stage.closedTime + ")";
             }
             return res;
         }

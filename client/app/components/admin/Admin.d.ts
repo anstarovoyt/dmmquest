@@ -31,3 +31,12 @@ interface AddTeamRequest {
 interface AddTeamResponse {
     success:boolean
 }
+
+interface UnlockLastCompletedStageRequest {
+    token:string,
+    teamTokenId:string
+}
+
+interface UnlockLastCompletedStageResponse {
+    success:boolean
+}

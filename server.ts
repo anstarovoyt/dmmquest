@@ -106,6 +106,20 @@ function initServer() {
         res.json(getRestTime(request));
     });
 
+    server.post('/unlock-stage', (req, res, next) => {
+        var request:UnlockLastCompletedStageRequest = req.body;
+        var team = checkToken(request.token);
+        if (!team || !team.admin) {
+            res.json({
+                success: false
+            })
+        }
+        
+        res.json({
+            success: stageManager.unlockLastStage(request.teamTokenId)
+        });
+    });
+
     server.post('/sign_s3', (req, response, next) => {
         var request:GetAWSSignRequest = req.body;
         var team = checkToken(request.token);
@@ -145,7 +159,12 @@ function processAnswerUpdateRequest(req:AnswersUpdateRequest):AnswersUpdateRespo
     var token = req.token;
     var team = checkToken(token);
 
-    if (!team || !checkTime(team)) {
+    if (!team) {
+        return {success: false};
+    }
+
+    if (!checkTime(team)) {
+        log('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
         return {success: false};
     }
 

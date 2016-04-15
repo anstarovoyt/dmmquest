@@ -162,3 +162,17 @@ export function getAWSSign(toSend:GetAWSSignRequest, successCallback:(res:GetAWS
         success: successCallback
     });
 }
+
+export function unlockLastStage(toSend:UnlockLastCompletedStageRequest, successCallback:(res:UnlockLastCompletedStageResponse)=>void) {
+    reqwest({
+        url: '/unlock-stage',
+        method: 'post',
+        data: toSend,
+        error: () => {
+            successCallback({
+                success: false
+            })
+        },
+        success: successCallback
+    });
+}

@@ -130,9 +130,14 @@ var StageManager = (function () {
             stage.questAnswers[answer.id] = answer;
         }
         var stagesName = this.stagesNames[stageId];
-        log('Updated answers for stage ' + stagesName + '. Answers: ' + JSON.stringify(answers));
-        this.saveAppStateToDB(token, this.getAppState(token), function () {
-            log('Saved new answers to DB for ' + stagesName);
+        log('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
+        this.saveAppStateToDB(token, this.getAppState(token), function (err) {
+            if (!err) {
+                log('Saved new answers "' + token + '" to DB for ' + stagesName);
+            }
+            else {
+                log('ALERT! Erorr save new answers to DB for ' + stagesName);
+            }
         });
         return stage;
     };
@@ -157,10 +162,15 @@ var StageManager = (function () {
             appState.bonus.closedTime = toEkbString(new Date());
         }
         var info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
-        log('Closed stage ' + info);
+        log('Closed stage token ' + token + ' stage ' + info);
         var appState = this.getAppState(token);
-        this.saveAppStateToDB(token, appState, function () {
-            log('Update app state for ' + info);
+        this.saveAppStateToDB(token, appState, function (err) {
+            if (!err) {
+                log('Update app state for ' + info);
+            }
+            else {
+                log('ALERT: Error update app state for ' + info);
+            }
         });
         return appState;
     };
@@ -176,6 +186,46 @@ var StageManager = (function () {
         }
         var stageInfo = defaultData.stages[Number(stageId)];
         return stageInfo && stageInfo.quests;
+    };
+    StageManager.prototype.unlockLastStage = function (tokenId) {
+        var _this = this;
+        var appState = this.getAppState(tokenId);
+        var team = teamManager.findTeamByToken(tokenId);
+        if (!team) {
+            log('Unlock request for incorrect team ' + team.tokenId);
+            return false;
+        }
+        var lastCompletedStage = null;
+        var number = 0;
+        var stages = appState.stages;
+        for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
+            var stage = stages_1[_i];
+            number++;
+            if (stage.status == 2 /* COMPLETED */) {
+                lastCompletedStage = stage;
+            }
+        }
+        if (lastCompletedStage == null) {
+            return false;
+        }
+        lastCompletedStage.status = 1 /* OPEN */;
+        log('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
+        delete lastCompletedStage.closedTime;
+        if (number == stages.length &&
+            appState.bonus.status == 2 /* COMPLETED */) {
+            appState.bonus.status = 3 /* BONUS */;
+            delete lastCompletedStage.closedTime;
+            log('Unlocked bonus for ' + tokenId);
+        }
+        this.saveAppStateToDB(team.tokenId, appState, function (err) {
+            if (!err) {
+                log('Update unlock stage for ' + team.tokenId + "  stage " + _this.stagesNames[lastCompletedStage.id]);
+            }
+            else {
+                log('ALERT: Error update unlock stage for ' + team.tokenId);
+            }
+        });
+        return true;
     };
     StageManager.prototype.getNextStage = function (appState, stage) {
         if (stage.status == 3 /* BONUS */) {
@@ -451,7 +501,7 @@ var TeamManager = (function () {
                 admin: team.admin
             };
         }
-        log('Incorrect login secret code access ' + secretCode);
+        log('Incorrect login secret code access "' + secretCode + '"');
         return { authenticated: false };
     };
     TeamManager.prototype.getNextStartFromStage = function () {
@@ -560,6 +610,18 @@ function initServer() {
         var request = req.body;
         res.json(getRestTime(request));
     });
+    server.post('/unlock-stage', function (req, res, next) {
+        var request = req.body;
+        var team = checkToken(request.token);
+        if (!team || !team.admin) {
+            res.json({
+                success: false
+            });
+        }
+        res.json({
+            success: stageManager.unlockLastStage(request.teamTokenId)
+        });
+    });
     server.post('/sign_s3', function (req, response, next) {
         var request = req.body;
         var team = checkToken(request.token);
@@ -591,7 +653,11 @@ function processStateRequest(req) {
 function processAnswerUpdateRequest(req) {
     var token = req.token;
     var team = checkToken(token);
-    if (!team || !checkTime(team)) {
+    if (!team) {
+        return { success: false };
+    }
+    if (!checkTime(team)) {
+        log('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
         return { success: false };
     }
     var answers = stageManager.setAnswers(token, req.stageId, req.answers);
