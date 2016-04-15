@@ -451,6 +451,7 @@ var TeamManager = (function () {
                 admin: team.admin
             };
         }
+        log('Incorrect login secret code access ' + secretCode);
         return { authenticated: false };
     };
     TeamManager.prototype.getNextStartFromStage = function () {

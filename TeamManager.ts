@@ -99,7 +99,8 @@ class TeamManager {
                 admin: team.admin
             }
         }
-        
+
+        log('Incorrect login secret code access "' + secretCode + '"');
         return {authenticated: false}
     }
 
