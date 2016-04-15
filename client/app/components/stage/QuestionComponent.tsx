@@ -110,18 +110,22 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     private getSaveIconSpan() {
+        //noinspection CheckTagEmptyBody
         return <span
             className="glyphicon glyphicon-floppy-save"></span>;
     }
 
 
     private getUploadIconSpan() {
+        //noinspection CheckTagEmptyBody
         return <span
             className="glyphicon glyphicon-floppy-open"></span>;
     }
 
     private getAnimatedIconSpan() {
-        return <span className="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+        //noinspection CheckTagEmptyBody
+        // return <span className="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+        return <span className="glyphicon glyphicon-refresh"></span>;
     }
 
     private getPopupSpan(savedHtmlClass) {
@@ -196,6 +200,9 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
 
 
     private setTimeoutToResetMarks() {
+        if (this.timeOutMarker) {
+            clearTimeout(this.timeOutMarker);
+        }
         this.timeOutMarker = setTimeout(() => {
             this.setState({
                 value: this.state.value,
@@ -208,70 +215,76 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     uploadFile(e) {
+        e.preventDefault();
         var target = e.target;
         var files = target.files;
         var file = files[0];
         var stateValue = this.state.value;
-        if (file != null) {
-            this.setState({
-                value: stateValue,
-                noBackgroundActions: false,
-                savedMark: ActionState.NO
-            });
+        if (file == null) {
+            return;
+        }
 
-            getAWSSign({
-                token: auth.getToken(),
-                fileName: file.name,
-                fileType: file.type,
-                stageId: this.props.stage.id,
-                questId: this.props.quest.id
+        this.setState({
+            value: stateValue,
+            noBackgroundActions: false,
+            savedMark: ActionState.NO
+        });
+
+        getAWSSign({
+            token: auth.getToken(),
+            fileName: file.name,
+            fileType: file.type,
+            stageId: this.props.stage.id,
+            questId: this.props.quest.id
+        }, (res) => {
+            if (!res.success) {
+                this.setState({
+                    value: stateValue,
+                    noBackgroundActions: true,
+                    savedMark: ActionState.ERROR
+                });
+                this.setTimeoutToResetMarks();
+                return;
+            }
+
+
+            uploadFileToAWS({
+                file: file,
+                sign: res.sign,
+                url: res.url
             }, (res) => {
                 if (res.success) {
-                    uploadFileToAWS({
-                        file: file,
-                        sign: res.sign,
-                        url: res.url
+                    var newValue = getUpdatedValue(this.state.value);
+                    var quest:Quest = this.props.quest;
+                    var stage = this.props.stage;
+                    var answer:QuestAnswer = {
+                        id: quest.id,
+                        answer: newValue
+                    };
+                    saveAnswers({
+                        token: auth.getToken(),
+                        stageId: stage.id,
+                        answers: [answer]
                     }, (res) => {
                         if (res.success) {
-                            var newValue = getUpdatedValue(this.state.value);
-                            console.log('new value ' + newValue);
-                            var quest:Quest = this.props.quest;
-                            var stage = this.props.stage;
-                            var answer:QuestAnswer = {
-                                id: quest.id,
-                                answer: newValue
-                            };
-                            saveAnswers({
-                                token: auth.getToken(),
-                                stageId: stage.id,
-                                answers: [answer]
-                            }, (res) => {
-                                if (res.success) {
-                                    appStateService.updateStage(res.stage);
-                                    this.setState({
-                                        value: newValue,
-                                        noBackgroundActions: true,
-                                        savedMark: ActionState.SAVED
-                                    })
-                                } else {
-                                    this.setState({
-                                        value: stateValue,
-                                        noBackgroundActions: true,
-                                        savedMark: ActionState.ERROR
-                                    });
-                                }
-                                this.setTimeoutToResetMarks();
+                            appStateService.updateStage(res.stage);
+                            
+                            this.setState({
+                                value: newValue,
+                                noBackgroundActions: true,
+                                savedMark: ActionState.SAVED
                             });
+
+                            
                         } else {
                             this.setState({
                                 value: stateValue,
                                 noBackgroundActions: true,
                                 savedMark: ActionState.ERROR
                             });
-                            this.setTimeoutToResetMarks();
                         }
-                      
-                    })
+                        this.setTimeoutToResetMarks();
+                    });
                 } else {
                     this.setState({
                         value: stateValue,
@@ -281,9 +294,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                     this.setTimeoutToResetMarks();
                 }
             })
-        }
+        })
     }
-
 }
 
 function getUpdatedValue(value) {
