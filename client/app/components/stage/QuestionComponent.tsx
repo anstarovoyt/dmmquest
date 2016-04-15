@@ -10,7 +10,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     private timeOutMarker = null;
 
     popupText = "";
-    
+
     constructor(props:any) {
         super(props);
 
@@ -51,13 +51,24 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
                     <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
-                    <div className="input-group">
-                        <input type="text"
-                               disabled={isCompleted}
-                               className="form-control"
-                               onChange={this.handlerChanged.bind(this)}
-                               placeholder="Ваш ответ"
-                               value={this.state.value}/>
+                    {this.createInputField(isCompleted, savedHtmlClass)}
+                </div>
+            </div>)
+    }
+
+
+    private createInputField(isCompleted:boolean, savedHtmlClass:string) {
+        return this.createTextInputField(isCompleted, savedHtmlClass);
+    }
+
+    private createTextInputField(isCompleted:boolean, savedHtmlClass:string) {
+        return <div className="input-group">
+            <input type="text"
+                   disabled={isCompleted}
+                   className="form-control"
+                   onChange={this.handlerChanged.bind(this)}
+                   placeholder="Ваш ответ"
+                   value={this.state.value}/>
 
                             <span className="input-group-btn">
                               <button
@@ -66,9 +77,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                                   <span className="glyphicon glyphicon-floppy-save"></span> Сохранить<span
                                   className={savedHtmlClass}> {this.popupText} </span></button>
                             </span>
-                    </div>
-                </div>
-            </div>)
+        </div>
     }
 
     private getDefaultValue():string {
