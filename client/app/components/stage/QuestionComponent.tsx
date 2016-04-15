@@ -71,7 +71,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         var hasBackground = !this.state.noBackgroundActions;
 
         var iconSpan = hasBackground ? this.getAnimatedIconSpan() : this.getUploadIconSpan();
-
+        var downloadMessage = hasBackground ? "Загрузка..." : "Загрузить";
         return <div className="input-group">
             <input type="text"
                    disabled={true}
@@ -84,7 +84,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                                   type="file"
                                   disabled={isCompleted}
                                   onChange={this.uploadFile.bind(this)}>
-                                  {iconSpan}&nbsp;Загрузить{this.getPopupSpan(savedHtmlClass)}</input>
+                                  {iconSpan}&nbsp;{downloadMessage}{this.getPopupSpan(savedHtmlClass)}</input>
                                 </label>
                             </span>
         </div>
@@ -211,7 +211,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
             });
 
             this.timeOutMarker = null;
-        }, 1000);
+        }, 3000);
     }
 
     uploadFile(e) {
