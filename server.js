@@ -128,7 +128,7 @@ var StageManager = (function () {
                 stage.questAnswers = {};
             }
             var oldAnswer = stage.questAnswers[answer.id];
-            if (fromClose && oldAnswer.answer && !answer.answer) {
+            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
                 continue;
             }
             stage.questAnswers[answer.id] = answer;
