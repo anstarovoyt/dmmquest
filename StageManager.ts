@@ -9,7 +9,7 @@ class StageManager {
     } = getStagesNames();
 
 
-    setAnswers(token:string, stageId:string, answers:QuestAnswer[]) {
+    setAnswers(token:string, stageId:string, answers:QuestAnswer[], fromClose:boolean) {
         var stage:Stage = this.getStage(token, stageId);
         if (!stage) {
             return null;
@@ -23,6 +23,12 @@ class StageManager {
             if (!stage.questAnswers) {
                 stage.questAnswers = {}
             }
+
+            var oldAnswer = stage.questAnswers[answer.id];
+            if (fromClose && oldAnswer.answer && !answer.answer) {
+                continue;
+            }
+
             stage.questAnswers[answer.id] = answer;
         }
 

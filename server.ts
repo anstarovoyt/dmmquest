@@ -55,14 +55,14 @@ function initServer() {
         var request:AnswersUpdateRequest = req.body;
 
 
-        res.json(processAnswerUpdateRequest(request));
+        res.json(processAnswerUpdateRequest(request, false));
     });
 
     server.post('/complete', (req, res, next) => {
         var request:AnswersUpdateRequest = req.body;
 
         var token = request.token;
-        var options = processAnswerUpdateRequest(request);
+        var options = processAnswerUpdateRequest(request, true);
         if (!options.success) {
             res.json({
                 success: false
@@ -114,7 +114,7 @@ function initServer() {
                 success: false
             })
         }
-        
+
         res.json({
             success: stageManager.unlockLastStage(request.teamTokenId)
         });
@@ -155,7 +155,7 @@ function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     }
 }
 
-function processAnswerUpdateRequest(req:AnswersUpdateRequest):AnswersUpdateResponse {
+function processAnswerUpdateRequest(req:AnswersUpdateRequest, fromClose:boolean):AnswersUpdateResponse {
     var token = req.token;
     var team = checkToken(token);
 
@@ -168,7 +168,7 @@ function processAnswerUpdateRequest(req:AnswersUpdateRequest):AnswersUpdateRespo
         return {success: false};
     }
 
-    var answers = stageManager.setAnswers(token, req.stageId, req.answers);
+    var answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
     return {
         success: !!answers,
         stage: answers
