@@ -129,24 +129,30 @@ export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetR
 }
 
 export function uploadFileToAWS(toSend:AWSSendFileRequest, successCallback:(res:AWSSendFileResponse)=>void) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("PUT", toSend.sign);
-    xhr.setRequestHeader('x-amz-acl', 'public-read');
-    xhr.onload = function () {
-        if (xhr.status === 200) {
+    try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", toSend.sign);
+        xhr.setRequestHeader('x-amz-acl', 'public-read');
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                successCallback({
+                    success: true,
+                    url: toSend.url
+                })
+            }
+        };
+        xhr.onerror = function (e) {
+            console.log(e);
             successCallback({
-                success: true,
-                url: toSend.url
+                success: false
             })
-        }
-    };
-    xhr.onerror = function (e) {
-        console.log(e);
+        };
+        xhr.send(toSend.file);
+    } catch(e) {
         successCallback({
-            success: false
+            success:false
         })
-    };
-    xhr.send(toSend.file);
+    }
 }
 
 export function getAWSSign(toSend:GetAWSSignRequest, successCallback:(res:GetAWSSignResponse)=>void) {

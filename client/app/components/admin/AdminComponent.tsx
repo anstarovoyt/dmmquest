@@ -38,10 +38,15 @@ export class AdminComponent extends React.Component<any, {hasAccess:boolean, tea
                 Access denied
             </div>
         }
-        var teams = this.state.teams;
-        if (!teams) {
+
+        var rawTeams = this.state.teams;
+        
+        if (!rawTeams) {
             return <LoadingComponent/>
         }
+
+        var teams = rawTeams.reverse();
+        
 
         var reloadParent = this.reloadState.bind(this);
         var result = teams.map(function (team) {
