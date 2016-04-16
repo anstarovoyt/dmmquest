@@ -87,16 +87,10 @@ function getDefaultTeams() {
 
     teams.push({
             name: "Тестовая админская команда",
-            secretCode: "test!test",
-            tokenId: "test!test",
+            secretCode: "test!test?",
+            tokenId: "test!test?",
             admin: true,
             startFromStage: 0
-        },
-        {
-            name: "Самая тестовая команда 1",
-            secretCode: "test2!test",
-            tokenId: "test2!test",
-            startFromStage: 1
         });
 
     return teams;
