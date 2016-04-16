@@ -1,4 +1,4 @@
-const COUNT_HOURS_TO_SOLVE = 6;
+const COUNT_HOURS_TO_SOLVE = 7;
 
 class TeamManager {
     findTeamByCode(secretCode:string):Team {
