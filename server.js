@@ -518,8 +518,8 @@ var TeamManager = (function () {
     };
     TeamManager.makeid = function () {
         var text = "";
-        var possible = "abcdefghijklmnopqrstuvwxyz";
-        for (var i = 0; i < 5; i++)
+        var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < 8; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     };
