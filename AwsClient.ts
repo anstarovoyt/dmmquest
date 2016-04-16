@@ -12,7 +12,7 @@ function processGetAWS(request:GetAWSSignRequest, callback:(GetAWSSignResponse)=
         region: 'eu-central-1'
     });
     var s3 = new aws.S3();
-    var url = request.token + '/stage_' + request.stageId + '/quest_' + request.questId + '/' + request.fileName;
+    var url = request.token + '/stage_' + request.stageId + '/quest_' + request.questId + '/f' + new Date().getTime() + '_' + request.fileName;
     var s3_params = {
         Bucket: S3_BUCKET,
         Key: url,

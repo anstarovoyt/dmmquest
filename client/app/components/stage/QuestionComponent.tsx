@@ -79,10 +79,10 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                    className="form-control"
                    placeholder="Загрузите файл"/>
                             <span className="input-group-btn">
-                                <label disabled={isCompleted || hasBackground} className="btn btn-info">
+                                <label disabled={isCompleted} className="btn btn-info">
                               <input
                                   type="file"
-                                  disabled={isCompleted || hasBackground}
+                                  disabled={isCompleted}
                                   onChange={this.uploadFile.bind(this)}>
                                   {iconSpan}&nbsp;{downloadMessage}{this.getPopupSpan(savedHtmlClass)}</input>
                                 </label>
@@ -238,6 +238,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
             questId: this.props.quest.id
         }, (res) => {
             if (!res.success) {
+                target.value = "";
                 this.setState({
                     value: stateValue,
                     noBackgroundActions: true,
@@ -266,6 +267,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                         stageId: stage.id,
                         answers: [answer]
                     }, (res) => {
+                        target.value = "";
                         if (res.success) {
                             appStateService.updateStage(res.stage);
                             
@@ -286,6 +288,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                         this.setTimeoutToResetMarks();
                     });
                 } else {
+                    target.value = "";
                     this.setState({
                         value: stateValue,
                         noBackgroundActions: true,
