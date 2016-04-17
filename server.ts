@@ -51,31 +51,31 @@ function initServer() {
         res.json(processLoginRequest(request));
     });
 
-    server.post('/save', (req, res, next) => {
-        var request:AnswersUpdateRequest = req.body;
+    // server.post('/save', (req, res, next) => {
+    //     var request:AnswersUpdateRequest = req.body;
+    //
+    //
+    //     res.json(processAnswerUpdateRequest(request, false));
+    // });
 
-
-        res.json(processAnswerUpdateRequest(request, false));
-    });
-
-    server.post('/complete', (req, res, next) => {
-        var request:AnswersUpdateRequest = req.body;
-
-        var token = request.token;
-        var options = processAnswerUpdateRequest(request, true);
-        if (!options.success) {
-            res.json({
-                success: false
-            });
-            return;
-        }
-        var result = stageManager.closeStage(token, request.stageId);
-        var response:CompleteStageResponse = {
-            res: result,
-            success: true
-        };
-        res.json(response);
-    });
+    // server.post('/complete', (req, res, next) => {
+    //     var request:AnswersUpdateRequest = req.body;
+    //
+    //     var token = request.token;
+    //     var options = processAnswerUpdateRequest(request, true);
+    //     if (!options.success) {
+    //         res.json({
+    //             success: false
+    //         });
+    //         return;
+    //     }
+    //     var result = stageManager.closeStage(token, request.stageId);
+    //     var response:CompleteStageResponse = {
+    //         res: result,
+    //         success: true
+    //     };
+    //     res.json(response);
+    // });
 
     server.get('/stage/*', function (req, res, next) {
         res.sendFile(path.join(__dirname, TARGET, '/index.html'));
@@ -120,18 +120,18 @@ function initServer() {
         });
     });
 
-    server.post('/sign_s3', (req, response, next) => {
-        var request:GetAWSSignRequest = req.body;
-        var team = checkToken(request.token);
-        if (!team) {
-            return;
-        }
-
-        processGetAWS(request, (result) => {
-            console.log('aws req: ' + JSON.stringify(result));
-            response.json(result);
-        })
-    });
+    // server.post('/sign_s3', (req, response, next) => {
+    //     var request:GetAWSSignRequest = req.body;
+    //     var team = checkToken(request.token);
+    //     if (!team) {
+    //         return;
+    //     }
+    //
+    //     processGetAWS(request, (result) => {
+    //         console.log('aws req: ' + JSON.stringify(result));
+    //         response.json(result);
+    //     })
+    // });
 
 
     log('Created server for: ' + TARGET + ', listening on port ' + PORT);
