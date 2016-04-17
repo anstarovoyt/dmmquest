@@ -7,9 +7,9 @@ interface RawStage {
 declare var all_text:{stages:RawStage[],bonus:RawStage};
 
 function getDefaultData():{stages:RawStage[],bonus:RawStage} {
-    // if (all_text) {
-    //     return all_text;
-    // }
+    if (all_text) {
+        return all_text;
+    }
 
     return {
         stages: [
