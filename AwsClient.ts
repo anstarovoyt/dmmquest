@@ -1,5 +1,5 @@
-var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || "AKIAIUDMKMJ4VTFWIBCQ";
-var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || "yY8XnEtANuv5t1+pMJ9eiuVa1A1a+xx54zJBNJWF";
+var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || "YOUR_AWS_KEY";
+var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || "YOUR_AWS_SECRET_KEY";
 var S3_BUCKET = process.env.S3_BUCKET || "dmmquest";
 var aws = require('aws-sdk');
 
