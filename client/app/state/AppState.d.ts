@@ -58,7 +58,7 @@ declare const enum StageStatus {
     BONUS
 }
 
-interface Team extends TeamSimple {
+interface Team11111 extends TeamSimple {
     firstLoginDate?:Date,
     endQuestDate?:Date,
 }

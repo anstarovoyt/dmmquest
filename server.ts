@@ -290,7 +290,7 @@ function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
 }
 
 
-function checkToken(token:string):Team {
+function checkToken(token:string):Team11111 {
     return teamManager.findTeamByCode(token);
 }
 
@@ -324,7 +324,7 @@ function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
 }
 
 
-function checkTime(team:Team) {
+function checkTime(team:Team11111) {
     if (!team.endQuestDate) {
         return true;
     }
@@ -332,7 +332,7 @@ function checkTime(team:Team) {
 }
 
 
-function diffWithCurrentTime(team:Team) {
+function diffWithCurrentTime(team:Team11111) {
     let currentTime = moment();
 
     let endTime = moment(team.endQuestDate);

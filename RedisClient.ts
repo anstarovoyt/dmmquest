@@ -11,7 +11,7 @@ log('Start redis client');
 const TEAMS_KEY = "teams";
 const APP_STATE_KEY = "app_state";
 
-var TEAMS_CACHE:Team[] = [];
+var TEAMS_CACHE:Team11111[] = [];
 
 var initTeams = () => {
     var multi = client.multi();
@@ -97,7 +97,7 @@ function getDefaultTeams() {
 
 }
 
-function initDefaultStateObject(team:Team) {
+function initDefaultStateObject(team:Team11111) {
 
 
     var stages:Stage[] = [];

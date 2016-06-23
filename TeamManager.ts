@@ -1,7 +1,7 @@
 const COUNT_HOURS_TO_SOLVE = 7;
 
 class TeamManager {
-    findTeamByCode(secretCode:string):Team {
+    findTeamByCode(secretCode:string):Team11111 {
         if (!secretCode) {
             return null;
         }
@@ -13,7 +13,7 @@ class TeamManager {
         return null;
     }
 
-    findTeamByToken(tokenId:string):Team {
+    findTeamByToken(tokenId:string):Team11111 {
         for (let team of TEAMS_CACHE) {
             if (team.tokenId == tokenId) {
                 return team;
@@ -49,10 +49,10 @@ class TeamManager {
 
     }
 
-    createTeam(name:string):Team {
+    createTeam(name:string):Team11111 {
         var secretCode = TeamManager.makeid();
         var newStartFrom = this.getNextStartFromStage();
-        var team:Team = {
+        var team:Team11111 = {
             name,
             secretCode,
             tokenId: secretCode,
@@ -73,7 +73,7 @@ class TeamManager {
         return team;
     }
 
-    listTeams():Team[] {
+    listTeams():Team11111[] {
         return TEAMS_CACHE;
     }
 
@@ -115,7 +115,7 @@ class TeamManager {
         return 0;
     }
 
-    private saveTeamToDB(team:Team, callback?:() => void) {
+    private saveTeamToDB(team:Team11111, callback?:() => void) {
         client.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
     }
 
