@@ -1,16 +1,20 @@
-import {stageManager} from "./StageManager";
-import {removeTeamDB, saveTeamDB, TEAMS_CACHE} from "./RedisClient";
-import {toEkbString} from "./server";
 import {defaultData} from "./data";
-import {logServer} from "./utils";
+import {logServer, toEkbString} from "./utils";
+import {Store} from "./Store";
+import {StateManager} from "./StateManager";
 export const COUNT_HOURS_TO_SOLVE = 7;
 
 export class TeamManager {
+
+
+    constructor(private stageModifier: StateManager, private dbStore: Store) {
+    }
+
     findTeamByCode(secretCode: string): Team {
         if (!secretCode) {
             return null;
         }
-        for (let team of TEAMS_CACHE) {
+        for (let team of this.dbStore.getTeams()) {
             if (team.secretCode.toLocaleLowerCase() == secretCode.toLocaleLowerCase()) {
                 return team;
             }
@@ -19,7 +23,7 @@ export class TeamManager {
     }
 
     findTeamByToken(tokenId: string): Team {
-        for (let team of TEAMS_CACHE) {
+        for (let team of this.dbStore.getTeams()) {
             if (team.tokenId == tokenId) {
                 return team;
             }
@@ -34,16 +38,10 @@ export class TeamManager {
             return false;
         }
 
-        const index = TEAMS_CACHE.indexOf(team);
-        if (index == -1) {
-            return false;
-        }
-
-        TEAMS_CACHE.splice(index, 1);
-        delete stageManager.states[tokenId];
+        delete this.stageModifier.states[tokenId];
         logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
 
-        removeTeamDB(team)
+        this.dbStore.removeTeamDB(team);
 
         return true;
 
@@ -59,22 +57,40 @@ export class TeamManager {
             startFromStage: newStartFrom
         };
 
-        TEAMS_CACHE.push(team);
-
         const token = team.tokenId;
         logServer('Added team to app: ' + team.name + ' ' + team.secretCode);
         this.saveTeamToDB(team, () => {
             logServer('Saved team to database: ' + team.name);
         });
-        stageManager.saveAppStateToDB(token, (stageManager.getAppState(token)), () => {
+        this.dbStore.saveAppDB(token, (this.getAppState(token)), () => {
             logServer('Saved state to database: ' + team.name);
         });
 
         return team;
     }
 
+    getAppState(token) {
+        let state = this.stageModifier.getState(token);
+        if (state) {
+            return state;
+        }
+
+        return this.createAppState(token);
+    }
+
+    createAppState(token: string) {
+        logServer('Init state:' + token);
+        let team = this.findTeamByToken(token);
+        if (!team) {
+            return;
+        }
+
+        return this.stageModifier.initDefaultStateObject(team);
+    }
+
+
     listTeams(): Team[] {
-        return TEAMS_CACHE;
+        return this.dbStore.getTeams();
     }
 
     login(secretCode: string): LoginInfo {
@@ -105,7 +121,8 @@ export class TeamManager {
     }
 
     private getNextStartFromStage() {
-        const lastTeam = TEAMS_CACHE[TEAMS_CACHE.length - 1];
+        let teams = this.dbStore.getTeams();
+        const lastTeam = teams[teams.length - 1];
         const startFromStage = lastTeam.startFromStage;
         const nextStage = startFromStage + 1;
         if (nextStage < defaultData.stages.length) {
@@ -116,7 +133,7 @@ export class TeamManager {
     }
 
     private saveTeamToDB(team: Team, callback?: () => void) {
-        saveTeamDB(team, callback);
+        this.dbStore.saveTeamDB(team, callback);
     }
 
     private static makeid() {
@@ -129,5 +146,3 @@ export class TeamManager {
         return text;
     }
 }
-
-export const teamManager: TeamManager = new TeamManager();

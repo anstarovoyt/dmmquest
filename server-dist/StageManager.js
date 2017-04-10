@@ -1,13 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TeamManager_1 = require("./TeamManager");
-var RedisClient_1 = require("./RedisClient");
-var server_1 = require("./server");
 var data_1 = require("./data");
 var utils_1 = require("./utils");
 var StageManager = (function () {
-    function StageManager() {
-        this.states = {};
+    function StageManager(teamManager, stateManager) {
+        this.teamManager = teamManager;
+        this.stateManager = stateManager;
         this.stagesNames = getStagesNames();
     }
     StageManager.prototype.setAnswers = function (token, stageId, answers, fromClose) {
@@ -32,7 +30,7 @@ var StageManager = (function () {
         }
         var stagesName = this.stagesNames[stageId];
         utils_1.logServer('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
-        this.saveAppStateToDB(token, this.getAppState(token), function (err) {
+        this.stateManager.saveAppDB(token, this.teamManager.getAppState(token), function (err) {
             if (!err) {
                 utils_1.logServer('Saved new answers "' + token + '" to DB for ' + stagesName);
             }
@@ -48,11 +46,11 @@ var StageManager = (function () {
     StageManager.prototype.closeStage = function (token, stageId) {
         var stage = this.getStage(token, stageId);
         if (!stage || stage.status != 1 /* OPEN */) {
-            return this.getAppState(token);
+            return this.teamManager.getAppState(token);
         }
         stage.status = 2 /* COMPLETED */;
-        stage.closedTime = server_1.toEkbString(new Date());
-        var appState = this.getAppState(token);
+        stage.closedTime = utils_1.toEkbString(new Date());
+        var appState = this.teamManager.getAppState(token);
         var nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == 0 /* LOCKED */) {
             nextStage.status = 1 /* OPEN */;
@@ -60,12 +58,12 @@ var StageManager = (function () {
         if (stage.last) {
             //close bonus if the stage is last
             appState.bonus.status = 2 /* COMPLETED */;
-            appState.bonus.closedTime = server_1.toEkbString(new Date());
+            appState.bonus.closedTime = utils_1.toEkbString(new Date());
         }
-        var info = this.stagesNames[stageId] + ' team ' + TeamManager_1.teamManager.findTeamByToken(token).name;
+        var info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
         utils_1.logServer('Closed stage token ' + token + ' stage ' + info);
-        appState = this.getAppState(token);
-        this.saveAppStateToDB(token, appState, function (err) {
+        appState = this.teamManager.getAppState(token);
+        this.stateManager.dbStore.saveAppDB(token, appState, function (err) {
             if (!err) {
                 utils_1.logServer('Update app state for ' + info);
             }
@@ -76,7 +74,7 @@ var StageManager = (function () {
         return appState;
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
-        var appState = this.getAppState(token);
+        var appState = this.teamManager.getAppState(token);
         var stage = getStageById(appState, stageId);
         if (!stage || stage.status == 0 /* LOCKED */) {
             return null;
@@ -90,8 +88,8 @@ var StageManager = (function () {
     };
     StageManager.prototype.unlockLastStage = function (tokenId) {
         var _this = this;
-        var appState = this.getAppState(tokenId);
-        var team = TeamManager_1.teamManager.findTeamByToken(tokenId);
+        var appState = this.teamManager.getAppState(tokenId);
+        var team = this.teamManager.findTeamByToken(tokenId);
         if (!team) {
             utils_1.logServer('Unlock request for incorrect team ' + team.tokenId);
             return false;
@@ -118,7 +116,7 @@ var StageManager = (function () {
             delete lastCompletedStage.closedTime;
             utils_1.logServer('Unlocked bonus for ' + tokenId);
         }
-        this.saveAppStateToDB(team.tokenId, appState, function (err) {
+        this.stateManager.dbStore.saveAppDB(team.tokenId, appState, function (err) {
             if (!err) {
                 utils_1.logServer('Update unlock stage for ' + team.tokenId + "  stage " + _this.stagesNames[lastCompletedStage.id]);
             }
@@ -140,29 +138,11 @@ var StageManager = (function () {
         return nextStage;
     };
     StageManager.prototype.getStage = function (token, stageId) {
-        var appState = this.getAppState(token);
+        var appState = this.teamManager.getAppState(token);
         if (!appState) {
             return null;
         }
         return getStageById(appState, stageId);
-    };
-    StageManager.prototype.getAppState = function (token) {
-        var state = this.states[token];
-        if (state) {
-            return state;
-        }
-        return this.createAppState(token);
-    };
-    StageManager.prototype.createAppState = function (token) {
-        utils_1.logServer('Init state:' + token);
-        var team = TeamManager_1.teamManager.findTeamByToken(token);
-        if (!team) {
-            return;
-        }
-        return RedisClient_1.initDefaultStateObject(team);
-    };
-    StageManager.prototype.saveAppStateToDB = function (token, state, callback) {
-        RedisClient_1.saveAppDB(token, state, callback);
     };
     return StageManager;
 }());
@@ -194,5 +174,4 @@ function getStagesNames() {
     return result;
 }
 exports.getStagesNames = getStagesNames;
-exports.stageManager = new StageManager();
 //# sourceMappingURL=StageManager.js.map

@@ -1,7 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var data_1 = require("./data");
+var moment = require("moment");
 function logServer(message) {
     console.log('DMM QUEST: ' + message);
 }
 exports.logServer = logServer;
+function createDefaultAppState(team) {
+    var stages = [];
+    var appState = {
+        bonus: null,
+        stages: stages
+    };
+    var defaultStages = data_1.defaultData.stages;
+    var startFromStage = team.startFromStage;
+    var pushNumber = 0;
+    for (var i = startFromStage; i < defaultStages.length; i++) {
+        var status_1 = i == startFromStage ? 1 /* OPEN */ : 0 /* LOCKED */;
+        stages.push({
+            id: String(i),
+            status: status_1,
+            showNumber: pushNumber++
+        });
+    }
+    for (var i = 0; i < startFromStage; i++) {
+        var item = {
+            id: String(i),
+            status: 0 /* LOCKED */,
+            showNumber: pushNumber++
+        };
+        stages.push(item);
+    }
+    stages[stages.length - 1].last = true;
+    appState.bonus = {
+        id: "bonus",
+        status: 3 /* BONUS */,
+        showNumber: pushNumber++
+    };
+    return appState;
+}
+exports.createDefaultAppState = createDefaultAppState;
+function toEkbString(date) {
+    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
+}
+exports.toEkbString = toEkbString;
 //# sourceMappingURL=utils.js.map

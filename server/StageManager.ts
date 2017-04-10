@@ -1,21 +1,21 @@
-import {teamManager} from "./TeamManager";
-import {initDefaultStateObject, saveAppDB} from "./RedisClient";
-import {toEkbString} from "./server";
+import {TeamManager} from "./TeamManager";
 import {defaultData} from "./data";
-import {logServer} from "./utils";
+import {logServer, toEkbString} from "./utils";
+import {StateManager} from "./StateManager";
+
 
 export class StageManager {
 
-    states:{
-        [token:string]:AppState;
-    } = {};
+    constructor(private teamManager: TeamManager, private stateManager: StateManager) {
+    }
 
-    private stagesNames:{
-        [stageId:string]:string;
+
+    private stagesNames: {
+        [stageId: string]: string;
     } = getStagesNames();
 
 
-    setAnswers(token:string, stageId:string, answers:QuestAnswer[], fromClose:boolean) {
+    setAnswers(token: string, stageId: string, answers: QuestAnswer[], fromClose: boolean) {
         let stage: Stage = this.getStage(token, stageId);
         if (!stage) {
             return null;
@@ -42,7 +42,7 @@ export class StageManager {
         const stagesName = this.stagesNames[stageId];
         logServer('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
 
-        this.saveAppStateToDB(token, this.getAppState(token), (err) => {
+        this.stateManager.saveAppDB(token, this.teamManager.getAppState(token), (err) => {
             if (!err) {
                 logServer('Saved new answers "' + token + '" to DB for ' + stagesName);
             } else {
@@ -57,16 +57,15 @@ export class StageManager {
     }
 
 
-    closeStage(token:string, stageId:string):AppState {
+    closeStage(token: string, stageId: string): AppState {
         let stage: Stage = this.getStage(token, stageId);
         if (!stage || stage.status != StageStatus.OPEN) {
-            return this.getAppState(token);
+            return this.teamManager.getAppState(token);
         }
-
 
         stage.status = StageStatus.COMPLETED;
         stage.closedTime = toEkbString(new Date());
-        let appState = this.getAppState(token);
+        let appState = this.teamManager.getAppState(token);
         const nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
             nextStage.status = StageStatus.OPEN;
@@ -78,12 +77,12 @@ export class StageManager {
             appState.bonus.closedTime = toEkbString(new Date());
         }
 
-        const info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
+        const info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
         logServer('Closed stage token ' + token + ' stage ' + info);
 
-        appState = this.getAppState(token);
+        appState = this.teamManager.getAppState(token);
 
-        this.saveAppStateToDB(token, appState, (err) => {
+        this.stateManager.dbStore.saveAppDB(token, appState, (err) => {
             if (!err) {
                 logServer('Update app state for ' + info)
             } else {
@@ -94,8 +93,8 @@ export class StageManager {
     }
 
 
-    getQuestionTexts(token:string, stageId:string):(string|{type:QuestType, text:string})[] {
-        const appState = this.getAppState(token);
+    getQuestionTexts(token: string, stageId: string): (string | { type: QuestType, text: string })[] {
+        const appState = this.teamManager.getAppState(token);
         let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
             return null;
@@ -112,10 +111,10 @@ export class StageManager {
         return stageInfo && stageInfo.quests;
     }
 
-    unlockLastStage(tokenId:string):boolean {
+    unlockLastStage(tokenId: string): boolean {
 
-        const appState = this.getAppState(tokenId);
-        let team = teamManager.findTeamByToken(tokenId);
+        const appState = this.teamManager.getAppState(tokenId);
+        let team = this.teamManager.findTeamByToken(tokenId);
         if (!team) {
             logServer('Unlock request for incorrect team ' + team.tokenId);
             return false;
@@ -145,18 +144,18 @@ export class StageManager {
             logServer('Unlocked bonus for ' + tokenId);
         }
 
-        this.saveAppStateToDB(team.tokenId, appState, (err) => {
+        this.stateManager.dbStore.saveAppDB(team.tokenId, appState, (err) => {
             if (!err) {
                 logServer('Update unlock stage for ' + team.tokenId + "  stage " + this.stagesNames[lastCompletedStage.id]);
             } else {
                 logServer('ALERT: Error update unlock stage for ' + team.tokenId)
             }
-        })
+        });
 
         return true;
     }
 
-    getNextStage(appState:AppState, stage:Stage):Stage {
+    getNextStage(appState: AppState, stage: Stage): Stage {
         if (stage.status == StageStatus.BONUS) {
             return null;
         }
@@ -171,8 +170,8 @@ export class StageManager {
         return nextStage;
     }
 
-    getStage(token:string, stageId:string) {
-        let appState = this.getAppState(token);
+    getStage(token: string, stageId: string) {
+        let appState = this.teamManager.getAppState(token);
 
         if (!appState) {
             return null;
@@ -180,33 +179,9 @@ export class StageManager {
 
         return getStageById(appState, stageId);
     }
-
-    getAppState(token:string):AppState {
-        const state = this.states[token];
-        if (state) {
-            return state;
-        }
-
-        return this.createAppState(token);
-    }
-
-    createAppState(token:string) {
-        logServer('Init state:' + token);
-        let team = teamManager.findTeamByToken(token);
-        if (!team) {
-            return;
-        }
-
-        return initDefaultStateObject(team);
-    }
-
-    saveAppStateToDB(token:string, state:AppState, callback?:(res) => void) {
-        saveAppDB(token, state, callback);
-    }
-
 }
 
-export function getStageById(state:AppState, stageId:string) {
+export function getStageById(state: AppState, stageId: string) {
     if (!state) {
         return null;
     }
@@ -238,5 +213,3 @@ export function getStagesNames() {
     return result;
 }
 
-
-export const stageManager = new StageManager();

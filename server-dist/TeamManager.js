@@ -1,20 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var StageManager_1 = require("./StageManager");
-var RedisClient_1 = require("./RedisClient");
-var server_1 = require("./server");
 var data_1 = require("./data");
 var utils_1 = require("./utils");
 exports.COUNT_HOURS_TO_SOLVE = 7;
 var TeamManager = (function () {
-    function TeamManager() {
+    function TeamManager(stageModifier, dbStore) {
+        this.stageModifier = stageModifier;
+        this.dbStore = dbStore;
     }
     TeamManager.prototype.findTeamByCode = function (secretCode) {
         if (!secretCode) {
             return null;
         }
-        for (var _i = 0, TEAMS_CACHE_1 = RedisClient_1.TEAMS_CACHE; _i < TEAMS_CACHE_1.length; _i++) {
-            var team = TEAMS_CACHE_1[_i];
+        for (var _i = 0, _a = this.dbStore.getTeams(); _i < _a.length; _i++) {
+            var team = _a[_i];
             if (team.secretCode.toLocaleLowerCase() == secretCode.toLocaleLowerCase()) {
                 return team;
             }
@@ -22,8 +21,8 @@ var TeamManager = (function () {
         return null;
     };
     TeamManager.prototype.findTeamByToken = function (tokenId) {
-        for (var _i = 0, TEAMS_CACHE_2 = RedisClient_1.TEAMS_CACHE; _i < TEAMS_CACHE_2.length; _i++) {
-            var team = TEAMS_CACHE_2[_i];
+        for (var _i = 0, _a = this.dbStore.getTeams(); _i < _a.length; _i++) {
+            var team = _a[_i];
             if (team.tokenId == tokenId) {
                 return team;
             }
@@ -35,14 +34,9 @@ var TeamManager = (function () {
         if (!team) {
             return false;
         }
-        var index = RedisClient_1.TEAMS_CACHE.indexOf(team);
-        if (index == -1) {
-            return false;
-        }
-        RedisClient_1.TEAMS_CACHE.splice(index, 1);
-        delete StageManager_1.stageManager.states[tokenId];
+        delete this.stageModifier.states[tokenId];
         utils_1.logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
-        RedisClient_1.removeTeamDB(team);
+        this.dbStore.removeTeamDB(team);
         return true;
     };
     TeamManager.prototype.createTeam = function (name) {
@@ -54,19 +48,33 @@ var TeamManager = (function () {
             tokenId: secretCode,
             startFromStage: newStartFrom
         };
-        RedisClient_1.TEAMS_CACHE.push(team);
         var token = team.tokenId;
         utils_1.logServer('Added team to app: ' + team.name + ' ' + team.secretCode);
         this.saveTeamToDB(team, function () {
             utils_1.logServer('Saved team to database: ' + team.name);
         });
-        StageManager_1.stageManager.saveAppStateToDB(token, (StageManager_1.stageManager.getAppState(token)), function () {
+        this.dbStore.saveAppDB(token, (this.getAppState(token)), function () {
             utils_1.logServer('Saved state to database: ' + team.name);
         });
         return team;
     };
+    TeamManager.prototype.getAppState = function (token) {
+        var state = this.stageModifier.getState(token);
+        if (state) {
+            return state;
+        }
+        return this.createAppState(token);
+    };
+    TeamManager.prototype.createAppState = function (token) {
+        utils_1.logServer('Init state:' + token);
+        var team = this.findTeamByToken(token);
+        if (!team) {
+            return;
+        }
+        return this.stageModifier.initDefaultStateObject(team);
+    };
     TeamManager.prototype.listTeams = function () {
-        return RedisClient_1.TEAMS_CACHE;
+        return this.dbStore.getTeams();
     };
     TeamManager.prototype.login = function (secretCode) {
         var team = this.findTeamByCode(secretCode);
@@ -77,7 +85,7 @@ var TeamManager = (function () {
                 endDate.setTime(date.getTime() + (exports.COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
-                utils_1.logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + server_1.toEkbString(team.firstLoginDate));
+                utils_1.logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + utils_1.toEkbString(team.firstLoginDate));
                 this.saveTeamToDB(team);
             }
             return {
@@ -91,7 +99,8 @@ var TeamManager = (function () {
         return { authenticated: false };
     };
     TeamManager.prototype.getNextStartFromStage = function () {
-        var lastTeam = RedisClient_1.TEAMS_CACHE[RedisClient_1.TEAMS_CACHE.length - 1];
+        var teams = this.dbStore.getTeams();
+        var lastTeam = teams[teams.length - 1];
         var startFromStage = lastTeam.startFromStage;
         var nextStage = startFromStage + 1;
         if (nextStage < data_1.defaultData.stages.length) {
@@ -100,7 +109,7 @@ var TeamManager = (function () {
         return 0;
     };
     TeamManager.prototype.saveTeamToDB = function (team, callback) {
-        RedisClient_1.saveTeamDB(team, callback);
+        this.dbStore.saveTeamDB(team, callback);
     };
     TeamManager.makeid = function () {
         var text = "";
@@ -112,5 +121,4 @@ var TeamManager = (function () {
     return TeamManager;
 }());
 exports.TeamManager = TeamManager;
-exports.teamManager = new TeamManager();
 //# sourceMappingURL=TeamManager.js.map

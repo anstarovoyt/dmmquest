@@ -7,13 +7,13 @@
   },
   "include": [
     "./**/*.ts",
+    "../client/app/api/QuestTexts.d.ts",
+    "../client/app/api/AppState.d.ts",
+    "../client/app/api/Authentication.d.ts",
+    "../client/app/api/Answers.d.ts",
+    "../client/app/api/Admin.d.ts",
     "../client/typings/express/express.d.ts",
     "../client/typings/redis/redis.d.ts",
-    "../client/app/state/QuestTexts.d.ts",
-    "../client/app/state/AppState.d.ts",
-    "../client/app/authentication/Auth.d.ts",
-    "../client/app/state/Answers.d.ts",
-    "../client/app/components/admin/Admin.d.ts",
     "../client/typings/node/*.d.ts"
   ],
   "exclude": [

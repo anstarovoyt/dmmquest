@@ -1,7 +1,8 @@
-import {stageManager} from "./StageManager";
-import {teamManager} from "./TeamManager";
-import {TEAMS_CACHE} from "./RedisClient";
-import {logServer} from "./utils";
+import {TeamManager} from "./TeamManager";
+import {logServer, toEkbString} from "./utils";
+import {initStore} from "./Store";
+import {StageManager} from "./StageManager";
+import {StateManager} from "./StateManager";
 
 let minimist = require('minimist');
 let express = require('express');
@@ -15,10 +16,16 @@ let TARGET_PATH_MAPPING = {
     DIST: './dist'
 };
 
+const dbStore = initStore(initServer);
+
 
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
 export function initServer() {
+    const stateManager = new StateManager(dbStore);
+    const teamManager: TeamManager = new TeamManager(stateManager, dbStore);
+    const stageManager = new StageManager(teamManager, stateManager);
+
     logServer('Start creating server, port ' + PORT);
     let server = express();
 
@@ -141,207 +148,203 @@ export function initServer() {
 
 
     logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
-}
 
-
-function processStateRequest(req: AppStateRequest): FullAppStateResponse {
-    let token = req.token;
-    let team = checkToken(token);
-    if (!team) {
-        logServer('Internal error. No team for token ' + token);
-        return {success: false}
-    }
-
-    return {
-        success: true,
-        state: {
-            appState: stageManager.getAppState(token),
-            stagesNames: stageManager.getStagesNames()
+    function processStateRequest(req: AppStateRequest): FullAppStateResponse {
+        let token = req.token;
+        let team = checkToken(token);
+        if (!team) {
+            logServer('Internal error. No team for token ' + token);
+            return {success: false}
         }
-    }
-}
 
-function processAnswerUpdateRequest(req: AnswersUpdateRequest, fromClose: boolean): AnswersUpdateResponse {
-    let token = req.token;
-    let team = checkToken(token);
-
-    if (!team) {
-        return {success: false};
-    }
-
-    if (!checkTime(team)) {
-        logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
-        return {success: false};
-    }
-
-    let answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
-    return {
-        success: !!answers,
-        stage: answers
-    }
-}
-
-function processLoginRequest(req: LoginRequest): LoginInfo {
-    return teamManager.login(req.secretCode);
-}
-
-function processQuestTextsRequest(request: QuestTextsRequest): QuestTextsResponse {
-    let token = request.token;
-    let team = checkToken(token);
-    if (!team) {
-        return {success: false};
-    }
-
-    let questTexts = stageManager.getQuestionTexts(token, request.stageId);
-    if (!questTexts) {
         return {
-            success: false
+            success: true,
+            state: {
+                appState: teamManager.getAppState(token),
+                stagesNames: stageManager.getStagesNames()
+            }
         }
     }
 
-    return {
-        success: true,
+    function processAnswerUpdateRequest(req: AnswersUpdateRequest, fromClose: boolean): AnswersUpdateResponse {
+        let token = req.token;
+        let team = checkToken(token);
 
-        questTexts: {
-            stageId: request.stageId,
-            quests: questTexts.map(function (el, i) {
-                let text;
-                let type;
-                if (typeof el === "string") {
-                    text = el;
-                } else {
-                    text = el.text;
-                    type = el.type;
-                }
-
-                let result: Quest = {
-                    id: i,
-                    text: text
-                };
-                if (type) {
-                    result.type = type;
-                }
-
-                return result
-            })
+        if (!team) {
+            return {success: false};
         }
-    }
-}
 
-function processRemoveTeamRequest(request: RemoveTeamRequest): RemoveTeamResponse {
-    let token = request.token;
-    let team = checkToken(token);
-    if (!team || !team.admin) {
+        if (!checkTime(team)) {
+            logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
+            return {success: false};
+        }
+
+        let answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
         return {
-            success: false
+            success: !!answers,
+            stage: answers
         }
     }
 
-    let result = teamManager.removeTeam(request.teamTokenId);
-
-    return {
-        success: result
+    function processLoginRequest(req: LoginRequest): LoginInfo {
+        return teamManager.login(req.secretCode);
     }
-}
 
-function processGetTeamsRequest(request: TeamsRequest): TeamsResponse {
-    let token = request.token;
-    let team = checkToken(token);
-    if (!team || !team.admin) {
+    function processQuestTextsRequest(request: QuestTextsRequest): QuestTextsResponse {
+        let token = request.token;
+        let team = checkToken(token);
+        if (!team) {
+            return {success: false};
+        }
+
+        let questTexts = stageManager.getQuestionTexts(token, request.stageId);
+        if (!questTexts) {
+            return {
+                success: false
+            }
+        }
+
         return {
-            success: false
+            success: true,
+
+            questTexts: {
+                stageId: request.stageId,
+                quests: questTexts.map(function (el, i) {
+                    let text;
+                    let type;
+                    if (typeof el === "string") {
+                        text = el;
+                    } else {
+                        text = el.text;
+                        type = el.type;
+                    }
+
+                    let result: Quest = {
+                        id: i,
+                        text: text
+                    };
+                    if (type) {
+                        result.type = type;
+                    }
+
+                    return result
+                })
+            }
         }
     }
 
-    let result: TeamInfo[] = [];
-
-    for (let cur of TEAMS_CACHE) {
-        let teamSimple: TeamSimple = {
-            admin: cur.admin,
-            name: cur.name,
-            secretCode: cur.secretCode,
-            startFromStage: cur.startFromStage,
-            tokenId: cur.tokenId
+    function processRemoveTeamRequest(request: RemoveTeamRequest): RemoveTeamResponse {
+        let token = request.token;
+        let team = checkToken(token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            }
         }
 
-        let info: TeamInfo = {
-            team: cur,
-            appState: stageManager.getAppState(cur.tokenId)
-        };
-        if (cur.firstLoginDate) {
-            info.firstLoginDateEkbTimezone = toEkbString(cur.firstLoginDate);
-            info.endQuestEkbTimezone = toEkbString(cur.endQuestDate);
-        }
-        result.push(info);
-    }
+        let result = teamManager.removeTeam(request.teamTokenId);
 
-    return {
-        success: true,
-        teams: result
-    }
-}
-
-function processAddTeamRequest(request: AddTeamRequest): AddTeamResponse {
-    let team = teamManager.findTeamByToken(request.token);
-    if (!team || !team.admin) {
         return {
-            success: false
-        };
-    }
-
-    let newTeam = teamManager.createTeam(request.teamName);
-
-    return {success: !!newTeam}
-}
-
-
-export function checkToken(token: string): Team {
-    return teamManager.findTeamByCode(token);
-}
-
-export function toEkbString(date) {
-    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm")
-}
-
-
-function getRestTime(request: GetRestTimeRequest): GetRestTimeResponse {
-    let token = request.token;
-    let team = checkToken(token);
-    if (!team) {
-        return {
-            success: false
+            success: result
         }
     }
 
-    if (!team.endQuestDate) {
+    function processGetTeamsRequest(request: TeamsRequest): TeamsResponse {
+        let token = request.token;
+        let team = checkToken(token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            }
+        }
+
+        let result: TeamInfo[] = [];
+
+        for (let cur of dbStore.getTeams()) {
+            let teamSimple: TeamSimple = {
+                admin: cur.admin,
+                name: cur.name,
+                secretCode: cur.secretCode,
+                startFromStage: cur.startFromStage,
+                tokenId: cur.tokenId
+            }
+
+            let info: TeamInfo = {
+                team: cur,
+                appState: teamManager.getAppState(cur.tokenId)
+            };
+            if (cur.firstLoginDate) {
+                info.firstLoginDateEkbTimezone = toEkbString(cur.firstLoginDate);
+                info.endQuestEkbTimezone = toEkbString(cur.endQuestDate);
+            }
+            result.push(info);
+        }
+
         return {
-            restTimeInSeconds: "-1",
-            success: true
+            success: true,
+            teams: result
         }
     }
 
-    let result = diffWithCurrentTime(team);
-    return {
-        success: true,
-        restTimeInSeconds: String(result),
-        isCompleted: result <= 0
+    function processAddTeamRequest(request: AddTeamRequest): AddTeamResponse {
+        let team = teamManager.findTeamByToken(request.token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            };
+        }
+
+        let newTeam = teamManager.createTeam(request.teamName);
+
+        return {success: !!newTeam}
+    }
+
+
+    function checkToken(token: string): Team {
+        return teamManager.findTeamByCode(token);
+    }
+
+    function getRestTime(request: GetRestTimeRequest): GetRestTimeResponse {
+        let token = request.token;
+        let team = checkToken(token);
+        if (!team) {
+            return {
+                success: false
+            }
+        }
+
+        if (!team.endQuestDate) {
+            return {
+                restTimeInSeconds: "-1",
+                success: true
+            }
+        }
+
+        let result = diffWithCurrentTime(team);
+        return {
+            success: true,
+            restTimeInSeconds: String(result),
+            isCompleted: result <= 0
+        }
+    }
+
+
+    function checkTime(team: Team) {
+        if (!team.endQuestDate) {
+            return true;
+        }
+        return diffWithCurrentTime(team) > 0;
+    }
+
+
+    function diffWithCurrentTime(team: Team) {
+        let currentTime = moment();
+
+        let endTime = moment(team.endQuestDate);
+
+
+        return endTime.diff(currentTime, 'seconds');
     }
 }
 
 
-function checkTime(team: Team) {
-    if (!team.endQuestDate) {
-        return true;
-    }
-    return diffWithCurrentTime(team) > 0;
-}
-
-
-function diffWithCurrentTime(team: Team) {
-    let currentTime = moment();
-
-    let endTime = moment(team.endQuestDate);
-
-
-    return endTime.diff(currentTime, 'seconds');
-}

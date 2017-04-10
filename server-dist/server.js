@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var StageManager_1 = require("./StageManager");
 var TeamManager_1 = require("./TeamManager");
-var RedisClient_1 = require("./RedisClient");
 var utils_1 = require("./utils");
+var Store_1 = require("./Store");
+var StageManager_1 = require("./StageManager");
+var StateManager_1 = require("./StateManager");
 var minimist = require('minimist');
 var express = require('express');
 var serveStatic = require('serve-static');
@@ -15,8 +16,12 @@ var TARGET_PATH_MAPPING = {
     BUILD: './build',
     DIST: './dist'
 };
+var dbStore = Store_1.initStore(initServer);
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 function initServer() {
+    var stateManager = new StateManager_1.StateManager(dbStore);
+    var teamManager = new TeamManager_1.TeamManager(stateManager, dbStore);
+    var stageManager = new StageManager_1.StageManager(teamManager, stateManager);
     utils_1.logServer('Start creating server, port ' + PORT);
     var server = express();
     server.use(bodyParser.json());
@@ -60,7 +65,7 @@ function initServer() {
             });
             return;
         }
-        var result = StageManager_1.stageManager.closeStage(token, request.stageId);
+        var result = stageManager.closeStage(token, request.stageId);
         var response = {
             res: result,
             success: true
@@ -98,7 +103,7 @@ function initServer() {
             });
         }
         res.json({
-            success: StageManager_1.stageManager.unlockLastStage(request.teamTokenId)
+            success: stageManager.unlockLastStage(request.teamTokenId)
         });
     });
     server.post('/sign_s3', function (req, response, next) {
@@ -113,174 +118,169 @@ function initServer() {
         });
     });
     utils_1.logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
+    function processStateRequest(req) {
+        var token = req.token;
+        var team = checkToken(token);
+        if (!team) {
+            utils_1.logServer('Internal error. No team for token ' + token);
+            return { success: false };
+        }
+        return {
+            success: true,
+            state: {
+                appState: teamManager.getAppState(token),
+                stagesNames: stageManager.getStagesNames()
+            }
+        };
+    }
+    function processAnswerUpdateRequest(req, fromClose) {
+        var token = req.token;
+        var team = checkToken(token);
+        if (!team) {
+            return { success: false };
+        }
+        if (!checkTime(team)) {
+            utils_1.logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
+            return { success: false };
+        }
+        var answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
+        return {
+            success: !!answers,
+            stage: answers
+        };
+    }
+    function processLoginRequest(req) {
+        return teamManager.login(req.secretCode);
+    }
+    function processQuestTextsRequest(request) {
+        var token = request.token;
+        var team = checkToken(token);
+        if (!team) {
+            return { success: false };
+        }
+        var questTexts = stageManager.getQuestionTexts(token, request.stageId);
+        if (!questTexts) {
+            return {
+                success: false
+            };
+        }
+        return {
+            success: true,
+            questTexts: {
+                stageId: request.stageId,
+                quests: questTexts.map(function (el, i) {
+                    var text;
+                    var type;
+                    if (typeof el === "string") {
+                        text = el;
+                    }
+                    else {
+                        text = el.text;
+                        type = el.type;
+                    }
+                    var result = {
+                        id: i,
+                        text: text
+                    };
+                    if (type) {
+                        result.type = type;
+                    }
+                    return result;
+                })
+            }
+        };
+    }
+    function processRemoveTeamRequest(request) {
+        var token = request.token;
+        var team = checkToken(token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            };
+        }
+        var result = teamManager.removeTeam(request.teamTokenId);
+        return {
+            success: result
+        };
+    }
+    function processGetTeamsRequest(request) {
+        var token = request.token;
+        var team = checkToken(token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            };
+        }
+        var result = [];
+        for (var _i = 0, _a = dbStore.getTeams(); _i < _a.length; _i++) {
+            var cur = _a[_i];
+            var teamSimple = {
+                admin: cur.admin,
+                name: cur.name,
+                secretCode: cur.secretCode,
+                startFromStage: cur.startFromStage,
+                tokenId: cur.tokenId
+            };
+            var info = {
+                team: cur,
+                appState: teamManager.getAppState(cur.tokenId)
+            };
+            if (cur.firstLoginDate) {
+                info.firstLoginDateEkbTimezone = utils_1.toEkbString(cur.firstLoginDate);
+                info.endQuestEkbTimezone = utils_1.toEkbString(cur.endQuestDate);
+            }
+            result.push(info);
+        }
+        return {
+            success: true,
+            teams: result
+        };
+    }
+    function processAddTeamRequest(request) {
+        var team = teamManager.findTeamByToken(request.token);
+        if (!team || !team.admin) {
+            return {
+                success: false
+            };
+        }
+        var newTeam = teamManager.createTeam(request.teamName);
+        return { success: !!newTeam };
+    }
+    function checkToken(token) {
+        return teamManager.findTeamByCode(token);
+    }
+    function getRestTime(request) {
+        var token = request.token;
+        var team = checkToken(token);
+        if (!team) {
+            return {
+                success: false
+            };
+        }
+        if (!team.endQuestDate) {
+            return {
+                restTimeInSeconds: "-1",
+                success: true
+            };
+        }
+        var result = diffWithCurrentTime(team);
+        return {
+            success: true,
+            restTimeInSeconds: String(result),
+            isCompleted: result <= 0
+        };
+    }
+    function checkTime(team) {
+        if (!team.endQuestDate) {
+            return true;
+        }
+        return diffWithCurrentTime(team) > 0;
+    }
+    function diffWithCurrentTime(team) {
+        var currentTime = moment();
+        var endTime = moment(team.endQuestDate);
+        return endTime.diff(currentTime, 'seconds');
+    }
 }
 exports.initServer = initServer;
-function processStateRequest(req) {
-    var token = req.token;
-    var team = checkToken(token);
-    if (!team) {
-        utils_1.logServer('Internal error. No team for token ' + token);
-        return { success: false };
-    }
-    return {
-        success: true,
-        state: {
-            appState: StageManager_1.stageManager.getAppState(token),
-            stagesNames: StageManager_1.stageManager.getStagesNames()
-        }
-    };
-}
-function processAnswerUpdateRequest(req, fromClose) {
-    var token = req.token;
-    var team = checkToken(token);
-    if (!team) {
-        return { success: false };
-    }
-    if (!checkTime(team)) {
-        utils_1.logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
-        return { success: false };
-    }
-    var answers = StageManager_1.stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
-    return {
-        success: !!answers,
-        stage: answers
-    };
-}
-function processLoginRequest(req) {
-    return TeamManager_1.teamManager.login(req.secretCode);
-}
-function processQuestTextsRequest(request) {
-    var token = request.token;
-    var team = checkToken(token);
-    if (!team) {
-        return { success: false };
-    }
-    var questTexts = StageManager_1.stageManager.getQuestionTexts(token, request.stageId);
-    if (!questTexts) {
-        return {
-            success: false
-        };
-    }
-    return {
-        success: true,
-        questTexts: {
-            stageId: request.stageId,
-            quests: questTexts.map(function (el, i) {
-                var text;
-                var type;
-                if (typeof el === "string") {
-                    text = el;
-                }
-                else {
-                    text = el.text;
-                    type = el.type;
-                }
-                var result = {
-                    id: i,
-                    text: text
-                };
-                if (type) {
-                    result.type = type;
-                }
-                return result;
-            })
-        }
-    };
-}
-function processRemoveTeamRequest(request) {
-    var token = request.token;
-    var team = checkToken(token);
-    if (!team || !team.admin) {
-        return {
-            success: false
-        };
-    }
-    var result = TeamManager_1.teamManager.removeTeam(request.teamTokenId);
-    return {
-        success: result
-    };
-}
-function processGetTeamsRequest(request) {
-    var token = request.token;
-    var team = checkToken(token);
-    if (!team || !team.admin) {
-        return {
-            success: false
-        };
-    }
-    var result = [];
-    for (var _i = 0, TEAMS_CACHE_1 = RedisClient_1.TEAMS_CACHE; _i < TEAMS_CACHE_1.length; _i++) {
-        var cur = TEAMS_CACHE_1[_i];
-        var teamSimple = {
-            admin: cur.admin,
-            name: cur.name,
-            secretCode: cur.secretCode,
-            startFromStage: cur.startFromStage,
-            tokenId: cur.tokenId
-        };
-        var info = {
-            team: cur,
-            appState: StageManager_1.stageManager.getAppState(cur.tokenId)
-        };
-        if (cur.firstLoginDate) {
-            info.firstLoginDateEkbTimezone = toEkbString(cur.firstLoginDate);
-            info.endQuestEkbTimezone = toEkbString(cur.endQuestDate);
-        }
-        result.push(info);
-    }
-    return {
-        success: true,
-        teams: result
-    };
-}
-function processAddTeamRequest(request) {
-    var team = TeamManager_1.teamManager.findTeamByToken(request.token);
-    if (!team || !team.admin) {
-        return {
-            success: false
-        };
-    }
-    var newTeam = TeamManager_1.teamManager.createTeam(request.teamName);
-    return { success: !!newTeam };
-}
-function checkToken(token) {
-    return TeamManager_1.teamManager.findTeamByCode(token);
-}
-exports.checkToken = checkToken;
-function toEkbString(date) {
-    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
-}
-exports.toEkbString = toEkbString;
-function getRestTime(request) {
-    var token = request.token;
-    var team = checkToken(token);
-    if (!team) {
-        return {
-            success: false
-        };
-    }
-    if (!team.endQuestDate) {
-        return {
-            restTimeInSeconds: "-1",
-            success: true
-        };
-    }
-    var result = diffWithCurrentTime(team);
-    return {
-        success: true,
-        restTimeInSeconds: String(result),
-        isCompleted: result <= 0
-    };
-}
-function checkTime(team) {
-    if (!team.endQuestDate) {
-        return true;
-    }
-    return diffWithCurrentTime(team) > 0;
-}
-function diffWithCurrentTime(team) {
-    var currentTime = moment();
-    var endTime = moment(team.endQuestDate);
-    return endTime.diff(currentTime, 'seconds');
-}
 //# sourceMappingURL=server.js.map
