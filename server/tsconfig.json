@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "sourceMap": true,
-    "outFile": "../server-dist/server.js"
+    "module": "commonjs",
+    "outDir": "../server-dist",
+    "sourceMap": true
   },
   "files": [
     "all-text.ts",

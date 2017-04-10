@@ -1,16 +1,9 @@
-export interface RawStage {
-    name: string,
-    quests: (string | { type: QuestType, text: string })[]
-    status?: StageStatus
-}
-
-export let all_text: { stages: RawStage[], bonus: RawStage };
-
-function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
-    if (all_text) {
-        return all_text;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+function getDefaultData() {
+    if (exports.all_text) {
+        return exports.all_text;
     }
-
     return {
         stages: [
             {
@@ -39,17 +32,17 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
                     "Что такое класс? Что такое объект? В чем разница?",
                     "Что такое член класса? Чем он отличается от других?",
                 ]
-            }],
+            }
+        ],
         bonus: {
             name: "О программистах",
-
             quests: [
                 "Клонируйте овечку долли и докажите, что это ее копия",
                 "Сколько попугает в жирафе? А есть он ходит по диагонали?",
                 "Убейте какое-нибудь животное и пришлите фотографию"
             ]
         }
-    }
+    };
 }
-
-export const defaultData = getDefaultData();
+exports.defaultData = getDefaultData();
+//# sourceMappingURL=data.js.map

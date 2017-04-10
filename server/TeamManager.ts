@@ -1,6 +1,10 @@
-const COUNT_HOURS_TO_SOLVE = 7;
+import {stageManager} from "./StageManager";
+import {APP_STATE_KEY, client, log, TEAMS_CACHE, TEAMS_KEY} from "./RedisClient";
+import {toEkbString} from "./server";
+import {defaultData} from "./data";
+export const COUNT_HOURS_TO_SOLVE = 7;
 
-class TeamManager {
+export class TeamManager {
     findTeamByCode(secretCode:string):Team {
         if (!secretCode) {
             return null;
@@ -24,12 +28,12 @@ class TeamManager {
     }
 
     removeTeam(tokenId):boolean {
-        var team = this.findTeamByToken(tokenId);
+        let team = this.findTeamByToken(tokenId);
         if (!team) {
             return false;
         }
 
-        var index = TEAMS_CACHE.indexOf(team);
+        const index = TEAMS_CACHE.indexOf(team);
         if (index == -1) {
             return false;
         }
@@ -38,7 +42,7 @@ class TeamManager {
         delete stageManager.states[tokenId];
         log('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
 
-        var multi = client.multi();
+        const multi = client.multi();
         multi.hdel(TEAMS_KEY, team.tokenId);
         multi.hdel(APP_STATE_KEY, team.tokenId);
         multi.exec(() => {
@@ -50,18 +54,18 @@ class TeamManager {
     }
 
     createTeam(name:string):Team {
-        var secretCode = TeamManager.makeid();
-        var newStartFrom = this.getNextStartFromStage();
-        var team:Team = {
+        const secretCode = TeamManager.makeid();
+        const newStartFrom = this.getNextStartFromStage();
+        const team: Team = {
             name,
             secretCode,
             tokenId: secretCode,
             startFromStage: newStartFrom
-        }
+        };
 
         TEAMS_CACHE.push(team);
 
-        var token = team.tokenId;
+        const token = team.tokenId;
         log('Added team to app: ' + team.name + ' ' + team.secretCode);
         this.saveTeamToDB(team, () => {
             log('Saved team to database: ' + team.name);
@@ -78,12 +82,12 @@ class TeamManager {
     }
 
     login(secretCode:string):LoginInfo {
-        var team = this.findTeamByCode(secretCode);
+        const team = this.findTeamByCode(secretCode);
         if (team) {
             if (!team.firstLoginDate && !team.admin) {
-                var date = new Date();
+                const date = new Date();
 
-                var endDate = new Date(); //new object!
+                const endDate = new Date(); //new object!
                 endDate.setTime(date.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
@@ -105,9 +109,9 @@ class TeamManager {
     }
 
     private getNextStartFromStage() {
-        var lastTeam = TEAMS_CACHE[TEAMS_CACHE.length - 1];
-        var startFromStage = lastTeam.startFromStage;
-        var nextStage = startFromStage + 1;
+        const lastTeam = TEAMS_CACHE[TEAMS_CACHE.length - 1];
+        const startFromStage = lastTeam.startFromStage;
+        const nextStage = startFromStage + 1;
         if (nextStage < defaultData.stages.length) {
             return nextStage;
         }
@@ -120,14 +124,14 @@ class TeamManager {
     }
 
     private static makeid() {
-        var text = "";
-        var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let text = "";
+        const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
 
-        for (var i = 0; i < 8; i++)
+        for (let i = 0; i < 8; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
 
         return text;
     }
 }
 
-var teamManager:TeamManager = new TeamManager();
+export const teamManager: TeamManager = new TeamManager();

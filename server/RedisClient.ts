@@ -1,6 +1,10 @@
-var redis = require("redis");
-var portArg = process.env.REDIS_URL;
-var client = portArg ? redis.createClient(portArg) : redis.createClient();
+import {stageManager} from "./StageManager";
+import {initServer} from "./server";
+import {defaultData} from "./data";
+
+const redis = require("redis");
+const portArg = process.env.REDIS_URL;
+export const client = portArg ? redis.createClient(portArg) : redis.createClient();
 
 client.on("error", function (err) {
     log('Error start redis listener');
@@ -8,23 +12,23 @@ client.on("error", function (err) {
 
 log('Start redis client');
 
-const TEAMS_KEY = "teams";
-const APP_STATE_KEY = "app_state";
+export const TEAMS_KEY = "teams";
+export const APP_STATE_KEY = "app_state";
 
-var TEAMS_CACHE:Team[] = [];
+export const TEAMS_CACHE: Team[] = [];
 
-var initTeams = () => {
-    var multi = client.multi();
+const initTeams = () => {
+    const multi = client.multi();
 
     multi.hgetall(TEAMS_KEY, function (err, object) {
-        var count = 0;
-        for (var l in object) {
+        let count = 0;
+        for (let l in object) {
             if (object.hasOwnProperty(l)) {
-                var value = object[l];
-                var items = JSON.parse(value);
+                const value = object[l];
+                const items = JSON.parse(value);
                 if (items.firstLoginDate) {
-                    var firstLoginDate:any = items.firstLoginDate;
-                    var endDate:any = items.endQuestDate;
+                    const firstLoginDate: any = items.firstLoginDate;
+                    const endDate: any = items.endQuestDate;
                     //fix date after serialization
                     items.firstLoginDate = new Date(firstLoginDate);
                     items.endQuestDate = new Date(endDate);
@@ -40,10 +44,10 @@ var initTeams = () => {
         if (!object) {
             log('ERROR! No states');
         }
-        var count = 0;
-        for (var l in object) {
+        let count = 0;
+        for (let l in object) {
             if (object.hasOwnProperty(l)) {
-                var value = object[l];
+                const value = object[l];
                 stageManager.states[l] = JSON.parse(value);
                 log('Load state for team ' + (count++) + ': with token ' + l);
             }
@@ -53,16 +57,16 @@ var initTeams = () => {
     multi.exec(() => {
         initServer();
     })
-}
+};
 
 
 client.exists(TEAMS_KEY, function (err, reply) {
     log('Database ' + reply ? "initialized" : "empty");
-    var defaultTeams = getDefaultTeams();
+    const defaultTeams = getDefaultTeams();
 
-    var toPush = {};
-    var multi = client.multi();
-    for (var team of defaultTeams) {
+    const toPush = {};
+    const multi = client.multi();
+    for (let team of defaultTeams) {
         multi.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team));
         multi.hset(APP_STATE_KEY, team.tokenId, JSON.stringify(initDefaultStateObject(team)));
         if (!reply) {
@@ -83,7 +87,7 @@ client.exists(TEAMS_KEY, function (err, reply) {
 
 
 function getDefaultTeams() {
-    var teams = [];
+    const teams = [];
 
     teams.push({
             name: "Тестовая админская команда",
@@ -97,20 +101,17 @@ function getDefaultTeams() {
 
 }
 
-function initDefaultStateObject(team:Team) {
-
-
-    var stages:Stage[] = [];
-    var appState:AppState = {
+export function initDefaultStateObject(team:Team) {
+    const stages: Stage[] = [];
+    const appState: AppState = {
         bonus: null,
         stages
-    }
-
-    var defaultStages = defaultData.stages;
-    var startFromStage = team.startFromStage;
-    var pushNumber:number = 0;
-    for (var i = startFromStage; i < defaultStages.length; i++) {
-        var status = i == startFromStage ? StageStatus.OPEN : StageStatus.LOCKED;
+    };
+    const defaultStages = defaultData.stages;
+    const startFromStage = team.startFromStage;
+    let pushNumber: number = 0;
+    for (let i = startFromStage; i < defaultStages.length; i++) {
+        const status = i == startFromStage ? StageStatus.OPEN : StageStatus.LOCKED;
         stages.push({
             id: String(i),
 
@@ -119,8 +120,8 @@ function initDefaultStateObject(team:Team) {
         });
     }
 
-    for (var i = 0; i < startFromStage; i++) {
-        var item:Stage = {
+    for (let i = 0; i < startFromStage; i++) {
+        const item: Stage = {
             id: String(i),
             status: StageStatus.LOCKED,
             showNumber: pushNumber++
@@ -141,7 +142,7 @@ function initDefaultStateObject(team:Team) {
     return appState;
 }
 
-function log(message:string) {
+export function log(message:string) {
     console.log('DMM QUEST: ' + message);
 }
 

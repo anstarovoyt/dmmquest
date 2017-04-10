@@ -1,3 +1,7 @@
+import {stageManager} from "./StageManager";
+import {teamManager} from "./TeamManager";
+import {log, TEAMS_CACHE} from "./RedisClient";
+
 let minimist = require('minimist');
 let express = require('express');
 let serveStatic = require('serve-static');
@@ -13,7 +17,7 @@ let TARGET_PATH_MAPPING = {
 
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
-function initServer() {
+export function initServer() {
     log('Start creating server');
     let server = express();
 
@@ -29,18 +33,18 @@ function initServer() {
         .listen(PORT);
 
     server.post('/quest-texts', (req, res, next) => {
-        let request:QuestTextsRequest = req.body;
+        let request: QuestTextsRequest = req.body;
 
         res.json(processQuestTextsRequest(request));
     });
 
     server.post('/state', (req, res, next) => {
-        let request:AppStateRequest = req.body;
+        let request: AppStateRequest = req.body;
         res.json(processStateRequest(request));
     });
 
     server.post('/login', (req, res, next) => {
-        let request:LoginRequest = req.body;
+        let request: LoginRequest = req.body;
 
         if (!request.secretCode) {
             res.json({
@@ -53,14 +57,14 @@ function initServer() {
     });
 
     server.post('/save', (req, res, next) => {
-        let request:AnswersUpdateRequest = req.body;
+        let request: AnswersUpdateRequest = req.body;
 
 
         res.json(processAnswerUpdateRequest(request, false));
     });
     //
     server.post('/complete', (req, res, next) => {
-        let request:AnswersUpdateRequest = req.body;
+        let request: AnswersUpdateRequest = req.body;
 
         let token = request.token;
         let options = processAnswerUpdateRequest(request, true);
@@ -71,7 +75,7 @@ function initServer() {
             return;
         }
         let result = stageManager.closeStage(token, request.stageId);
-        let response:CompleteStageResponse = {
+        let response: CompleteStageResponse = {
             res: result,
             success: true
         };
@@ -87,28 +91,28 @@ function initServer() {
     })
 
     server.post('/teams', (req, res, next) => {
-        let request:TeamsRequest = req.body;
+        let request: TeamsRequest = req.body;
         res.json(processGetTeamsRequest(request));
     });
 
     server.post('/remove-team', (req, res, next) => {
-        let request:RemoveTeamRequest = req.body;
+        let request: RemoveTeamRequest = req.body;
         res.json(processRemoveTeamRequest(request));
     });
 
 
     server.post('/add-team', (req, res, next) => {
-        let request:AddTeamRequest = req.body;
+        let request: AddTeamRequest = req.body;
         res.json(processAddTeamRequest(request));
     });
 
     server.post('/rest-time', (req, res, next) => {
-        let request:GetRestTimeRequest = req.body;
+        let request: GetRestTimeRequest = req.body;
         res.json(getRestTime(request));
     });
 
     server.post('/unlock-stage', (req, res, next) => {
-        let request:UnlockLastCompletedStageRequest = req.body;
+        let request: UnlockLastCompletedStageRequest = req.body;
         let team = checkToken(request.token);
         if (!team || !team.admin) {
             res.json({
@@ -122,7 +126,7 @@ function initServer() {
     });
 
     server.post('/sign_s3', (req, response, next) => {
-        let request:GetAWSSignRequest = req.body;
+        let request: GetAWSSignRequest = req.body;
         let team = checkToken(request.token);
         if (!team) {
             return;
@@ -139,7 +143,7 @@ function initServer() {
 }
 
 
-function processStateRequest(req:AppStateRequest):FullAppStateResponse {
+function processStateRequest(req: AppStateRequest): FullAppStateResponse {
     let token = req.token;
     let team = checkToken(token);
     if (!team) {
@@ -156,7 +160,7 @@ function processStateRequest(req:AppStateRequest):FullAppStateResponse {
     }
 }
 
-function processAnswerUpdateRequest(req:AnswersUpdateRequest, fromClose:boolean):AnswersUpdateResponse {
+function processAnswerUpdateRequest(req: AnswersUpdateRequest, fromClose: boolean): AnswersUpdateResponse {
     let token = req.token;
     let team = checkToken(token);
 
@@ -176,11 +180,11 @@ function processAnswerUpdateRequest(req:AnswersUpdateRequest, fromClose:boolean)
     }
 }
 
-function processLoginRequest(req:LoginRequest):LoginInfo {
+function processLoginRequest(req: LoginRequest): LoginInfo {
     return teamManager.login(req.secretCode);
 }
 
-function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse {
+function processQuestTextsRequest(request: QuestTextsRequest): QuestTextsResponse {
     let token = request.token;
     let team = checkToken(token);
     if (!team) {
@@ -209,7 +213,7 @@ function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse 
                     type = el.type;
                 }
 
-                let result:Quest = {
+                let result: Quest = {
                     id: i,
                     text: text
                 };
@@ -223,7 +227,7 @@ function processQuestTextsRequest(request:QuestTextsRequest):QuestTextsResponse 
     }
 }
 
-function processRemoveTeamRequest(request:RemoveTeamRequest):RemoveTeamResponse {
+function processRemoveTeamRequest(request: RemoveTeamRequest): RemoveTeamResponse {
     let token = request.token;
     let team = checkToken(token);
     if (!team || !team.admin) {
@@ -239,7 +243,7 @@ function processRemoveTeamRequest(request:RemoveTeamRequest):RemoveTeamResponse 
     }
 }
 
-function processGetTeamsRequest(request:TeamsRequest):TeamsResponse {
+function processGetTeamsRequest(request: TeamsRequest): TeamsResponse {
     let token = request.token;
     let team = checkToken(token);
     if (!team || !team.admin) {
@@ -248,10 +252,10 @@ function processGetTeamsRequest(request:TeamsRequest):TeamsResponse {
         }
     }
 
-    let result:TeamInfo[] = [];
+    let result: TeamInfo[] = [];
 
     for (let cur of TEAMS_CACHE) {
-        let teamSimple:TeamSimple = {
+        let teamSimple: TeamSimple = {
             admin: cur.admin,
             name: cur.name,
             secretCode: cur.secretCode,
@@ -259,7 +263,7 @@ function processGetTeamsRequest(request:TeamsRequest):TeamsResponse {
             tokenId: cur.tokenId
         }
 
-        let info:TeamInfo = {
+        let info: TeamInfo = {
             team: cur,
             appState: stageManager.getAppState(cur.tokenId)
         };
@@ -276,7 +280,7 @@ function processGetTeamsRequest(request:TeamsRequest):TeamsResponse {
     }
 }
 
-function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
+function processAddTeamRequest(request: AddTeamRequest): AddTeamResponse {
     let team = teamManager.findTeamByToken(request.token);
     if (!team || !team.admin) {
         return {
@@ -290,16 +294,16 @@ function processAddTeamRequest(request:AddTeamRequest):AddTeamResponse {
 }
 
 
-function checkToken(token:string):Team {
+export function checkToken(token: string): Team {
     return teamManager.findTeamByCode(token);
 }
 
-function toEkbString(date) {
+export function toEkbString(date) {
     return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm")
 }
 
 
-function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
+function getRestTime(request: GetRestTimeRequest): GetRestTimeResponse {
     let token = request.token;
     let team = checkToken(token);
     if (!team) {
@@ -324,7 +328,7 @@ function getRestTime(request:GetRestTimeRequest):GetRestTimeResponse {
 }
 
 
-function checkTime(team:Team) {
+function checkTime(team: Team) {
     if (!team.endQuestDate) {
         return true;
     }
@@ -332,7 +336,7 @@ function checkTime(team:Team) {
 }
 
 
-function diffWithCurrentTime(team:Team) {
+function diffWithCurrentTime(team: Team) {
     let currentTime = moment();
 
     let endTime = moment(team.endQuestDate);

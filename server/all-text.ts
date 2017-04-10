@@ -1,4 +1,7 @@
-var all_text:{stages:RawStage[],bonus:RawStage} = {
+import {RawStage} from "./data";
+
+
+const all_text: { stages: RawStage[], bonus: RawStage } = {
     stages: [
         {
             name: "Этап «Мост Макарова»",

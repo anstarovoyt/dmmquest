@@ -1,4 +1,9 @@
-class StageManager {
+import {teamManager} from "./TeamManager";
+import {APP_STATE_KEY, client, initDefaultStateObject, log} from './RedisClient';
+import {toEkbString} from "./server";
+import {defaultData} from "./data";
+
+export class StageManager {
 
     states:{
         [token:string]:AppState;
@@ -10,7 +15,7 @@ class StageManager {
 
 
     setAnswers(token:string, stageId:string, answers:QuestAnswer[], fromClose:boolean) {
-        var stage:Stage = this.getStage(token, stageId);
+        let stage: Stage = this.getStage(token, stageId);
         if (!stage) {
             return null;
         }
@@ -24,7 +29,7 @@ class StageManager {
                 stage.questAnswers = {}
             }
 
-            var oldAnswer = stage.questAnswers[answer.id];
+            const oldAnswer = stage.questAnswers[answer.id];
             if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
                 continue;
             }
@@ -33,7 +38,7 @@ class StageManager {
         }
 
 
-        var stagesName = this.stagesNames[stageId];
+        const stagesName = this.stagesNames[stageId];
         log('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
 
         this.saveAppStateToDB(token, this.getAppState(token), (err) => {
@@ -52,7 +57,7 @@ class StageManager {
 
 
     closeStage(token:string, stageId:string):AppState {
-        var stage:Stage = this.getStage(token, stageId);
+        let stage: Stage = this.getStage(token, stageId);
         if (!stage || stage.status != StageStatus.OPEN) {
             return this.getAppState(token);
         }
@@ -60,8 +65,8 @@ class StageManager {
 
         stage.status = StageStatus.COMPLETED;
         stage.closedTime = toEkbString(new Date());
-        var appState = this.getAppState(token);
-        var nextStage = this.getNextStage(appState, stage);
+        let appState = this.getAppState(token);
+        const nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
             nextStage.status = StageStatus.OPEN;
         }
@@ -72,10 +77,10 @@ class StageManager {
             appState.bonus.closedTime = toEkbString(new Date());
         }
 
-        var info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
+        const info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
         log('Closed stage token ' + token + ' stage ' + info);
 
-        var appState = this.getAppState(token);
+        appState = this.getAppState(token);
 
         this.saveAppStateToDB(token, appState, (err) => {
             if (!err) {
@@ -89,8 +94,8 @@ class StageManager {
 
 
     getQuestionTexts(token:string, stageId:string):(string|{type:QuestType, text:string})[] {
-        var appState = this.getAppState(token);
-        var stage = getStageById(appState, stageId);
+        const appState = this.getAppState(token);
+        let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
             return null;
         }
@@ -100,7 +105,7 @@ class StageManager {
             return defaultData.bonus.quests;
         }
 
-        var stageInfo = defaultData.stages[Number(stageId)];
+        const stageInfo = defaultData.stages[Number(stageId)];
 
 
         return stageInfo && stageInfo.quests;
@@ -108,16 +113,16 @@ class StageManager {
 
     unlockLastStage(tokenId:string):boolean {
 
-        var appState = this.getAppState(tokenId);
-        var team = teamManager.findTeamByToken(tokenId);
+        const appState = this.getAppState(tokenId);
+        let team = teamManager.findTeamByToken(tokenId);
         if (!team) {
             log('Unlock request for incorrect team ' + team.tokenId);
             return false;
         }
-        var lastCompletedStage:Stage = null;
-        var number = 0;
-        var stages = appState.stages;
-        for (var stage of stages) {
+        let lastCompletedStage: Stage = null;
+        let number = 0;
+        const stages = appState.stages;
+        for (let stage of stages) {
             number++;
             if (stage.status == StageStatus.COMPLETED) {
                 lastCompletedStage = stage;
@@ -155,9 +160,9 @@ class StageManager {
             return null;
         }
 
-        var showNumber = stage.showNumber;
+        const showNumber = stage.showNumber;
 
-        var nextStage = appState.stages[showNumber + 1];
+        let nextStage = appState.stages[showNumber + 1];
         if (!nextStage) {
             return null;
         }
@@ -166,7 +171,7 @@ class StageManager {
     }
 
     getStage(token:string, stageId:string) {
-        var appState = this.getAppState(token);
+        let appState = this.getAppState(token);
 
         if (!appState) {
             return null;
@@ -176,7 +181,7 @@ class StageManager {
     }
 
     getAppState(token:string):AppState {
-        var state = this.states[token];
+        const state = this.states[token];
         if (state) {
             return state;
         }
@@ -186,7 +191,7 @@ class StageManager {
 
     createAppState(token:string) {
         log('Init state:' + token);
-        var team = teamManager.findTeamByToken(token);
+        let team = teamManager.findTeamByToken(token);
         if (!team) {
             return;
         }
@@ -200,11 +205,11 @@ class StageManager {
 
 }
 
-function getStageById(state:AppState, stageId:string) {
+export function getStageById(state:AppState, stageId:string) {
     if (!state) {
         return null;
     }
-    for (var stage of state.stages) {
+    for (const stage of state.stages) {
         if (stage.id == stageId) {
             return stage;
         }
@@ -217,11 +222,11 @@ function getStageById(state:AppState, stageId:string) {
     return null;
 }
 
-function getStagesNames() {
-    var result:any = {};
-    var stages = defaultData.stages;
-    for (var i = 0; i < stages.length; i++) {
-        var rawStage = stages[i];
+export function getStagesNames() {
+    const result: any = {};
+    const stages = defaultData.stages;
+    for (let i = 0; i < stages.length; i++) {
+        const rawStage = stages[i];
 
         result[String(i)] = rawStage.name;
     }
@@ -233,4 +238,4 @@ function getStagesNames() {
 }
 
 
-var stageManager = new StageManager();
+export const stageManager = new StageManager();
