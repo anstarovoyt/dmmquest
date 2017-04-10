@@ -2,7 +2,7 @@
   "name": "dmmquest",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack && tsc && node server.js",
+    "build": "webpack && node server.js",
     "dist": "webpack --TARGET=DIST",
     "start": "node server.js --TARGET=DIST"
   },
