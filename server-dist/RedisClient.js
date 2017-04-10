@@ -3,13 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var StageManager_1 = require("./StageManager");
 var server_1 = require("./server");
 var data_1 = require("./data");
+var utils_1 = require("./utils");
 var redis = require("redis");
 var portArg = process.env.REDIS_URL;
 exports.client = portArg ? redis.createClient(portArg) : redis.createClient();
 exports.client.on("error", function (err) {
-    log('Error start redis listener');
+    utils_1.logServer('Error start redis listener');
 });
-log('Start redis client');
+utils_1.logServer('Start redis client');
 exports.TEAMS_KEY = "teams";
 exports.APP_STATE_KEY = "app_state";
 exports.TEAMS_CACHE = [];
@@ -28,21 +29,21 @@ var initTeams = function () {
                     items.firstLoginDate = new Date(firstLoginDate);
                     items.endQuestDate = new Date(endDate);
                 }
-                log('Load team ' + (count++) + ": " + items.name + ' token: ' + items.tokenId);
+                utils_1.logServer('Load team ' + (count++) + ": " + items.name + ' token: ' + items.tokenId);
                 exports.TEAMS_CACHE.push(items);
             }
         }
     });
     multi.hgetall(exports.APP_STATE_KEY, function (err, object) {
         if (!object) {
-            log('ERROR! No states');
+            utils_1.logServer('ERROR! No states');
         }
         var count = 0;
         for (var l in object) {
             if (object.hasOwnProperty(l)) {
                 var value = object[l];
                 StageManager_1.stageManager.states[l] = JSON.parse(value);
-                log('Load state for team ' + (count++) + ': with token ' + l);
+                utils_1.logServer('Load state for team ' + (count++) + ': with token ' + l);
             }
         }
     });
@@ -51,7 +52,7 @@ var initTeams = function () {
     });
 };
 exports.client.exists(exports.TEAMS_KEY, function (err, reply) {
-    log('Database ' + reply ? "initialized" : "empty");
+    utils_1.logServer('Database ' + reply ? "initialized" : "empty");
     var defaultTeams = getDefaultTeams();
     var toPush = {};
     var multi = exports.client.multi();
@@ -62,7 +63,7 @@ exports.client.exists(exports.TEAMS_KEY, function (err, reply) {
         if (!reply) {
             exports.TEAMS_CACHE.push(team);
         }
-        log('Update or store default team: ' + team.name + ' token: ' + team.secretCode);
+        utils_1.logServer('Update or store default team: ' + team.name + ' token: ' + team.secretCode);
     }
     multi.exec(function () {
         if (reply) {
@@ -119,8 +120,21 @@ function initDefaultStateObject(team) {
     return appState;
 }
 exports.initDefaultStateObject = initDefaultStateObject;
-function log(message) {
-    console.log('DMM QUEST: ' + message);
+function saveTeamDB(team, callback) {
+    exports.client.hset(exports.TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
 }
-exports.log = log;
+exports.saveTeamDB = saveTeamDB;
+function saveAppDB(token, state, callback) {
+    exports.client.hset(exports.APP_STATE_KEY, token, JSON.stringify(state), callback);
+}
+exports.saveAppDB = saveAppDB;
+function removeTeamDB(team) {
+    var multi = exports.client.multi();
+    multi.hdel(exports.TEAMS_KEY, team.tokenId);
+    multi.hdel(exports.APP_STATE_KEY, team.tokenId);
+    multi.exec(function () {
+        utils_1.logServer('ALERT: Removed team and state from database ' + team.name);
+    });
+}
+exports.removeTeamDB = removeTeamDB;
 //# sourceMappingURL=RedisClient.js.map

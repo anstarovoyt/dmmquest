@@ -1,16 +1,17 @@
 import {stageManager} from "./StageManager";
 import {initServer} from "./server";
 import {defaultData} from "./data";
+import {logServer} from "./utils";
 
 const redis = require("redis");
 const portArg = process.env.REDIS_URL;
 export const client = portArg ? redis.createClient(portArg) : redis.createClient();
 
 client.on("error", function (err) {
-    log('Error start redis listener');
+    logServer('Error start redis listener');
 });
 
-log('Start redis client');
+logServer('Start redis client');
 
 export const TEAMS_KEY = "teams";
 export const APP_STATE_KEY = "app_state";
@@ -33,7 +34,7 @@ const initTeams = () => {
                     items.firstLoginDate = new Date(firstLoginDate);
                     items.endQuestDate = new Date(endDate);
                 }
-                log('Load team ' + (count++) + ": " + items.name + ' token: ' + items.tokenId);
+                logServer('Load team ' + (count++) + ": " + items.name + ' token: ' + items.tokenId);
 
                 TEAMS_CACHE.push(items);
             }
@@ -42,14 +43,14 @@ const initTeams = () => {
 
     multi.hgetall(APP_STATE_KEY, function (err, object) {
         if (!object) {
-            log('ERROR! No states');
+            logServer('ERROR! No states');
         }
         let count = 0;
         for (let l in object) {
             if (object.hasOwnProperty(l)) {
                 const value = object[l];
                 stageManager.states[l] = JSON.parse(value);
-                log('Load state for team ' + (count++) + ': with token ' + l);
+                logServer('Load state for team ' + (count++) + ': with token ' + l);
             }
         }
     });
@@ -61,7 +62,7 @@ const initTeams = () => {
 
 
 client.exists(TEAMS_KEY, function (err, reply) {
-    log('Database ' + reply ? "initialized" : "empty");
+    logServer('Database ' + reply ? "initialized" : "empty");
     const defaultTeams = getDefaultTeams();
 
     const toPush = {};
@@ -73,7 +74,7 @@ client.exists(TEAMS_KEY, function (err, reply) {
             TEAMS_CACHE.push(team);
         }
 
-        log('Update or store default team: ' + team.name + ' token: ' + team.secretCode)
+        logServer('Update or store default team: ' + team.name + ' token: ' + team.secretCode)
     }
 
     multi.exec(() => {
@@ -90,18 +91,18 @@ function getDefaultTeams() {
     const teams = [];
 
     teams.push({
-            name: "Тестовая админская команда",
-            secretCode: "test+test-",
-            tokenId: "test+test-",
-            admin: true,
-            startFromStage: 0
-        });
+        name: "Тестовая админская команда",
+        secretCode: "test+test-",
+        tokenId: "test+test-",
+        admin: true,
+        startFromStage: 0
+    });
 
     return teams;
 
 }
 
-export function initDefaultStateObject(team:Team) {
+export function initDefaultStateObject(team: Team) {
     const stages: Stage[] = [];
     const appState: AppState = {
         bonus: null,
@@ -142,8 +143,22 @@ export function initDefaultStateObject(team:Team) {
     return appState;
 }
 
-export function log(message:string) {
-    console.log('DMM QUEST: ' + message);
+
+export function saveTeamDB(team: Team, callback) {
+    client.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
 }
 
+export function saveAppDB(token: string, state: AppState, callback?: (res) => void) {
+    client.hset(APP_STATE_KEY, token, JSON.stringify(state), callback);
+}
+
+
+export function removeTeamDB(team: Team) {
+    const multi = client.multi();
+    multi.hdel(TEAMS_KEY, team.tokenId);
+    multi.hdel(APP_STATE_KEY, team.tokenId);
+    multi.exec(() => {
+        logServer('ALERT: Removed team and state from database ' + team.name);
+    });
+}
 

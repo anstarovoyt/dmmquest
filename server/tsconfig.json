@@ -5,13 +5,8 @@
     "outDir": "../server-dist",
     "sourceMap": true
   },
-  "files": [
-    "all-text.ts",
-    "data.ts",
-    "StageManager.ts",
-    "RedisClient.ts",
-    "TeamManager.ts",
-    "server.ts",
+  "include": [
+    "./**/*.ts",
     "../client/typings/express/express.d.ts",
     "../client/typings/redis/redis.d.ts",
     "../client/app/state/QuestTexts.d.ts",
@@ -19,9 +14,9 @@
     "../client/app/authentication/Auth.d.ts",
     "../client/app/state/Answers.d.ts",
     "../client/app/components/admin/Admin.d.ts",
-    "AwsClient.ts"
+    "../client/typings/node/*.d.ts"
   ],
   "exclude": [
-    "node_modules"
+    "../node_modules"
   ]
 }

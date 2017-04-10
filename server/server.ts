@@ -1,6 +1,7 @@
 import {stageManager} from "./StageManager";
 import {teamManager} from "./TeamManager";
-import {log, TEAMS_CACHE} from "./RedisClient";
+import {TEAMS_CACHE} from "./RedisClient";
+import {logServer} from "./utils";
 
 let minimist = require('minimist');
 let express = require('express');
@@ -18,7 +19,7 @@ let TARGET_PATH_MAPPING = {
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
 export function initServer() {
-    log('Start creating server');
+    logServer('Start creating server, port ' + PORT);
     let server = express();
 
     server.use(bodyParser.json());
@@ -139,7 +140,7 @@ export function initServer() {
     });
 
 
-    log('Created server for: ' + TARGET + ', listening on port ' + PORT);
+    logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
 }
 
 
@@ -147,7 +148,7 @@ function processStateRequest(req: AppStateRequest): FullAppStateResponse {
     let token = req.token;
     let team = checkToken(token);
     if (!team) {
-        log('Internal error. No team for token ' + token);
+        logServer('Internal error. No team for token ' + token);
         return {success: false}
     }
 
@@ -169,7 +170,7 @@ function processAnswerUpdateRequest(req: AnswersUpdateRequest, fromClose: boolea
     }
 
     if (!checkTime(team)) {
-        log('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
+        logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
         return {success: false};
     }
 

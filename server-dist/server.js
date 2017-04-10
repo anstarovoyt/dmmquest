@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var StageManager_1 = require("./StageManager");
 var TeamManager_1 = require("./TeamManager");
 var RedisClient_1 = require("./RedisClient");
+var utils_1 = require("./utils");
 var minimist = require('minimist');
 var express = require('express');
 var serveStatic = require('serve-static');
@@ -16,7 +17,7 @@ var TARGET_PATH_MAPPING = {
 };
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 function initServer() {
-    RedisClient_1.log('Start creating server');
+    utils_1.logServer('Start creating server, port ' + PORT);
     var server = express();
     server.use(bodyParser.json());
     server.use(bodyParser.urlencoded({
@@ -111,14 +112,14 @@ function initServer() {
             response.json(result);
         });
     });
-    RedisClient_1.log('Created server for: ' + TARGET + ', listening on port ' + PORT);
+    utils_1.logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
 }
 exports.initServer = initServer;
 function processStateRequest(req) {
     var token = req.token;
     var team = checkToken(token);
     if (!team) {
-        RedisClient_1.log('Internal error. No team for token ' + token);
+        utils_1.logServer('Internal error. No team for token ' + token);
         return { success: false };
     }
     return {
@@ -136,7 +137,7 @@ function processAnswerUpdateRequest(req, fromClose) {
         return { success: false };
     }
     if (!checkTime(team)) {
-        RedisClient_1.log('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
+        utils_1.logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
         return { success: false };
     }
     var answers = StageManager_1.stageManager.setAnswers(token, req.stageId, req.answers, fromClose);

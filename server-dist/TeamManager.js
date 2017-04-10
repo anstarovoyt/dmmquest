@@ -4,6 +4,7 @@ var StageManager_1 = require("./StageManager");
 var RedisClient_1 = require("./RedisClient");
 var server_1 = require("./server");
 var data_1 = require("./data");
+var utils_1 = require("./utils");
 exports.COUNT_HOURS_TO_SOLVE = 7;
 var TeamManager = (function () {
     function TeamManager() {
@@ -40,13 +41,8 @@ var TeamManager = (function () {
         }
         RedisClient_1.TEAMS_CACHE.splice(index, 1);
         delete StageManager_1.stageManager.states[tokenId];
-        RedisClient_1.log('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
-        var multi = RedisClient_1.client.multi();
-        multi.hdel(RedisClient_1.TEAMS_KEY, team.tokenId);
-        multi.hdel(RedisClient_1.APP_STATE_KEY, team.tokenId);
-        multi.exec(function () {
-            RedisClient_1.log('ALERT: Removed team and state from database ' + team.name);
-        });
+        utils_1.logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
+        RedisClient_1.removeTeamDB(team);
         return true;
     };
     TeamManager.prototype.createTeam = function (name) {
@@ -60,12 +56,12 @@ var TeamManager = (function () {
         };
         RedisClient_1.TEAMS_CACHE.push(team);
         var token = team.tokenId;
-        RedisClient_1.log('Added team to app: ' + team.name + ' ' + team.secretCode);
+        utils_1.logServer('Added team to app: ' + team.name + ' ' + team.secretCode);
         this.saveTeamToDB(team, function () {
-            RedisClient_1.log('Saved team to database: ' + team.name);
+            utils_1.logServer('Saved team to database: ' + team.name);
         });
         StageManager_1.stageManager.saveAppStateToDB(token, (StageManager_1.stageManager.getAppState(token)), function () {
-            RedisClient_1.log('Saved state to database: ' + team.name);
+            utils_1.logServer('Saved state to database: ' + team.name);
         });
         return team;
     };
@@ -81,7 +77,7 @@ var TeamManager = (function () {
                 endDate.setTime(date.getTime() + (exports.COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
-                RedisClient_1.log('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + server_1.toEkbString(team.firstLoginDate));
+                utils_1.logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + server_1.toEkbString(team.firstLoginDate));
                 this.saveTeamToDB(team);
             }
             return {
@@ -91,7 +87,7 @@ var TeamManager = (function () {
                 admin: team.admin
             };
         }
-        RedisClient_1.log('Incorrect login secret code access "' + secretCode + '"');
+        utils_1.logServer('Incorrect login secret code access "' + secretCode + '"');
         return { authenticated: false };
     };
     TeamManager.prototype.getNextStartFromStage = function () {
@@ -104,7 +100,7 @@ var TeamManager = (function () {
         return 0;
     };
     TeamManager.prototype.saveTeamToDB = function (team, callback) {
-        RedisClient_1.client.hset(RedisClient_1.TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
+        RedisClient_1.saveTeamDB(team, callback);
     };
     TeamManager.makeid = function () {
         var text = "";

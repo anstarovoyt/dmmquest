@@ -1,11 +1,12 @@
 import {stageManager} from "./StageManager";
-import {APP_STATE_KEY, client, log, TEAMS_CACHE, TEAMS_KEY} from "./RedisClient";
+import {removeTeamDB, saveTeamDB, TEAMS_CACHE} from "./RedisClient";
 import {toEkbString} from "./server";
 import {defaultData} from "./data";
+import {logServer} from "./utils";
 export const COUNT_HOURS_TO_SOLVE = 7;
 
 export class TeamManager {
-    findTeamByCode(secretCode:string):Team {
+    findTeamByCode(secretCode: string): Team {
         if (!secretCode) {
             return null;
         }
@@ -17,7 +18,7 @@ export class TeamManager {
         return null;
     }
 
-    findTeamByToken(tokenId:string):Team {
+    findTeamByToken(tokenId: string): Team {
         for (let team of TEAMS_CACHE) {
             if (team.tokenId == tokenId) {
                 return team;
@@ -27,7 +28,7 @@ export class TeamManager {
         return null;
     }
 
-    removeTeam(tokenId):boolean {
+    removeTeam(tokenId): boolean {
         let team = this.findTeamByToken(tokenId);
         if (!team) {
             return false;
@@ -40,20 +41,15 @@ export class TeamManager {
 
         TEAMS_CACHE.splice(index, 1);
         delete stageManager.states[tokenId];
-        log('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
+        logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
 
-        const multi = client.multi();
-        multi.hdel(TEAMS_KEY, team.tokenId);
-        multi.hdel(APP_STATE_KEY, team.tokenId);
-        multi.exec(() => {
-            log('ALERT: Removed team and state from database ' + team.name);
-        });
+        removeTeamDB(team)
 
         return true;
 
     }
 
-    createTeam(name:string):Team {
+    createTeam(name: string): Team {
         const secretCode = TeamManager.makeid();
         const newStartFrom = this.getNextStartFromStage();
         const team: Team = {
@@ -66,22 +62,22 @@ export class TeamManager {
         TEAMS_CACHE.push(team);
 
         const token = team.tokenId;
-        log('Added team to app: ' + team.name + ' ' + team.secretCode);
+        logServer('Added team to app: ' + team.name + ' ' + team.secretCode);
         this.saveTeamToDB(team, () => {
-            log('Saved team to database: ' + team.name);
+            logServer('Saved team to database: ' + team.name);
         });
         stageManager.saveAppStateToDB(token, (stageManager.getAppState(token)), () => {
-            log('Saved state to database: ' + team.name);
+            logServer('Saved state to database: ' + team.name);
         });
 
         return team;
     }
 
-    listTeams():Team[] {
+    listTeams(): Team[] {
         return TEAMS_CACHE;
     }
 
-    login(secretCode:string):LoginInfo {
+    login(secretCode: string): LoginInfo {
         const team = this.findTeamByCode(secretCode);
         if (team) {
             if (!team.firstLoginDate && !team.admin) {
@@ -92,7 +88,7 @@ export class TeamManager {
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
 
-                log('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate))
+                logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate))
                 this.saveTeamToDB(team);
             }
 
@@ -104,7 +100,7 @@ export class TeamManager {
             }
         }
 
-        log('Incorrect login secret code access "' + secretCode + '"');
+        logServer('Incorrect login secret code access "' + secretCode + '"');
         return {authenticated: false}
     }
 
@@ -119,8 +115,8 @@ export class TeamManager {
         return 0;
     }
 
-    private saveTeamToDB(team:Team, callback?:() => void) {
-        client.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);
+    private saveTeamToDB(team: Team, callback?: () => void) {
+        saveTeamDB(team, callback);
     }
 
     private static makeid() {

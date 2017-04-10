@@ -1,7 +1,8 @@
 import {teamManager} from "./TeamManager";
-import {APP_STATE_KEY, client, initDefaultStateObject, log} from './RedisClient';
+import {initDefaultStateObject, saveAppDB} from "./RedisClient";
 import {toEkbString} from "./server";
 import {defaultData} from "./data";
+import {logServer} from "./utils";
 
 export class StageManager {
 
@@ -39,13 +40,13 @@ export class StageManager {
 
 
         const stagesName = this.stagesNames[stageId];
-        log('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
+        logServer('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
 
         this.saveAppStateToDB(token, this.getAppState(token), (err) => {
             if (!err) {
-                log('Saved new answers "' + token + '" to DB for ' + stagesName);
+                logServer('Saved new answers "' + token + '" to DB for ' + stagesName);
             } else {
-                log('ALERT! Erorr save new answers to DB for ' + stagesName);
+                logServer('ALERT! Erorr save new answers to DB for ' + stagesName);
             }
         });
         return stage;
@@ -78,15 +79,15 @@ export class StageManager {
         }
 
         const info = this.stagesNames[stageId] + ' team ' + teamManager.findTeamByToken(token).name;
-        log('Closed stage token ' + token + ' stage ' + info);
+        logServer('Closed stage token ' + token + ' stage ' + info);
 
         appState = this.getAppState(token);
 
         this.saveAppStateToDB(token, appState, (err) => {
             if (!err) {
-                log('Update app state for ' + info)
+                logServer('Update app state for ' + info)
             } else {
-                log('ALERT: Error update app state for ' + info)
+                logServer('ALERT: Error update app state for ' + info)
             }
         });
         return appState;
@@ -116,7 +117,7 @@ export class StageManager {
         const appState = this.getAppState(tokenId);
         let team = teamManager.findTeamByToken(tokenId);
         if (!team) {
-            log('Unlock request for incorrect team ' + team.tokenId);
+            logServer('Unlock request for incorrect team ' + team.tokenId);
             return false;
         }
         let lastCompletedStage: Stage = null;
@@ -134,21 +135,21 @@ export class StageManager {
         }
 
         lastCompletedStage.status = StageStatus.OPEN;
-        log('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
+        logServer('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
         delete lastCompletedStage.closedTime;
 
         if (number == stages.length &&
             appState.bonus.status == StageStatus.COMPLETED) {
             appState.bonus.status = StageStatus.BONUS;
             delete lastCompletedStage.closedTime;
-            log('Unlocked bonus for ' + tokenId);
+            logServer('Unlocked bonus for ' + tokenId);
         }
 
         this.saveAppStateToDB(team.tokenId, appState, (err) => {
             if (!err) {
-                log('Update unlock stage for ' + team.tokenId + "  stage " + this.stagesNames[lastCompletedStage.id]);
+                logServer('Update unlock stage for ' + team.tokenId + "  stage " + this.stagesNames[lastCompletedStage.id]);
             } else {
-                log('ALERT: Error update unlock stage for ' + team.tokenId)
+                logServer('ALERT: Error update unlock stage for ' + team.tokenId)
             }
         })
 
@@ -190,7 +191,7 @@ export class StageManager {
     }
 
     createAppState(token:string) {
-        log('Init state:' + token);
+        logServer('Init state:' + token);
         let team = teamManager.findTeamByToken(token);
         if (!team) {
             return;
@@ -200,7 +201,7 @@ export class StageManager {
     }
 
     saveAppStateToDB(token:string, state:AppState, callback?:(res) => void) {
-        client.hset(APP_STATE_KEY, token, JSON.stringify(state), callback);
+        saveAppDB(token, state, callback);
     }
 
 }
