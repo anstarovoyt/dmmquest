@@ -1,4 +1,5 @@
 import {initRedisStore} from "./RedisClient";
+import {createDefaultAppState, getDefaultTeams} from "./utils";
 export interface Store {
     saveAppDB(token: string, state: AppState, callback?: (res) => void): void;
 
@@ -23,10 +24,15 @@ export function initStore(callback: () => void): Store {
         removeTeamDB(team: Team) {
         },
         getTeams() {
-            return [];
+            return getDefaultTeams();
         },
         getDefaultStates() {
-            return {};
+            let result = {};
+            for (let obj of this.getTeams()) {
+                result[obj.tokenId] = createDefaultAppState(obj);
+            }
+
+            return result;
         }
     }
 }

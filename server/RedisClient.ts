@@ -1,4 +1,4 @@
-import {createDefaultAppState, logServer} from "./utils";
+import {createDefaultAppState, getDefaultTeams, logServer} from "./utils";
 import {Store} from "./Store";
 
 const redis = require("redis");
@@ -90,20 +90,6 @@ export function initRedisStore(callback): Store {
     });
 
 
-    function getDefaultTeams() {
-        const teams: Team[] = [];
-
-        teams.push({
-            name: "Тестовая админская команда",
-            secretCode: "test+test-",
-            tokenId: "test+test-",
-            admin: true,
-            startFromStage: 0
-        });
-
-        return teams;
-
-    }
 
 
     function saveTeamDB(team: Team, callback) {

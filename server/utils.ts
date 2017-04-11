@@ -49,3 +49,19 @@ export function createDefaultAppState(team: Team) {
 export function toEkbString(date) {
     return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm")
 }
+
+export function getDefaultTeams() {
+    const teams: Team[] = [];
+
+    teams.push({
+        name: "Тестовая админская команда",
+        secretCode: "test+test-",
+        tokenId: "test+test-",
+        admin: true,
+        startFromStage: 0
+    });
+
+    return teams;
+
+}
+

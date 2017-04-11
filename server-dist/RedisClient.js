@@ -52,7 +52,7 @@ function initRedisStore(callback) {
     };
     client.exists(TEAMS_KEY, function (err, reply) {
         utils_1.logServer('Database ' + reply ? "initialized" : "empty");
-        var defaultTeams = getDefaultTeams();
+        var defaultTeams = utils_1.getDefaultTeams();
         var toPush = {};
         var multi = client.multi();
         for (var _i = 0, defaultTeams_1 = defaultTeams; _i < defaultTeams_1.length; _i++) {
@@ -75,17 +75,6 @@ function initRedisStore(callback) {
             }
         });
     });
-    function getDefaultTeams() {
-        var teams = [];
-        teams.push({
-            name: "Тестовая админская команда",
-            secretCode: "test+test-",
-            tokenId: "test+test-",
-            admin: true,
-            startFromStage: 0
-        });
-        return teams;
-    }
     function saveTeamDB(team, callback) {
         TEAMS_CACHE.push(team);
         client.hset(TEAMS_KEY, team.tokenId, JSON.stringify(team), callback);

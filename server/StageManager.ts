@@ -207,9 +207,7 @@ export function getStagesNames() {
         result[String(i)] = rawStage.name;
     }
 
-
     result['bonus'] = defaultData.bonus.name;
 
     return result;
 }
-

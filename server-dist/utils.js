@@ -44,4 +44,16 @@ function toEkbString(date) {
     return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
 }
 exports.toEkbString = toEkbString;
+function getDefaultTeams() {
+    var teams = [];
+    teams.push({
+        name: "Тестовая админская команда",
+        secretCode: "test+test-",
+        tokenId: "test+test-",
+        admin: true,
+        startFromStage: 0
+    });
+    return teams;
+}
+exports.getDefaultTeams = getDefaultTeams;
 //# sourceMappingURL=utils.js.map
