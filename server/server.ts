@@ -12,16 +12,18 @@ let path = require('path');
 let moment = require('moment-timezone');
 let PORT = process.env.PORT || 8080;
 let TARGET_PATH_MAPPING = {
-    BUILD: './build',
-    DIST: './dist'
+    BUILD: 'build',
+    DIST: 'dist'
 };
 
 const dbStore = initStore(initServer);
-
+const startDir = process.cwd();
+logServer(startDir);
 
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
 export function initServer() {
+    logServer("Start http server");
     const stateManager = new StateManager(dbStore);
     const teamManager: TeamManager = new TeamManager(stateManager, dbStore);
     const stageManager = new StageManager(teamManager, stateManager);
@@ -35,9 +37,12 @@ export function initServer() {
     }));
 
 
+    let appStatics = path.join(startDir, TARGET_PATH_MAPPING[TARGET]);
+    logServer("App: " + appStatics);
+    let resources = path.join(startDir, 'statics');
     server
-        .use(serveStatic(TARGET_PATH_MAPPING[TARGET]))
-        .use('/statics', express.static(__dirname + '/statics'))
+        .use(serveStatic(appStatics))
+        .use('/statics', express.static(resources))
         .listen(PORT);
 
     server.post('/quest-texts', (req, res, next) => {
@@ -91,11 +96,11 @@ export function initServer() {
     });
 
     server.get('/stage/*', function (req, res, next) {
-        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+        res.sendFile(path.join(startDir, TARGET, '/index.html'));
     });
 
     server.get('/stages', function (req, res, next) {
-        res.sendFile(path.join(__dirname, TARGET, '/index.html'));
+        res.sendFile(path.join(startDir, TARGET, '/index.html'));
     })
 
     server.post('/teams', (req, res, next) => {

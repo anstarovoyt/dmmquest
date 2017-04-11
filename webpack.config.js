@@ -30,13 +30,6 @@ var DEFAULT_PARAMS = {
             {test: /\.(ico|png|jpg|gif|svg|eot|ttf|woff|woff2)(\?.+)?$/, loader: 'url?limit=50000'}
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: './client/app/index.html',
-            inject: 'body'
-        }),
-        new webpack.optimize.DedupePlugin()
-    ],
     debug: true,
     progress: true,
     colors: true
@@ -51,7 +44,12 @@ var PARAMS_PER_TARGET = {
         },
         devtool: 'source-map',
         plugins: [
-            new CleanWebpackPlugin(['build'])
+            new webpack.optimize.DedupePlugin(),
+            new CleanWebpackPlugin(['build']),
+            new HtmlWebpackPlugin({
+                template: './client/app/index.html',
+                inject: 'body'
+            })
         ]
     },
 
@@ -64,10 +62,15 @@ var PARAMS_PER_TARGET = {
         eval: 'cheap-source-map',
         plugins: [
             new CleanWebpackPlugin(['dist']),
+            new webpack.optimize.DedupePlugin(),
             new webpack.DefinePlugin({
                 'process.env': {
                     'NODE_ENV': JSON.stringify('production')
                 },
+            }),
+            new HtmlWebpackPlugin({
+                template: './client/app/index.html',
+                inject: 'body'
             }),
             new webpack.optimize.UglifyJsPlugin({
                 compress: {

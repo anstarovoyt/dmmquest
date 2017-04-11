@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
-var redis = require("redis");
-var portArg = process.env.REDIS_URL;
-var client = portArg ? redis.createClient(portArg) : redis.createClient();
 function initRedisStore(callback) {
+    var redis = require("redis");
+    var portArg = process.env.REDIS_URL;
+    var client = portArg ? redis.createClient(portArg) : redis.createClient();
     client.on("error", function (err) {
         utils_1.logServer('Error start redis listener ' + err);
     });

@@ -1,12 +1,11 @@
 import {createDefaultAppState, getDefaultTeams, logServer} from "./utils";
 import {Store} from "./Store";
 
-const redis = require("redis");
-const portArg = process.env.REDIS_URL;
-const client = portArg ? redis.createClient(portArg) : redis.createClient();
-
 
 export function initRedisStore(callback): Store {
+    const redis = require("redis");
+    const portArg = process.env.REDIS_URL;
+    const client = portArg ? redis.createClient(portArg) : redis.createClient();
 
     client.on("error", function (err) {
         logServer('Error start redis listener ' + err);
@@ -88,8 +87,6 @@ export function initRedisStore(callback): Store {
             }
         })
     });
-
-
 
 
     function saveTeamDB(team: Team, callback) {

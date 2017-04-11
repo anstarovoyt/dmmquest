@@ -1,5 +1,5 @@
 import {initRedisStore} from "./RedisClient";
-import {createDefaultAppState, getDefaultTeams} from "./utils";
+import {createDefaultAppState, getDefaultTeams, logServer} from "./utils";
 export interface Store {
     saveAppDB(token: string, state: AppState, callback?: (res) => void): void;
 
@@ -11,10 +11,14 @@ export interface Store {
 
 export function initStore(callback: () => void): Store {
     if (process.env.REDIS_URL) {
+        logServer("Run service with redis");
         return initRedisStore(callback);
     }
 
-    setImmediate(() => callback());
+    setImmediate(() => {
+        logServer("Run local service");
+        callback();
+    });
 
     return {
         saveTeamDB(team: Team, callback: () => void) {
