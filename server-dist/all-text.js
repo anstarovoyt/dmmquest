@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var all_text = {
+exports.all_text = {
     stages: [
         {
             name: "Этап «Мост Макарова»",

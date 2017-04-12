@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.all_text = require('./all-text').all_text;
 function getDefaultData() {
     if (exports.all_text) {
         return exports.all_text;

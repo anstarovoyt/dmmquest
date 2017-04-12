@@ -7,12 +7,13 @@ import {StagesListComponent} from "./components/stages/StagesListComponent";
 import {StageContainerComponent} from "./components/stage/StageContainerComponent";
 import {BonusStageContainerComponent} from "./components/stage/BonusStageContainer";
 import {AdminComponent} from "./components/admin/AdminComponent";
+import {IntroStageContainer} from "./components/stage/IntroStageContainer";
 
 //hack to reduce size
 var Router = require('react-router/lib/Router');
 var Route = require('react-router/lib/Route');
 var IndexRoute = require('react-router/lib/IndexRoute');
-var useRouterHistory:any = require('react-router/lib/useRouterHistory');
+var useRouterHistory: any = require('react-router/lib/useRouterHistory');
 var createHashHistory = require("history/lib/createHashHistory");
 
 
@@ -26,6 +27,7 @@ function renderRouter() {
             <Route path="/" component={MainComponent}>
                 <IndexRoute component={StagesListComponent}/>
                 <Route path="/stages" component={StagesListComponent}/>
+                <Route path="/intro" component={IntroStageContainer}/>
                 <Route path="/stage/:id" component={StageContainerComponent}/>
                 <Route path="/bonus" component={BonusStageContainerComponent}/>
                 <Route path="/admin" component={AdminComponent}/>

@@ -2,9 +2,11 @@ export interface RawStage {
     name: string,
     quests: (string | { type: QuestType, text: string })[]
     status?: StageStatus
+    bonuses?: (string | { type: QuestType, text: string })[]
+    description?: string;
 }
 
-export let all_text: { stages: RawStage[], bonus: RawStage };
+export let all_text: { stages: RawStage[], bonus: RawStage } = require('./all-text').all_text;
 
 function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
     if (all_text) {

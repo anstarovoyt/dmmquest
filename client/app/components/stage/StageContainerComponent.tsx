@@ -4,20 +4,20 @@ import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageLocked} from "./StageLocked";
-type StageStage = {stage:Stage, loading:boolean, available:boolean};
+type StageStage = { stage: Stage, loading: boolean, available: boolean };
 
-export class StageContainerComponent extends React.Component<any,StageStage> {
+export class StageContainerComponent extends React.Component<any, StageStage> {
 
-    private _changeListener:(p:AppState)=>void;
+    private _changeListener: (p: AppState) => void;
 
 
-    constructor(props:any, context:any) {
+    constructor(props: any, context: any) {
         super(props, context);
-        var state:AppState = appStateService.getAppState();
+        var state: AppState = appStateService.getAppState();
         this.state = this.getStageByAppState(state);
     }
 
-    _onChange(appState:AppState) {
+    _onChange(appState: AppState) {
         this.setState(this.getStageByAppState(appState));
     }
 
@@ -32,7 +32,7 @@ export class StageContainerComponent extends React.Component<any,StageStage> {
         this._changeListener = null;
     }
 
-    private getStageByAppState(state:AppState):StageStage {
+    private getStageByAppState(state: AppState): StageStage {
         if (!state) {
             return {
                 loading: true,
@@ -41,7 +41,7 @@ export class StageContainerComponent extends React.Component<any,StageStage> {
             };
         }
         else {
-            var id:string = this.getStageId();
+            var id: string = this.getStageId();
             if (id) {
                 var stage = getStageById(state, id);
                 if (stage) {

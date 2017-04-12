@@ -1,7 +1,7 @@
 import {RawStage} from "./data";
 
 
-const all_text: { stages: RawStage[], bonus: RawStage } = {
+export const all_text: { stages: RawStage[], bonus: RawStage } = {
     stages: [
         {
             name: "Этап «Мост Макарова»",

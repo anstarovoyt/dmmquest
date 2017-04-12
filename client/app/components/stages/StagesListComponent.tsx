@@ -4,16 +4,18 @@ import {appStateService} from "../../state/AppStateService";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageListItemComponent} from "./StageListItemComponent";
 import {auth} from "../../authentication/AuthService";
+import {IntroStageContainer} from "../stage/IntroStageContainer";
+import {IntroStageListItemComponent} from "./IntroStageListItemComponent";
 
 
-export class StagesListComponent extends React.Component<any, {stages:Stage[], bonus:Stage, loading:boolean}> {
+export class StagesListComponent extends React.Component<any, { stages: Stage[], bonus: Stage, loading: boolean }> {
 
     private _changeListener;
 
-    constructor(props:any, context:any) {
+    constructor(props: any, context: any) {
         super(props, context);
 
-        var state:AppState = appStateService.getAppState();
+        var state: AppState = appStateService.getAppState();
         if (!state) {
             this.state = {loading: true, stages: null, bonus: null};
         } else {
@@ -22,7 +24,7 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[], b
     }
 
 
-    _onChange(appState:AppState) {
+    _onChange(appState: AppState) {
         var state = appState == null ? {loading: false, stages: null, bonus: null} : {
             stages: appState.stages,
             loading: false,
@@ -60,9 +62,10 @@ export class StagesListComponent extends React.Component<any, {stages:Stage[], b
 
 
         var stages = this.state.stages;
-        var result = stages.map(function (el) {
+        var result = [<IntroStageListItemComponent />];
+        result = result.concat(stages.map(function (el) {
             return <StageListItemComponent key={el.id} stage={el}/>
-        })
+        }));
 
         let el = state.bonus;
         if (el) {

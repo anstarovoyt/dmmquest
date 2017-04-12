@@ -1,5 +1,5 @@
 import {TeamManager} from "./TeamManager";
-import {defaultData} from "./data";
+import {defaultData, RawStage} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {StateManager} from "./StateManager";
 
@@ -93,7 +93,7 @@ export class StageManager {
     }
 
 
-    getQuestionTexts(token: string, stageId: string): (string | { type: QuestType, text: string })[] {
+    getQuestionTexts(token: string, stageId: string): RawStage {
         const appState = this.teamManager.getAppState(token);
         let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
@@ -102,13 +102,14 @@ export class StageManager {
 
         if (stage.status == StageStatus.BONUS ||
             stageId == "bonus") {
-            return defaultData.bonus.quests;
+            return defaultData.bonus;
         }
 
-        const stageInfo = defaultData.stages[Number(stageId)];
+        const stageInfo: RawStage = defaultData.stages[Number(stageId)];
+        if (!stageInfo) return;
 
 
-        return stageInfo && stageInfo.quests;
+        return stageInfo;
     }
 
     unlockLastStage(tokenId: string): boolean {

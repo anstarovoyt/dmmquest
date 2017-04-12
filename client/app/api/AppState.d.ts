@@ -1,53 +1,55 @@
 interface AppState {
-    stages:Stage[],
-    bonus:Stage
+    stages: Stage[],
+    bonus: Stage
 }
 
 interface FullAppState {
-    appState:AppState,
+    appState: AppState,
 
-    stagesNames:{
-        [stageId:string]:string
+    stagesNames: {
+        [stageId: string]: string
     }
 }
 
 interface HasId {
-    id:number
+    id: number
 }
 
 interface Stage {
-    id:string
-    status:StageStatus,
-    showNumber:number,
-    last?:boolean,
-    closedTime?:string,
-    questAnswers?:{
-        [id:number]:QuestAnswer
+    id: string
+    status: StageStatus,
+    showNumber: number,
+    last?: boolean,
+    closedTime?: string,
+    questAnswers?: {
+        [id: number]: QuestAnswer
     }
 
 }
 
 interface QuestAnswer extends HasId {
-    answer:string
+    answer: string
 }
 
 interface QuestTexts {
-    stageId:string
-    quests:Quest[]
+    stageId: string,
+    stageDescription?: string,
+    bonuses?: Quest[],
+    quests: Quest[]
 }
 
 interface Quest extends HasId {
-    text:string,
-    type?:QuestType
+    text: string,
+    type?: QuestType
 }
 
 interface AppStateRequest {
-    token:string
+    token: string
 }
 
 interface FullAppStateResponse {
-    state?:FullAppState,
-    success:boolean
+    state?: FullAppState,
+    success: boolean
 }
 
 
@@ -55,27 +57,29 @@ declare const enum StageStatus {
     LOCKED,
     OPEN,
     COMPLETED,
-    BONUS
+    BONUS,
+    INTO,
+    KILLER
 }
 
 interface Team extends TeamSimple {
-    firstLoginDate?:Date,
-    endQuestDate?:Date,
+    firstLoginDate?: Date,
+    endQuestDate?: Date,
 }
 
 interface TeamSimple {
-    name:string,
-    secretCode:string,
-    tokenId:string,
-    startFromStage:number,
+    name: string,
+    secretCode: string,
+    tokenId: string,
+    startFromStage: number,
 
-    admin?:boolean
+    admin?: boolean
 }
 
 
 interface CompleteStageResponse {
-    res?:AppState,
-    success:boolean
+    res?: AppState,
+    success: boolean
 }
 
 declare const enum ActionState {
@@ -86,36 +90,36 @@ declare const enum ActionState {
 }
 
 interface GetRestTimeRequest {
-    token:string
+    token: string
 }
 
 interface GetRestTimeResponse {
-    success:boolean,
-    restTimeInSeconds?:string
-    isCompleted?:boolean
+    success: boolean,
+    restTimeInSeconds?: string
+    isCompleted?: boolean
 }
 
 interface AWSSendFileRequest {
-    url:string
-    sign:string
+    url: string
+    sign: string
     file
 }
 
 interface AWSSendFileResponse {
-    success:boolean
-    url?:string,
+    success: boolean
+    url?: string,
 }
 
 interface GetAWSSignRequest {
-    token:string,
-    fileName:string,
-    fileType:string,
-    stageId:string,
-    questId:number
+    token: string,
+    fileName: string,
+    fileType: string,
+    stageId: string,
+    questId: number
 }
 
 interface GetAWSSignResponse {
-    url?:string,
-    sign?:string,
-    success:boolean
+    url?: string,
+    sign?: string,
+    success: boolean
 }

@@ -3,12 +3,12 @@ import {authRequest} from "../communitation/Dispatcher";
 import {questService} from "../state/QuestService";
 import {appStateService} from "../state/AppStateService";
 
-var auth = new class {
+const auth = new class {
 
     private _noLocalStorage;
 
-    login(secretCode:string, callback:(result:boolean) => void):void {
-        var token = this.getToken();
+    login(secretCode: string, callback: (result: boolean) => void): void {
+        const token = this.getToken();
         if (token) {
             this.onChange({
                 authenticated: true,
@@ -17,9 +17,8 @@ var auth = new class {
             return
         }
 
-        authRequest({secretCode}, (resp:LoginInfo) => {
-
-            var res = resp;
+        authRequest({secretCode}, (resp: LoginInfo) => {
+            let res = resp;
             if (resp.authenticated) {
                 try {
                     this.storeLoginInfo(resp);
@@ -39,7 +38,7 @@ var auth = new class {
         });
     }
 
-    getToken():string {
+    getToken(): string {
         if (typeof localStorage == "undefined") {
             return null;
         }
@@ -47,7 +46,7 @@ var auth = new class {
         return localStorage.authToken;
     }
 
-    getName():string {
+    getName(): string {
         return localStorage.authName;
     }
 
@@ -55,7 +54,7 @@ var auth = new class {
         return localStorage.admin;
     }
 
-    logout():void {
+    logout(): void {
         this.dropLoginInfo();
         appStateService.clean();
 
@@ -65,7 +64,7 @@ var auth = new class {
         })
     };
 
-    loggedIn():boolean {
+    loggedIn(): boolean {
         if (typeof localStorage == "undefined") {
             return false;
         }
@@ -73,12 +72,12 @@ var auth = new class {
         return !!localStorage.authToken
     };
 
-    logginInfo():LoginInfo {
+    logginInfo(): LoginInfo {
         if (typeof localStorage == "undefined") {
             return null;
         }
 
-        var authFromStore = localStorage.authToken;
+        let authFromStore = localStorage.authToken;
         if (!authFromStore) {
             return null;
         }
@@ -91,11 +90,11 @@ var auth = new class {
         }
     }
 
-    private onChange(result:LoginInfo) {
+    private onChange(result: LoginInfo) {
         authStore.emitChange(result);
     };
 
-    private storeLoginInfo(result:LoginInfo) {
+    private storeLoginInfo(result: LoginInfo) {
         if (typeof localStorage == "undefined") {
             this._noLocalStorage = true;
             return;
