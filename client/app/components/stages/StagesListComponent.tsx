@@ -62,7 +62,7 @@ export class StagesListComponent extends React.Component<any, { stages: Stage[],
 
 
         var stages = this.state.stages;
-        var result = [<IntroStageListItemComponent />];
+        var result = [<IntroStageListItemComponent key="intro"/>];
         result = result.concat(stages.map(function (el) {
             return <StageListItemComponent key={el.id} stage={el}/>
         }));

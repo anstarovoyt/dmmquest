@@ -46,4 +46,5 @@ function getDefaultData() {
     };
 }
 exports.defaultData = getDefaultData();
+exports.intro = "Это интро детка";
 //# sourceMappingURL=data.js.map

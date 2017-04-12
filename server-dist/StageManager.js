@@ -81,10 +81,12 @@ var StageManager = (function () {
         }
         if (stage.status == 3 /* BONUS */ ||
             stageId == "bonus") {
-            return data_1.defaultData.bonus.quests;
+            return data_1.defaultData.bonus;
         }
         var stageInfo = data_1.defaultData.stages[Number(stageId)];
-        return stageInfo && stageInfo.quests;
+        if (!stageInfo)
+            return;
+        return stageInfo;
     };
     StageManager.prototype.unlockLastStage = function (tokenId) {
         var _this = this;
@@ -143,6 +145,9 @@ var StageManager = (function () {
             return null;
         }
         return getStageById(appState, stageId);
+    };
+    StageManager.prototype.getIntro = function () {
+        return data_1.intro;
     };
     return StageManager;
 }());

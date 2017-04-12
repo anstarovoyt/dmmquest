@@ -135,7 +135,8 @@ function initServer() {
             success: true,
             state: {
                 appState: teamManager.getAppState(token),
-                stagesNames: stageManager.getStagesNames()
+                stagesNames: stageManager.getStagesNames(),
+                intro: stageManager.getIntro()
             }
         };
     }
@@ -164,17 +165,18 @@ function initServer() {
         if (!team) {
             return { success: false };
         }
-        var questTexts = stageManager.getQuestionTexts(token, request.stageId);
-        if (!questTexts) {
+        var stage = stageManager.getQuestionTexts(token, request.stageId);
+        if (!stage) {
             return {
                 success: false
             };
         }
+        var quests = stage.quests;
         return {
             success: true,
             questTexts: {
                 stageId: request.stageId,
-                quests: questTexts.map(function (el, i) {
+                quests: quests.map(function (el, i) {
                     var text;
                     var type;
                     if (typeof el === "string") {

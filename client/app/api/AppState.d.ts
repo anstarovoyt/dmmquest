@@ -6,6 +6,8 @@ interface AppState {
 interface FullAppState {
     appState: AppState,
 
+    intro? : string;
+
     stagesNames: {
         [stageId: string]: string
     }

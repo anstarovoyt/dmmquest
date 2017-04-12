@@ -1,5 +1,5 @@
 import {TeamManager} from "./TeamManager";
-import {defaultData, RawStage} from "./data";
+import {defaultData, intro, RawStage} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {StateManager} from "./StateManager";
 
@@ -179,6 +179,10 @@ export class StageManager {
         }
 
         return getStageById(appState, stageId);
+    }
+
+    getIntro() {
+        return intro;
     }
 }
 

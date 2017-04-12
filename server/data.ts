@@ -55,3 +55,5 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
 }
 
 export const defaultData = getDefaultData();
+
+export const intro = "Это интро детка";

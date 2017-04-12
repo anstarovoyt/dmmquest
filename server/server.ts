@@ -166,7 +166,8 @@ export function initServer() {
             success: true,
             state: {
                 appState: teamManager.getAppState(token),
-                stagesNames: stageManager.getStagesNames()
+                stagesNames: stageManager.getStagesNames(),
+                intro: stageManager.getIntro()
             }
         }
     }
@@ -202,19 +203,21 @@ export function initServer() {
             return {success: false};
         }
 
-        let questTexts = stageManager.getQuestionTexts(token, request.stageId);
-        if (!questTexts) {
+        let stage = stageManager.getQuestionTexts(token, request.stageId);
+        if (!stage) {
             return {
                 success: false
             }
         }
+
+        let quests = stage.quests;
 
         return {
             success: true,
 
             questTexts: {
                 stageId: request.stageId,
-                quests: questTexts.map(function (el, i) {
+                quests: quests.map(function (el, i) {
                     let text;
                     let type;
                     if (typeof el === "string") {

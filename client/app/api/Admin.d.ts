@@ -1,42 +1,42 @@
 interface TeamsRequest {
-    token:string
+    token: string
 }
 
 interface RemoveTeamRequest {
-    token:string,
-    teamTokenId:string
+    token: string,
+    teamTokenId: string
 }
 
 interface RemoveTeamResponse {
-    success:boolean
+    success: boolean
 }
 
 interface TeamInfo {
-    team:TeamSimple,
-    firstLoginDateEkbTimezone?:string,
-    endQuestEkbTimezone?:string,
-    appState:AppState
+    team: TeamSimple,
+    firstLoginDateEkbTimezone?: string,
+    endQuestEkbTimezone?: string,
+    appState: AppState
 }
 
 interface TeamsResponse {
-    teams?:TeamInfo[],
-    success:boolean
+    teams?: TeamInfo[],
+    success: boolean
 }
 
 interface AddTeamRequest {
-    token:string
-    teamName:string
+    token: string
+    teamName: string
 }
 
 interface AddTeamResponse {
-    success:boolean
+    success: boolean
 }
 
 interface UnlockLastCompletedStageRequest {
-    token:string,
-    teamTokenId:string
+    token: string,
+    teamTokenId: string
 }
 
 interface UnlockLastCompletedStageResponse {
-    success:boolean
+    success: boolean
 }

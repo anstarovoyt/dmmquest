@@ -4,7 +4,7 @@ import {auth} from "../authentication/AuthService";
 
 class AppStateService {
 
-    private fullState:FullAppState;
+    private fullState: FullAppState;
 
     updateState() {
         if (this.fullState) {
@@ -14,17 +14,26 @@ class AppStateService {
         }
     }
 
-    getAppState():AppState {
+    getAppState(): AppState {
         return this.fullState && this.fullState.appState;
     }
 
-    setState(newState:AppState) {
+    setState(newState: AppState) {
         this.fullState.appState = newState;
         this.onChange();
     }
 
-    getStageNameById(stageId:string) {
-        var app = this.fullState;
+    getIntro() {
+        const app = this.fullState;
+        if (!app) {
+            return ""
+        }
+
+        return app.intro;
+    }
+
+    getStageNameById(stageId: string) {
+        let app = this.fullState;
         if (!app) {
             return ""
         }
@@ -32,7 +41,7 @@ class AppStateService {
         return app.stagesNames[stageId];
     }
 
-    getStageName(stage:Stage) {
+    getStageName(stage: Stage) {
         if (!stage) {
             return "";
         }
@@ -40,18 +49,18 @@ class AppStateService {
         return this.getStageNameById(stage.id);
     }
 
-    updateStage(newStage:Stage) {
-        var newState = cloneAppState(this.fullState.appState);
+    updateStage(newStage: Stage) {
+        const newState = cloneAppState(this.fullState.appState);
 
-        var id = newStage.id;
+        const id = newStage.id;
         if (id == "bonus") {
             newState.bonus = newStage;
             return
         }
 
-        var stages = newState.stages;
-        for (var i = 0; i < stages.length; i++) {
-            var stg = stages[i];
+        const stages = newState.stages;
+        for (let i = 0; i < stages.length; i++) {
+            const stg = stages[i];
             if (stg.id == id) {
                 stages[i] = newStage;
                 break;
@@ -62,12 +71,12 @@ class AppStateService {
     }
 
     onChange() {
-        var fullState = this.fullState;
+        const fullState = this.fullState;
         appStateStore.emitChange(fullState == null ? null : fullState.appState);
     }
 
     private loadFullState() {
-        var token = auth.getToken();
+        const token = auth.getToken();
         loadState({token: token}, response => {
             this.fullState = response.state;
             this.onChange();
@@ -80,14 +89,14 @@ class AppStateService {
     }
 }
 
-function cloneAppState(oldState:AppState):AppState {
-    var result:AppState = {
+function cloneAppState(oldState: AppState): AppState {
+    const result: AppState = {
         bonus: oldState.bonus,
         stages: null
     };
 
-    var oldStages = oldState.stages;
-    var newStages:Stage[] = [];
+    const oldStages = oldState.stages;
+    const newStages: Stage[] = [];
     for (let cur of oldStages) {
         newStages.push(cur);
     }
@@ -97,11 +106,11 @@ function cloneAppState(oldState:AppState):AppState {
 
 }
 
-export function getStageById(state:AppState, stageId:string) {
+export function getStageById(state: AppState, stageId: string) {
     if (!state) {
         return null;
     }
-    for (var stage of state.stages) {
+    for (let stage of state.stages) {
         if (stage.id == stageId) {
             return stage;
         }
@@ -115,6 +124,6 @@ export function getStageById(state:AppState, stageId:string) {
 }
 
 
-var appStateService = new AppStateService();
+const appStateService = new AppStateService();
 
 export {appStateService}
