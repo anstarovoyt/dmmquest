@@ -8,7 +8,14 @@ import {IntroStageContainer} from "../stage/IntroStageContainer";
 import {IntroStageListItemComponent} from "./IntroStageListItemComponent";
 
 
-export class StagesListComponent extends React.Component<any, { stages: Stage[], bonus: Stage, loading: boolean }> {
+type StateList = {
+    stages: Stage[],
+    bonus: Stage,
+    killer?: Stage,
+    loading: boolean
+};
+
+export class StagesListComponent extends React.Component<any, StateList> {
 
     private _changeListener;
 
@@ -17,18 +24,19 @@ export class StagesListComponent extends React.Component<any, { stages: Stage[],
 
         var state: AppState = appStateService.getAppState();
         if (!state) {
-            this.state = {loading: true, stages: null, bonus: null};
+            this.state = {loading: true, stages: null, bonus: null, killer: null};
         } else {
-            this.state = {stages: state.stages, bonus: state.bonus, loading: false}
+            this.state = {stages: state.stages, bonus: state.bonus, killer: state.killer, loading: false}
         }
     }
 
 
     _onChange(appState: AppState) {
-        var state = appState == null ? {loading: false, stages: null, bonus: null} : {
+        const state = appState == null ? {loading: false, stages: null, bonus: null} : {
             stages: appState.stages,
             loading: false,
-            bonus: appState.bonus
+            bonus: appState.bonus,
+            killer: appState.killer
         };
         this.setState(state);
     }
@@ -67,9 +75,18 @@ export class StagesListComponent extends React.Component<any, { stages: Stage[],
             return <StageListItemComponent key={el.id} stage={el}/>
         }));
 
-        let el = state.bonus;
-        if (el) {
-            result.push(<StageListItemComponent key={el.id} stage={el}/>)
+        let bonus = state.bonus;
+        if (bonus) {
+            result.push(<StageListItemComponent key={bonus.id} stage={bonus}/>)
+        } else {
+            console.log("No Bonus");
+        }
+
+        let killer = state.killer;
+        if (killer) {
+            result.push(<StageListItemComponent key={killer.id} stage={killer}/>)
+        } else {
+            console.log("No killer");
         }
 
         return <div className="row">

@@ -76,10 +76,14 @@ export class StageContainerComponent extends React.Component<any, StageStage> {
                 if (stage.status == StageStatus.LOCKED) {
                     return <StageLocked />
                 }
-                return <StageComponent stage={stage}/>
+                return this.createStageComponent(stage);
             }
         }
 
         return <LoadingComponent/>;
+    }
+
+    createStageComponent(stage: Stage) {
+        return <StageComponent stage={stage}/>;
     }
 }

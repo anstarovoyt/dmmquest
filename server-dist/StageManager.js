@@ -83,6 +83,9 @@ var StageManager = (function () {
             stageId == "bonus") {
             return data_1.defaultData.bonus;
         }
+        if (stage.status == 5 /* KILLER */ || stageId == "killer") {
+            return data_1.defaultData.killer;
+        }
         var stageInfo = data_1.defaultData.stages[Number(stageId)];
         if (!stageInfo)
             return;
@@ -162,8 +165,8 @@ function getStageById(state, stageId) {
             return stage;
         }
     }
-    if (stageId == 'bonus') {
-        return state.bonus;
+    if (stageId == 'bonus' || stageId == 'killer') {
+        return state[stageId];
     }
     return null;
 }
@@ -176,6 +179,7 @@ function getStagesNames() {
         result[String(i)] = rawStage.name;
     }
     result['bonus'] = data_1.defaultData.bonus.name;
+    result['killer'] = data_1.defaultData.killer.name;
     return result;
 }
 exports.getStagesNames = getStagesNames;

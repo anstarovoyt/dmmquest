@@ -1,7 +1,8 @@
 import {RawStage} from "./data";
 
+export type AllData = { stages: RawStage[], bonus: RawStage, killer: RawStage };
 
-export const all_text: { stages: RawStage[], bonus: RawStage } = {
+export const all_text: AllData = {
     stages: [
         {
             name: "Этап «Мост Макарова»",
@@ -209,6 +210,17 @@ export const all_text: { stages: RawStage[], bonus: RawStage } = {
             },
             `Снимите рекламу вашего любимого учебного курса на матмехе и пришлите нам ссылку на загрузку/просмотр видео. <br><br> Максимум 1 балл на усмотрение жюри`,
             `Петенька очень любит шаурму. Но не а бы какую! Возле кировского по Успенскому проспекту 127 можно раздобыть ту самую. Привезите ее на набережную рабочей молодежи куда-то между домами 1 и 3. Белый фольксваген 898. 2 балла`
+        ]
+    },
+
+    killer: {
+        name: "Найди убийцу",
+        description: "Нужно найти убийцу",
+        status: StageStatus.KILLER,
+        quests: [
+            "Кто",
+            "Где",
+            "Когда"
         ]
     }
 };

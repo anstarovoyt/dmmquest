@@ -14,7 +14,6 @@ export class IntroStageContainer extends React.Component<any, any> {
                 <h1><Link to="/">
                     <span className="glyphicon glyphicon-arrow-left"></span>
                 </Link>
-
                     <div className="row">
                         <div className="col-xs-12 col-md-8">
                             <div dangerouslySetInnerHTML={{__html: intro}}/>

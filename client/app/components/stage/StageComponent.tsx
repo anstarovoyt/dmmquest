@@ -124,10 +124,8 @@ export class StageComponent extends React.Component<{stage:Stage},
                                   {savedMark == ActionState.NO ? "" :
                                       <span className={savedHtmlClass}>{this.popupText}</span>}
                               </button>
-
                             </span>
                         </div>
-
                     </div>
                 </div>
             );

@@ -105,6 +105,10 @@ export class StageManager {
             return defaultData.bonus;
         }
 
+        if (stage.status == StageStatus.KILLER || stageId == "killer") {
+            return defaultData.killer;
+        }
+
         const stageInfo: RawStage = defaultData.stages[Number(stageId)];
         if (!stageInfo) return;
 
@@ -196,8 +200,8 @@ export function getStageById(state: AppState, stageId: string) {
         }
     }
 
-    if (stageId == 'bonus') {
-        return state.bonus;
+    if (stageId == 'bonus' || stageId == 'killer') {
+        return state[stageId];
     }
 
     return null;
@@ -213,6 +217,7 @@ export function getStagesNames() {
     }
 
     result['bonus'] = defaultData.bonus.name;
+    result['killer'] = defaultData.killer.name;
 
     return result;
 }

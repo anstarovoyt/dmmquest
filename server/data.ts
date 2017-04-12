@@ -1,3 +1,4 @@
+import {AllData} from "./all-text";
 export interface RawStage {
     name: string,
     quests: (string | { type: QuestType, text: string })[]
@@ -6,9 +7,9 @@ export interface RawStage {
     description?: string;
 }
 
-export let all_text: { stages: RawStage[], bonus: RawStage } = require('./all-text').all_text;
+export let all_text: AllData = require('./all-text').all_text;
 
-function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
+function getDefaultData(): AllData {
     if (all_text) {
         return all_text;
     }
@@ -50,7 +51,16 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage } {
                 "Сколько попугает в жирафе? А есть он ходит по диагонали?",
                 "Убейте какое-нибудь животное и пришлите фотографию"
             ]
-        }
+        },
+        killer: {
+            name: "Убийца",
+
+            quests: [
+                "Кто",
+                "Где",
+                "Когда"
+            ]
+        },
     }
 }
 

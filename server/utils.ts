@@ -10,6 +10,7 @@ export function createDefaultAppState(team: Team) {
     const stages: Stage[] = [];
     const appState: AppState = {
         bonus: null,
+        killer: null,
         stages
     };
     const defaultStages = defaultData.stages;
@@ -39,6 +40,11 @@ export function createDefaultAppState(team: Team) {
     appState.bonus = {
         id: "bonus",
         status: StageStatus.BONUS,
+        showNumber: pushNumber++
+    };
+    appState.killer = {
+        id: "killer",
+        status: StageStatus.KILLER,
         showNumber: pushNumber++
     };
 

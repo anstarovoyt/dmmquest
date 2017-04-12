@@ -57,6 +57,10 @@ class AppStateService {
             newState.bonus = newStage;
             return
         }
+        if (id == "killer") {
+            newState.killer = newStage;
+            return;
+        }
 
         const stages = newState.stages;
         for (let i = 0; i < stages.length; i++) {
@@ -92,7 +96,8 @@ class AppStateService {
 function cloneAppState(oldState: AppState): AppState {
     const result: AppState = {
         bonus: oldState.bonus,
-        stages: null
+        stages: null,
+        killer: oldState.killer
     };
 
     const oldStages = oldState.stages;
@@ -118,6 +123,9 @@ export function getStageById(state: AppState, stageId: string) {
 
     if (stageId == 'bonus') {
         return state.bonus;
+    }
+    if (stageId == 'killer') {
+        return state.killer;
     }
 
     return null;

@@ -10,6 +10,7 @@ function createDefaultAppState(team) {
     var stages = [];
     var appState = {
         bonus: null,
+        killer: null,
         stages: stages
     };
     var defaultStages = data_1.defaultData.stages;
@@ -35,6 +36,11 @@ function createDefaultAppState(team) {
     appState.bonus = {
         id: "bonus",
         status: 3 /* BONUS */,
+        showNumber: pushNumber++
+    };
+    appState.killer = {
+        id: "killer",
+        status: 5 /* KILLER */,
         showNumber: pushNumber++
     };
     return appState;

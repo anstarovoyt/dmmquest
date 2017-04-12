@@ -1,4 +1,5 @@
 interface AppState {
+    killer: Stage;
     stages: Stage[],
     bonus: Stage
 }
@@ -6,7 +7,7 @@ interface AppState {
 interface FullAppState {
     appState: AppState,
 
-    intro? : string;
+    intro?: string;
 
     stagesNames: {
         [stageId: string]: string
