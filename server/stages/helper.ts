@@ -11,7 +11,7 @@ export function getVideo(video: boolean, ...links: string[]) {
     result += "<br>";
 
     links.forEach(el => {
-        result += "br";
+        result += "<br>";
         result += `<a style=\"text-decoration:underline !important\" href=\"${el}\">YouTube link</a>`;
     });
 

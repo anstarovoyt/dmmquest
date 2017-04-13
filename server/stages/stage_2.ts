@@ -9,10 +9,10 @@ export const stage: RawStage = {
 
         "На чём сейчас находится памятный знак?" + getVideo(
             false,
-            "https://youtu.be/jZPlIlKMJFc",
-            "https://youtu.be/zLPh8YsJb2g",
-            "https://youtu.be/ZRimt_3d49Y",
-            "https://youtu.be/5Qp55HzZmTQ"),
+            "https://www.youtube.com/embed/jZPlIlKMJFc",
+            "https://www.youtube.com/embed/zLPh8YsJb2g",
+            "https://www.youtube.com/embed/ZRimt_3d49Y",
+            "https://www.youtube.com/embed/5Qp55HzZmTQ"),
 
 
         `На здании, в котором обитают сразу 4 совы, есть вывеска, обещающая перемещение в пространстве при пересечении порога. 
@@ -21,7 +21,7 @@ export const stage: RawStage = {
 
 
         `Загадано здание. Заходить на территорию не надо - там могут быть чувствительные люди. 
-        Перечислите, какие три дня недели указаны на щите у входа?` + getVideo(true, "https://youtu.be/dbvk8_Fy9RM"),
+        Перечислите, какие три дня недели указаны на щите у входа?` + getVideo(true, "https://www.youtube.com/embed/dbvk8_Fy9RM"),
 
 
         `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, "https://youtu.be/me6vAVmXR_Q"),
@@ -32,11 +32,11 @@ export const stage: RawStage = {
 
         `Вам нужно графити с обратной стороны загаданного здания. 
 Помимо прочего у персонажа в волосах застряла табличка, которую вам надо рассмотреть. 
-Назовите категорию помещения.` + getVideo(true, "https://youtu.be/bYsl0GIZmD4")
+Назовите категорию помещения.` + getVideo(true, "https://www.youtube.com/embed/bYsl0GIZmD4")
     ],
 
 
     bonuses: []
-}
+};
 
 
