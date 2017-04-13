@@ -6,10 +6,10 @@ function getVideo(video) {
         links[_i - 1] = arguments[_i];
     }
     var result = '';
-    var height = video ? "182" : "24";
+    var height = video ? "182" : "50";
     links.forEach(function (el) {
         result += "<br>";
-        result += "<iframe width=\"300\" height=\"" + height + "\" src=\"" + el + "?modestbranding=1&autohide=1&showinfo=0&controls=0\" frameborder=\"0\" allowfullscreen></iframe>";
+        result += "<iframe width=\"300\" height=\"" + height + "\" src=\"" + el + "?modestbranding=1&autohide=0&showinfo=0\" frameborder=\"0\" allowfullscreen></iframe>";
     });
     result += "<br>";
     links.forEach(function (el) {
