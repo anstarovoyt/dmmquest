@@ -1,9 +1,11 @@
-export function getVideo(...links: string[]) {
+export function getVideo(video: boolean, ...links: string[]) {
     let result = '';
+
+    let height = video ? "182" : "24";
 
     links.forEach(el => {
         result += "<br>";
-        result += "<iframe width=\"280\" height=\"157\" src=\"${link}\" frameborder=\"0\" allowfullscreen></iframe>";
+        result += "<iframe width=\"300\" height=\"${height}\" src=\"${link}\" frameborder=\"0\" allowfullscreen></iframe>";
     });
 
     result += "<br>";

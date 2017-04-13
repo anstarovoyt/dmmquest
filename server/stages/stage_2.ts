@@ -8,6 +8,7 @@ export const stage: RawStage = {
         "Пароль: мыкоманда",
 
         "На чём сейчас находится памятный знак?" + getVideo(
+            false,
             "https://youtu.be/jZPlIlKMJFc",
             "https://youtu.be/zLPh8YsJb2g",
             "https://youtu.be/ZRimt_3d49Y",
@@ -20,10 +21,10 @@ export const stage: RawStage = {
 
 
         `Загадано здание. Заходить на территорию не надо - там могут быть чувствительные люди. 
-        Перечислите, какие три дня недели указаны на щите у входа?` + getVideo("https://youtu.be/dbvk8_Fy9RM"),
+        Перечислите, какие три дня недели указаны на щите у входа?` + getVideo(true, "https://youtu.be/dbvk8_Fy9RM"),
 
 
-        `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo("https://youtu.be/me6vAVmXR_Q"),
+        `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, "https://youtu.be/me6vAVmXR_Q"),
 
         `В загаданном месте посчитайте количество светлых четырехугольников вокруг.` +
         "<img style='height: auto;width: auto; max-width: 200px;max-height: 200px;' src='/statics/stages/stage_2/quad_count.png'/>",
@@ -31,7 +32,7 @@ export const stage: RawStage = {
 
         `Вам нужно графити с обратной стороны загаданного здания. 
 Помимо прочего у персонажа в волосах застряла табличка, которую вам надо рассмотреть. 
-Назовите категорию помещения.` + getVideo("https://youtu.be/bYsl0GIZmD4")
+Назовите категорию помещения.` + getVideo(true, "https://youtu.be/bYsl0GIZmD4")
     ],
 
 
