@@ -26,7 +26,7 @@ export const stage: RawStage = {
 
         `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, "https://www.youtube.com/embed/me6vAVmXR_Q"),
 
-        `В загаданном месте посчитайте количество светлых четырехугольников вокруг.` +
+        `В загаданном месте посчитайте количество светлых четырехугольников вокруг.<br>` +
         "<img style='height: auto;width: auto; max-width: 200px;max-height: 200px;' src='/statics/stages/stage_2/quad_count.png'/>",
 
 

@@ -5,7 +5,7 @@ export function getVideo(video: boolean, ...links: string[]) {
 
     links.forEach(el => {
         result += "<br>";
-        result += `<iframe width=\"300\" height=\"${height}\" src=\"${el}\" frameborder=\"0\" allowfullscreen></iframe>`;
+        result += `<iframe width=\"300\" height=\"${height}\" src=\"${el}\?modestbranding=1&autohide=1&showinfo=0&controls=0" frameborder=\"0\" allowfullscreen></iframe>`;
     });
 
     result += "<br>";
