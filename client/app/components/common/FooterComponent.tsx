@@ -6,7 +6,7 @@ export class FooterComponent extends React.Component<any, any> {
         return (
             <div className="footer">
                 <div className="inner">
-                    <p>© Оргкомитет ДММ 2016</p>
+                    <p>© Оргкомитет ДММ 2017</p>
                 </div>
             </div>
         )
