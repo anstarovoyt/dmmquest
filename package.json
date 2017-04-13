@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack && node server.js",
-    "postinstall": "webpack --TARGET=DIST",
+    "postinstall": "./.bin/webpack --TARGET=DIST",
     "start": "node server.js --TARGET=DIST"
   },
   "dependencies": {
