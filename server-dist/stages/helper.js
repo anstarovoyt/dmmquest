@@ -16,6 +16,7 @@ function getVideo(video) {
         result += "br";
         result += "<a style=\"text-decoration:underline !important\" href=\"" + el + "\">YouTube link</a>";
     });
+    return result;
 }
 exports.getVideo = getVideo;
 //# sourceMappingURL=helper.js.map
