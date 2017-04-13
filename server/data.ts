@@ -1,17 +1,34 @@
-import {AllData} from "./all-text";
 export interface RawStage {
     name: string,
+    internalName?: string,
     quests: (string | { type: QuestType, text: string })[]
     status?: StageStatus
     bonuses?: (string | { type: QuestType, text: string })[]
     description?: string;
 }
 
-export let all_text: AllData = require('./all-text').all_text;
 
-function getDefaultData(): AllData {
-    if (all_text) {
-        return all_text;
+let allStages: RawStage[] = null;
+let killer: RawStage = null;
+let bonus: RawStage = null;
+try {
+    allStages = [
+        require('./stages/stage_0').stage,
+        require('./stages/stage_1').stage,
+        require('./stages/stage_2').stage];
+
+    killer = require('./stages/killer').stage;
+    bonus = require('./stages/bonus').stage;
+} catch (e) {
+}
+
+function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawStage } {
+    if (allStages) {
+        return {
+            stages: allStages,
+            killer,
+            bonus
+        };
     }
 
     return {

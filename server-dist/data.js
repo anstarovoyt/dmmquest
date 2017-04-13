@@ -1,9 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.all_text = require('./all-text').all_text;
+var allStages = null;
+var killer = null;
+var bonus = null;
+try {
+    allStages = [
+        require('./stages/stage_0').stage,
+        require('./stages/stage_1').stage,
+        require('./stages/stage_2').stage
+    ];
+    killer = require('./stages/killer').stage;
+    bonus = require('./stages/bonus').stage;
+}
+catch (e) {
+}
 function getDefaultData() {
-    if (exports.all_text) {
-        return exports.all_text;
+    if (allStages) {
+        return {
+            stages: allStages,
+            killer: killer,
+            bonus: bonus
+        };
     }
     return {
         stages: [
