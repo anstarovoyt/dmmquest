@@ -1,9 +1,11 @@
+export type QuestText = (string | { type: QuestType; text: string });
+
 export interface RawStage {
     name: string,
     internalName?: string,
-    quests: (string | { type: QuestType, text: string })[]
+    quests: QuestText[]
     status?: StageStatus
-    bonuses?: (string | { type: QuestType, text: string })[]
+    bonuses?: QuestText[]
     description?: string;
 }
 
