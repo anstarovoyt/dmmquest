@@ -18,7 +18,7 @@ export class StageListItemStatusComponent extends React.Component<{ stageStatus:
             return <div className="alert alert-success"> Бонус</div>
         }
 
-        if (stageStatus == StageStatus.INTO) {
+        if (stageStatus == StageStatus.INTRO) {
             return <div className="alert alert-success"> Intro</div>
         }
 

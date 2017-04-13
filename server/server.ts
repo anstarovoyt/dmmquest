@@ -3,6 +3,7 @@ import {logServer, toEkbString} from "./utils";
 import {initStore} from "./Store";
 import {StageManager} from "./StageManager";
 import {StateManager} from "./StateManager";
+import {QuestText} from "./data";
 
 let minimist = require('minimist');
 let express = require('express');
@@ -203,40 +204,48 @@ export function initServer() {
             return {success: false};
         }
 
-        let stage = stageManager.getQuestionTexts(token, request.stageId);
-        if (!stage) {
+        let quests: { quest: QuestText, show?: boolean }[] = stageManager.getQuestionTexts(token, request.stageId);
+        if (!quests) {
             return {
                 success: false
             }
         }
 
-        let quests = stage.quests;
+        let resultQuests:Quest[] = [];
+
+
+        quests.forEach(function (el, i) {
+            let show = el.show;
+            if (!show) return;
+
+            let quest = el.quest;
+
+            let text;
+            let type;
+            if (typeof quest === "string") {
+                text = quest;
+            } else if (quest) {
+                text = quest.text;
+                type = quest.type;
+            }
+
+            let result: Quest = {
+                id: i,
+                text: text
+            };
+            if (type) {
+                result.type = type;
+            }
+
+            resultQuests.push(result);
+        });
 
         return {
             success: true,
 
             questTexts: {
                 stageId: request.stageId,
-                quests: quests.map(function (el, i) {
-                    let text;
-                    let type;
-                    if (typeof el === "string") {
-                        text = el;
-                    } else {
-                        text = el.text;
-                        type = el.type;
-                    }
-
-                    let result: Quest = {
-                        id: i,
-                        text: text
-                    };
-                    if (type) {
-                        result.type = type;
-                    }
-
-                    return result
-                })
+                quests: resultQuests
             }
         }
     }

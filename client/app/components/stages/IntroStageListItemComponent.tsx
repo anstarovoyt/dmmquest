@@ -10,6 +10,6 @@ export class IntroStageListItemComponent extends AbstractStageListItemComponent<
     }
 
     getStatus(): StageStatus {
-        return StageStatus.INTO;
+        return StageStatus.INTRO;
     }
 }

@@ -81,15 +81,46 @@ var StageManager = (function () {
         }
         if (stage.status == 3 /* BONUS */ ||
             stageId == "bonus") {
-            return data_1.defaultData.bonus;
+            var result_1 = [];
+            var quests = data_1.defaultData.bonus.quests;
+            if (quests) {
+                quests.forEach(function (el) { return result_1.push({ quest: el, show: true }); });
+            }
+            var _loop_1 = function (stage_1) {
+                if (stage_1.status == 1 /* OPEN */ ||
+                    stage_1.status == 0 /* LOCKED */ ||
+                    stage_1.status == 2 /* COMPLETED */) {
+                    var stageNumber = Number(stage_1.id);
+                    if (stageNumber) {
+                        var currentStage = data_1.defaultData.stages[stageNumber];
+                        if (currentStage.bonuses) {
+                            currentStage.bonuses.forEach(function (el) {
+                                result_1.push({
+                                    quest: el,
+                                    show: stage_1.status != 0 /* LOCKED */
+                                });
+                            });
+                        }
+                    }
+                }
+            };
+            for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
+                var stage_1 = _a[_i];
+                _loop_1(stage_1);
+            }
+            return result_1;
         }
         if (stage.status == 5 /* KILLER */ || stageId == "killer") {
-            return data_1.defaultData.killer;
+            return data_1.defaultData.killer.quests.map(function (el) {
+                return { quest: el, show: true };
+            });
         }
         var stageInfo = data_1.defaultData.stages[Number(stageId)];
         if (!stageInfo)
             return;
-        return stageInfo;
+        return stageInfo.quests.map(function (el) {
+            return { quest: el, show: true };
+        });
     };
     StageManager.prototype.unlockLastStage = function (tokenId) {
         var _this = this;

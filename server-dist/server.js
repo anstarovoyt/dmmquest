@@ -165,36 +165,41 @@ function initServer() {
         if (!team) {
             return { success: false };
         }
-        var stage = stageManager.getQuestionTexts(token, request.stageId);
-        if (!stage) {
+        var quests = stageManager.getQuestionTexts(token, request.stageId);
+        if (!quests) {
             return {
                 success: false
             };
         }
-        var quests = stage.quests;
+        var resultQuests = [];
+        quests.forEach(function (el, i) {
+            var show = el.show;
+            if (!show)
+                return;
+            var quest = el.quest;
+            var text;
+            var type;
+            if (typeof quest === "string") {
+                text = quest;
+            }
+            else if (quest) {
+                text = quest.text;
+                type = quest.type;
+            }
+            var result = {
+                id: i,
+                text: text
+            };
+            if (type) {
+                result.type = type;
+            }
+            resultQuests.push(result);
+        });
         return {
             success: true,
             questTexts: {
                 stageId: request.stageId,
-                quests: quests.map(function (el, i) {
-                    var text;
-                    var type;
-                    if (typeof el === "string") {
-                        text = el;
-                    }
-                    else {
-                        text = el.text;
-                        type = el.type;
-                    }
-                    var result = {
-                        id: i,
-                        text: text
-                    };
-                    if (type) {
-                        result.type = type;
-                    }
-                    return result;
-                })
+                quests: resultQuests
             }
         };
     }

@@ -1,5 +1,5 @@
 import {TeamManager} from "./TeamManager";
-import {defaultData, intro, RawStage} from "./data";
+import {defaultData, intro, QuestText, RawStage} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {StateManager} from "./StateManager";
 
@@ -93,7 +93,7 @@ export class StageManager {
     }
 
 
-    getQuestionTexts(token: string, stageId: string): RawStage {
+    getQuestionTexts(token: string, stageId: string): { quest: QuestText, show?: boolean }[] {
         const appState = this.teamManager.getAppState(token);
         let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
@@ -102,18 +102,46 @@ export class StageManager {
 
         if (stage.status == StageStatus.BONUS ||
             stageId == "bonus") {
-            return defaultData.bonus;
+            let result: { quest: QuestText, show?: boolean }[] = [];
+            let quests = defaultData.bonus.quests;
+            if (quests) {
+                quests.forEach(el => result.push({quest: el, show: true}));
+            }
+            for (let stage of appState.stages) {
+                if (stage.status == StageStatus.OPEN ||
+                    stage.status == StageStatus.LOCKED ||
+                    stage.status == StageStatus.COMPLETED) {
+                    let stageNumber = Number(stage.id);
+                    if (stageNumber) {
+                        let currentStage = defaultData.stages[stageNumber];
+                        if (currentStage.bonuses) {
+                            currentStage.bonuses.forEach(el => {
+                                result.push({
+                                    quest: el,
+                                    show: stage.status != StageStatus.LOCKED
+                                })
+                            });
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         if (stage.status == StageStatus.KILLER || stageId == "killer") {
-            return defaultData.killer;
+            return defaultData.killer.quests.map(el => {
+                return {quest: el, show: true}
+            });
         }
 
         const stageInfo: RawStage = defaultData.stages[Number(stageId)];
         if (!stageInfo) return;
 
 
-        return stageInfo;
+        return stageInfo.quests.map(el => {
+            return {quest: el, show: true}
+        });
     }
 
     unlockLastStage(tokenId: string): boolean {

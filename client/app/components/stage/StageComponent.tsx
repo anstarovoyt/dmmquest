@@ -195,6 +195,8 @@ export class StageComponent extends React.Component<{stage:Stage},
             if (r.success) {
                 appStateService.setState(r.res);
                 if (stage.status != StageStatus.BONUS) {
+                    questService.reset("bonus");
+
                     this.context["history"].push('/');
                     return;
                 }

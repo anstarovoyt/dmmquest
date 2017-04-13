@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack && node server.js",
-    "target": "./.bin/webpack --TARGET=DIST",
+    "target": "./node_modules/.bin/webpack --TARGET=DIST",
     "start": "node server.js --TARGET=DIST"
   },
   "dependencies": {
