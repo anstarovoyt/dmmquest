@@ -16,6 +16,7 @@ export function initRedisStore(callback): Store {
     const TEAMS_KEY = "teams";
     const APP_STATE_KEY = "app_state";
     const TEAMS_CACHE: Team[] = [];
+    // noinspection JSMismatchedCollectionQueryUpdate
     const DEFAULT_STATES: { [token: string]: AppState } = {};
 
     const initTeams = () => {
