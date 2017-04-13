@@ -24,7 +24,7 @@ export const stage: RawStage = {
         Перечислите, какие три дня недели указаны на щите у входа?` + getVideo(true, "https://www.youtube.com/embed/dbvk8_Fy9RM"),
 
 
-        `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, "https://youtu.be/me6vAVmXR_Q"),
+        `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, "https://www.youtube.com/embed/me6vAVmXR_Q"),
 
         `В загаданном месте посчитайте количество светлых четырехугольников вокруг.` +
         "<img style='height: auto;width: auto; max-width: 200px;max-height: 200px;' src='/statics/stages/stage_2/quad_count.png'/>",

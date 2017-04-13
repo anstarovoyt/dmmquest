@@ -13,7 +13,6 @@ function getVideo(video) {
     });
     result += "<br>";
     links.forEach(function (el) {
-        result += "<br>";
         result += "<a style=\"text-decoration:underline !important\" href=\"" + el + "\">YouTube link</a>";
     });
     return result;
