@@ -17,7 +17,7 @@ let TARGET_PATH_MAPPING = {
 };
 
 const dbStore = initStore(initServer);
-const startDir = process.cwd();
+const startDir = path.dirname(__dirname);
 logServer(startDir);
 
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';

@@ -17,7 +17,7 @@ var TARGET_PATH_MAPPING = {
     DIST: 'dist'
 };
 var dbStore = Store_1.initStore(initServer);
-var startDir = process.cwd();
+var startDir = path.dirname(__dirname);
 utils_1.logServer(startDir);
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 function initServer() {
