@@ -15,12 +15,14 @@ const enum LoadState {
     ERROR
 }
 
-export class StageComponent extends React.Component<{stage:Stage},
-    {questTexts?:QuestTexts,
-        stage?:Stage,
-        isEnableSave:boolean,
-        savedMark:ActionState,
-        loadState:LoadState}> {
+export class StageComponent extends React.Component<{ stage: Stage },
+    {
+        questTexts?: QuestTexts,
+        stage?: Stage,
+        isEnableSave: boolean,
+        savedMark: ActionState,
+        loadState: LoadState
+    }> {
 
     static contextTypes = {
         history: PropTypes.object.isRequired
@@ -32,7 +34,7 @@ export class StageComponent extends React.Component<{stage:Stage},
 
     nestedValue = {};
 
-    constructor(props:any, context) {
+    constructor(props: any, context) {
         super(props, context);
         this.state = {
             isEnableSave: true,
@@ -42,7 +44,7 @@ export class StageComponent extends React.Component<{stage:Stage},
     }
 
 
-    componentWillUnmount():void {
+    componentWillUnmount(): void {
         if (this.timeOutMarker != null) {
             clearTimeout(this.timeOutMarker);
             this.timeOutMarker = null;
@@ -137,18 +139,22 @@ export class StageComponent extends React.Component<{stage:Stage},
                     <h1><Link to="/">
                         <span className="glyphicon glyphicon-arrow-left"></span>
                     </Link>
-                            <span>{stageName} {currentStage.status == StageStatus.BONUS ?
-                                (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
+                        <span>{stageName} {currentStage.status == StageStatus.BONUS ?
+                            (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
                     {this.state.loadState == LoadState.ERROR ?
-                        <span>Ошибка загрузки данных. Попробуйте обновить страницу</span>: <LoadingComponent />}
+                        <span>Ошибка загрузки данных. Попробуйте обновить страницу</span> : <LoadingComponent />}
                 </div>
             </div>
         )
     }
 
-    private getButtonName(currentStage:Stage, isCompletedLevel:boolean) {
+    getButtonName(currentStage: Stage, isCompletedLevel: boolean) {
         if (currentStage && currentStage.status == StageStatus.BONUS) {
             return "Сохранить ответы";
+        }
+
+        if (currentStage && currentStage.status == StageStatus.KILLER) {
+            return "Проверить!"
         }
 
         return isCompletedLevel ? "Этап сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
@@ -165,7 +171,7 @@ export class StageComponent extends React.Component<{stage:Stage},
             return;
         }
 
-        var answers:QuestAnswer[] = [];
+        var answers: QuestAnswer[] = [];
         var nestedValue = this.nestedValue;
         for (var value in nestedValue) {
             if (nestedValue.hasOwnProperty(value)) {

@@ -63,7 +63,8 @@ declare const enum StageStatus {
     COMPLETED,
     BONUS,
     INTRO,
-    KILLER
+    KILLER,
+    KILLER_COMPLETED
 }
 
 interface Team extends TeamSimple {
