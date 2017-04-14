@@ -1,5 +1,6 @@
 import * as React from "react";
 import {auth} from "../../authentication/AuthService";
+import {PropTypes} from "react";
 
 
 export class LoginForm extends React.Component<any, { secretCode: string, showError: boolean }> {
@@ -11,6 +12,10 @@ export class LoginForm extends React.Component<any, { secretCode: string, showEr
             showError: false
         };
     }
+
+    static contextTypes = {
+        history: PropTypes.object.isRequired
+    };
 
 
     componentWillMount(): void {
@@ -66,9 +71,7 @@ export class LoginForm extends React.Component<any, { secretCode: string, showEr
                     showError: true
                 })
             } else if (res.redirect) {
-                setImmediate(() => {
-                    this.context["history"].push('/intro');
-                });
+                this.context["history"].push('/intro');
             }
         });
     }

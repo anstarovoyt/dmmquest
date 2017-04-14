@@ -30,7 +30,7 @@ const auth = new class {
                     }
                 }
                 let needRedirectToIntro: boolean = resp.first;
-                callback({success: res.authenticated});
+                callback({success: res.authenticated, redirect: needRedirectToIntro});
                 this.onChange(res);
 
 

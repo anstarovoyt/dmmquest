@@ -1,11 +1,17 @@
 import * as React from "react";
 import {appStateService} from "../../state/AppStateService";
+import {StageContainerComponent} from "./StageContainerComponent";
+import {LoadingComponent} from "../common/LoadingComponent";
+
 var Link = require('react-router/lib/Link');
 
 
-export class IntroStageContainer extends React.Component<any, any> {
+export class IntroStageContainer extends StageContainerComponent {
 
     render() {
+        if (!appStateService.getAppState()) {
+            return <LoadingComponent/>;
+        }
 
         let intro = appStateService.getIntro();
 

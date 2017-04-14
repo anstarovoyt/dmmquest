@@ -4,6 +4,7 @@ import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageLocked} from "./StageLocked";
+
 type StageStage = { stage: Stage, loading: boolean, available: boolean };
 
 export class StageContainerComponent extends React.Component<any, StageStage> {
@@ -13,7 +14,7 @@ export class StageContainerComponent extends React.Component<any, StageStage> {
 
     constructor(props: any, context: any) {
         super(props, context);
-        var state: AppState = appStateService.getAppState();
+        const state: AppState = appStateService.getAppState();
         this.state = this.getStageByAppState(state);
     }
 
@@ -41,9 +42,9 @@ export class StageContainerComponent extends React.Component<any, StageStage> {
             };
         }
         else {
-            var id: string = this.getStageId();
+            const id: string = this.getStageId();
             if (id) {
-                var stage = getStageById(state, id);
+                const stage = getStageById(state, id);
                 if (stage) {
                     return {
                         stage,
@@ -66,12 +67,12 @@ export class StageContainerComponent extends React.Component<any, StageStage> {
     }
 
     render() {
-        var state = this.state;
+        const state = this.state;
         if (state) {
             if (false === state.available) {
                 return <StageLocked />
             }
-            var stage = state.stage;
+            const stage = state.stage;
             if (stage) {
                 if (stage.status == StageStatus.LOCKED) {
                     return <StageLocked />
