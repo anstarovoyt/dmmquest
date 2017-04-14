@@ -8,17 +8,17 @@ export const stage: RawStage = {
         {
             text: "Кто",
             type: QuestType.LIST_BOX,
-            values: ["Маша", "Ваня"]
+            values: ["Маша", "Ваня", "Настя", "Архитектор"]
         },
         {
             text:"Где",
             type: QuestType.LIST_BOX,
-            values: ["Евразия"]
+            values: ["Евразия", "Школа", "Фонтан", "Парковка", "Аэропорт", "Прачечная", "Храм", "Маяк"]
         },
         {
             text:"С помощью чего",
             type: QuestType.LIST_BOX,
-            values: ["Жир", "Питон"]
+            values: ["Жир", "Питон", "Телефонный аппарат", "Камень", "Молот", "Волосы"]
         }
     ]
 }
