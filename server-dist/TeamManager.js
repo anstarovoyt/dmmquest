@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_1 = require("./data");
 var utils_1 = require("./utils");
-exports.COUNT_HOURS_TO_SOLVE = 7;
+exports.COUNT_HOURS_TO_SOLVE = 7.5;
 var TeamManager = (function () {
     function TeamManager(stageModifier, dbStore) {
         this.stageModifier = stageModifier;

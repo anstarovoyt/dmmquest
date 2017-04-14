@@ -2,7 +2,7 @@ import {defaultData} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {Store} from "./Store";
 import {StateManager} from "./StateManager";
-export const COUNT_HOURS_TO_SOLVE = 7;
+export const COUNT_HOURS_TO_SOLVE = 7.5;
 
 export class TeamManager {
 
