@@ -7,7 +7,7 @@ import {complete} from "../../communitation/Dispatcher";
 import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
-var Link = require('react-router/lib/Link');
+const Link = require('react-router/lib/Link');
 
 const enum LoadState {
     NOT_LOADED,
@@ -52,7 +52,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
     }
 
     componentDidMount() {
-        var currentStage = this.getCurrentStage();
+        const currentStage = this.getCurrentStage();
         questService.getAsyncQuestTexts(currentStage, (res) => {
             if (res.success) {
                 this.setState({
@@ -91,22 +91,22 @@ export class StageComponent extends React.Component<{ stage: Stage },
     }
 
     render() {
-        var currentStage: Stage = this.getCurrentStage();
+        const currentStage: Stage = this.getCurrentStage();
 
-        var state = this.state;
-        var stageName = appStateService.getStageName(currentStage);
-        var hasQuestion = state.questTexts;
+        const state = this.state;
+        const stageName = appStateService.getStageName(currentStage);
+        const hasQuestion = state.questTexts;
         if (hasQuestion) {
-            var quests = state.questTexts.quests.map(item => {
+            const quests = state.questTexts.quests.map(item => {
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
-            var isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
-            var buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
+            const isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
+            const buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
 
 
-            var savedMark = this.state.savedMark;
-            var savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+            const savedMark = this.state.savedMark;
+            const savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
 
 
             if (savedMark == ActionState.ERROR) {
@@ -171,7 +171,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
     }
 
     private saveAnswers() {
-        var stage = this.props.stage;
+        let stage = this.props.stage;
         if (!stage) {
             return;
         }
@@ -181,9 +181,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
             return;
         }
 
-        var answers: QuestAnswer[] = [];
-        var nestedValue = this.nestedValue;
-        for (var value in nestedValue) {
+        const answers: QuestAnswer[] = [];
+        const nestedValue = this.nestedValue;
+        for (let value in nestedValue) {
             if (nestedValue.hasOwnProperty(value)) {
                 answers.push({
                     id: Number(value),
@@ -193,7 +193,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         }
 
 
-        var token = auth.getToken();
+        const token = auth.getToken();
 
         this.setState({
             questTexts: this.state.questTexts,
