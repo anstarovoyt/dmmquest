@@ -211,7 +211,7 @@ export function initServer() {
             }
         }
 
-        let resultQuests:Quest[] = [];
+        let resultQuests: Quest[] = [];
 
 
         quests.forEach(function (el, i) {

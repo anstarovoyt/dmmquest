@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stage = {
     status: 3 /* BONUS */,
-    name: "Для задротов",
+    name: "Бонусы",
     internalName: "Бонус",
     quests: []
 };
