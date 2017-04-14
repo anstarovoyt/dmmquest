@@ -79,8 +79,19 @@ export class StageComponent extends React.Component<{ stage: Stage },
     }
 
 
+    private getTitleText(currentStage: Stage) {
+        if (currentStage.status == StageStatus.BONUS) {
+            return <h4> Сдаете последние этап — бонус блокируется </h4>;
+        }
+
+        if (currentStage.status == StageStatus.KILLER) {
+            return <h4>У вас будет только одна попытка проверить свою догадку, используйте ее с умом</h4>;
+        }
+        return <h4/>;
+    }
+
     render() {
-        var currentStage = this.getCurrentStage();
+        var currentStage: Stage = this.getCurrentStage();
 
         var state = this.state;
         var stageName = appStateService.getStageName(currentStage);
@@ -110,8 +121,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                         <h1><Link to="/">
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
-                            <span>{stageName} {currentStage.status == StageStatus.BONUS ?
-                                (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
+                            <span>{stageName} { this.getTitleText(currentStage) }</span></h1>
                         {quests}
                     </div>
                     <div className="col-lg-12 save-level">
