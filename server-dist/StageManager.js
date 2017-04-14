@@ -91,7 +91,7 @@ var StageManager = (function () {
                     stage_1.status == 0 /* LOCKED */ ||
                     stage_1.status == 2 /* COMPLETED */) {
                     var stageNumber = Number(stage_1.id);
-                    if (stageNumber) {
+                    if (stageNumber != null) {
                         var currentStage = data_1.defaultData.stages[stageNumber];
                         if (currentStage.bonuses) {
                             currentStage.bonuses.forEach(function (el) {

@@ -112,7 +112,7 @@ export class StageManager {
                     stage.status == StageStatus.LOCKED ||
                     stage.status == StageStatus.COMPLETED) {
                     let stageNumber = Number(stage.id);
-                    if (stageNumber) {
+                    if (stageNumber != null) {
                         let currentStage = defaultData.stages[stageNumber];
                         if (currentStage.bonuses) {
                             currentStage.bonuses.forEach(el => {
