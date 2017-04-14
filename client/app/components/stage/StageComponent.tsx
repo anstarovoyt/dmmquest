@@ -95,9 +95,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
         const state = this.state;
         const stageName = appStateService.getStageName(currentStage);
-        const hasQuestion = state.questTexts;
-        if (hasQuestion) {
-            const quests = state.questTexts.quests.map(item => {
+        const questTexts: QuestTexts = state.questTexts;
+        if (questTexts) {
+            const quests = questTexts.quests.map(item => {
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
@@ -122,6 +122,8 @@ export class StageComponent extends React.Component<{ stage: Stage },
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
                             <span>{stageName} { this.getTitleText(currentStage) }</span></h1>
+                        {this.getDescription(questTexts)}
+
                         {quests}
                     </div>
                     <div className="col-lg-12 save-level">
@@ -247,6 +249,17 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 this.timeOutMarker = null;
             }, 1000);
         })
+    }
+
+    private getDescription(questTexts: QuestTexts) {
+        let description = questTexts.stageDescription;
+        if (!description) return <div/>;
+        return <div className="row">
+            <div className="col-xs-12 col-md-8">
+                <h4>Описание</h4>
+                <div dangerouslySetInnerHTML={{__html: description}}/>
+            </div>
+        </div>;
     }
 }
 

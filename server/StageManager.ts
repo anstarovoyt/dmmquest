@@ -93,7 +93,7 @@ export class StageManager {
     }
 
 
-    getQuestionTexts(token: string, stageId: string): { quest: QuestText, show?: boolean }[] {
+    getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean }[], description?: string } {
         const appState = this.teamManager.getAppState(token);
         let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
@@ -126,22 +126,27 @@ export class StageManager {
                 }
             }
 
-            return result;
+            return {texts: result};
         }
 
         if (stage.status == StageStatus.KILLER || stageId == "killer") {
-            return defaultData.killer.quests.map(el => {
-                return {quest: el, show: true}
-            });
+            return {
+                texts: defaultData.killer.quests.map(el => {
+                    return {quest: el, show: true}
+                })
+            };
         }
 
         const stageInfo: RawStage = defaultData.stages[Number(stageId)];
         if (!stageInfo) return;
 
 
-        return stageInfo.quests.map(el => {
-            return {quest: el, show: true}
-        });
+        return {
+            texts: stageInfo.quests.map(el => {
+                return {quest: el, show: true}
+            }),
+            description: stageInfo.description
+        }
     }
 
     unlockLastStage(tokenId: string): boolean {

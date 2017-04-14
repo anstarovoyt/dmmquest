@@ -6,7 +6,7 @@ function getVideo(video) {
         links[_i - 1] = arguments[_i];
     }
     var result = '';
-    var height = video ? "150" : "50";
+    var height = video ? "130" : "50";
     links.forEach(function (el) {
         result += "<br>";
         result += "<iframe width=\"200\" height=\"" + height + "\" src=\"" + el + "?modestbranding=1&autohide=0&showinfo=0\" frameborder=\"0\" allowfullscreen></iframe>";

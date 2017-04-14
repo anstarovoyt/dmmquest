@@ -108,19 +108,24 @@ var StageManager = (function () {
                 var stage_1 = _a[_i];
                 _loop_1(stage_1);
             }
-            return result_1;
+            return { texts: result_1 };
         }
         if (stage.status == 5 /* KILLER */ || stageId == "killer") {
-            return data_1.defaultData.killer.quests.map(function (el) {
-                return { quest: el, show: true };
-            });
+            return {
+                texts: data_1.defaultData.killer.quests.map(function (el) {
+                    return { quest: el, show: true };
+                })
+            };
         }
         var stageInfo = data_1.defaultData.stages[Number(stageId)];
         if (!stageInfo)
             return;
-        return stageInfo.quests.map(function (el) {
-            return { quest: el, show: true };
-        });
+        return {
+            texts: stageInfo.quests.map(function (el) {
+                return { quest: el, show: true };
+            }),
+            description: stageInfo.description
+        };
     };
     StageManager.prototype.unlockLastStage = function (tokenId) {
         var _this = this;

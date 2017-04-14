@@ -4,6 +4,7 @@ var helper_1 = require("./helper");
 exports.stage = {
     name: "Постмодерн",
     internalName: "Ботаника",
+    description: helper_1.getVideo(true, "https://www.youtube.com/embed/cIWOO9nbcJU"),
     quests: [
         "Пароль: мыкоманда",
         "На чём сейчас находится памятный знак?" + helper_1.getVideo(false, "https://www.youtube.com/embed/jZPlIlKMJFc", "https://www.youtube.com/embed/zLPh8YsJb2g", "https://www.youtube.com/embed/ZRimt_3d49Y", "https://www.youtube.com/embed/5Qp55HzZmTQ"),

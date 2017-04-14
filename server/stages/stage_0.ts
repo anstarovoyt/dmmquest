@@ -1,8 +1,10 @@
 import {RawStage} from "../data";
+import {getVideo} from "./helper";
 
 export const stage: RawStage = {
     name: "Классика",
     internalName: "Уралмаш",
+    description: getVideo(true, "https://www.youtube.com/embed/oEV83TYje64"),
     quests: [
         "Код по результатам прохождения этапа"
     ],

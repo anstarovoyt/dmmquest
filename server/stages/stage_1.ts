@@ -1,8 +1,10 @@
 import {RawStage} from "../data";
+import {getVideo} from "./helper";
 
 export const stage: RawStage = {
     name: "Модерн",
     internalName: "Динамо",
+    description: getVideo(true, "https://www.youtube.com/embed/7NUpDPaI3M4"),
     quests: [
         "Безконтрольность Челябинской авиационной тропинки приведет вас в это место, над каким материком находится поезд",
 

@@ -204,7 +204,8 @@ export function initServer() {
             return {success: false};
         }
 
-        let quests: { quest: QuestText, show?: boolean }[] = stageManager.getQuestionTexts(token, request.stageId);
+        let questsInfo = stageManager.getQuestionTexts(token, request.stageId);
+        const quests = questsInfo.texts;
         if (!quests) {
             return {
                 success: false
@@ -251,7 +252,8 @@ export function initServer() {
 
             questTexts: {
                 stageId: request.stageId,
-                quests: resultQuests
+                quests: resultQuests,
+                stageDescription: questsInfo.description
             }
         }
     }

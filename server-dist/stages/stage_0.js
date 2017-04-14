@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var helper_1 = require("./helper");
 exports.stage = {
     name: "Классика",
     internalName: "Уралмаш",
+    description: helper_1.getVideo(true, "https://www.youtube.com/embed/oEV83TYje64"),
     quests: [
         "Код по результатам прохождения этапа"
     ],

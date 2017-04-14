@@ -165,7 +165,8 @@ function initServer() {
         if (!team) {
             return { success: false };
         }
-        var quests = stageManager.getQuestionTexts(token, request.stageId);
+        var questsInfo = stageManager.getQuestionTexts(token, request.stageId);
+        var quests = questsInfo.texts;
         if (!quests) {
             return {
                 success: false
@@ -204,7 +205,8 @@ function initServer() {
             success: true,
             questTexts: {
                 stageId: request.stageId,
-                quests: resultQuests
+                quests: resultQuests,
+                stageDescription: questsInfo.description
             }
         };
     }
