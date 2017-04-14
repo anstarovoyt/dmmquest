@@ -75,14 +75,15 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
 
         let items = this.props.quest.values.map(el => {
-            return <option value={el}>{el}</option>;
+            return <option key={el} value={el}>{el}</option>;
         });
 
         return <div className="input-group">
-            <select onChange={this.handlerChanged.bind(this)} disabled={isCompleted} value={this.state.value}>
+            <select className="form-control my-select-no-border" onChange={this.handlerChanged.bind(this)} disabled={isCompleted}
+                    value={this.state.value}>
                 {items}
             </select>
-            <span className="input-group-btn">
+            <span className="input-group-btn my-padding-left">
                               <button
                                   disabled={isSendDisabled}
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>

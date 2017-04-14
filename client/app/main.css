@@ -380,3 +380,8 @@ h1 a {
 input[type="file"] {
     display: none;
 }
+
+.my-padding-left {
+    padding-left: 5px;
+}
+
