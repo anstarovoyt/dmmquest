@@ -81,7 +81,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     private getTitleText(currentStage: Stage) {
         if (currentStage.status == StageStatus.BONUS) {
-            return <h4> Сдаете последние этап — бонус блокируется </h4>;
+            return <h4> Сдаете последний (третий) этап — квест завершается и бонусы блокируются </h4>;
         }
 
         if (currentStage.status == StageStatus.KILLER) {
@@ -122,7 +122,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
                             <span>{stageName} { this.getTitleText(currentStage) }</span></h1>
-                        {this.getDescription(questTexts)}
+                        {this.getDescription(currentStage, questTexts)}
 
                         {quests}
                     </div>
@@ -251,13 +251,15 @@ export class StageComponent extends React.Component<{ stage: Stage },
         })
     }
 
-    private getDescription(questTexts: QuestTexts) {
+    private getDescription(currentStage: Stage, questTexts: QuestTexts) {
         let description = questTexts.stageDescription;
         if (!description) return <div/>;
         return <div className="row">
             <div className="col-xs-12 col-md-8">
                 <h4>Описание</h4>
                 <div dangerouslySetInnerHTML={{__html: description}}/>
+                <br/>
+                <h4>{currentStage.status == StageStatus.OPEN ? "После разблокирования этапа открылись новые бонусы! Проверь!" : ""}</h4>
             </div>
         </div>;
     }
