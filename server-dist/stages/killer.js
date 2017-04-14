@@ -5,9 +5,21 @@ exports.stage = {
     name: "Убийца",
     internalName: "Killer",
     quests: [
-        "Кто",
-        "Где",
-        "Когда"
+        {
+            text: "Кто",
+            type: 3 /* LIST_BOX */,
+            values: ["Маша", "Ваня"]
+        },
+        {
+            text: "Где",
+            type: 3 /* LIST_BOX */,
+            values: ["Евразия"]
+        },
+        {
+            text: "С помощью чего",
+            type: 3 /* LIST_BOX */,
+            values: ["Жир", "Питон"]
+        }
     ]
 };
 //# sourceMappingURL=killer.js.map

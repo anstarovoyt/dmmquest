@@ -5,8 +5,20 @@ export const stage: RawStage = {
     name: "Убийца",
     internalName: "Killer",
     quests: [
-        "Кто",
-        "Где",
-        "Когда"
+        {
+            text: "Кто",
+            type: QuestType.LIST_BOX,
+            values: ["Маша", "Ваня"]
+        },
+        {
+            text:"Где",
+            type: QuestType.LIST_BOX,
+            values: ["Евразия"]
+        },
+        {
+            text:"С помощью чего",
+            type: QuestType.LIST_BOX,
+            values: ["Жир", "Питон"]
+        }
     ]
 }

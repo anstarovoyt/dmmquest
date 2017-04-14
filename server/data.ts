@@ -1,4 +1,4 @@
-export type QuestText = (string | { type: QuestType; text: string });
+export type QuestText = (string | { type: QuestType; text: string, values?: string[] });
 
 export interface RawStage {
     name: string,

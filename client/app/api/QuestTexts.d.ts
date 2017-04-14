@@ -6,7 +6,8 @@ interface QuestTextsRequest {
 declare const enum QuestType {
     TEXT,
     UPLOAD,
-    UPLOAD_5
+    UPLOAD_5,
+    LIST_BOX
 }
 
 interface QuestTextsResponse {
