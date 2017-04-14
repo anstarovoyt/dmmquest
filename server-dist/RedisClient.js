@@ -12,6 +12,7 @@ function initRedisStore(callback) {
     var TEAMS_KEY = "teams";
     var APP_STATE_KEY = "app_state";
     var TEAMS_CACHE = [];
+    // noinspection JSMismatchedCollectionQueryUpdate
     var DEFAULT_STATES = {};
     var initTeams = function () {
         var multi = client.multi();
