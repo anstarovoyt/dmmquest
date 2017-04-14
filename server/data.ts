@@ -1,3 +1,5 @@
+import {getVideo} from "./stages/helper";
+
 export type QuestText = (string | { type: QuestType; text: string, values?: string[] });
 
 export interface RawStage {
@@ -85,4 +87,6 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawSta
 
 export const defaultData = getDefaultData();
 
-export const intro = "Это интро детка";
+export const intro = getVideo(true, "https://www.youtube.com/embed/ujjRcmhJh-I") + `<br>Для определения того, кто является убийцей вам необходимо исключить из списка подозреваемых все те объекты, которые в явном и неявном виде встретятся в квесте на протяжении трех этапов (в бонусах нет).
+Например одна из загадок привела вас к ответу "Петя", исключаем его из списка подозреваемых. Другой пример: ответ на загадку - земноводное, вычеркиваем из списка лягушку. В конце при всех правильно решенных загадках у вас должно остаться по одному человеку, месту, орудию.
+Не все загадки позволяют вычеркивать объекты.`;

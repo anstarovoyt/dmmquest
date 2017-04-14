@@ -20,13 +20,13 @@ export class IntroStageContainer extends StageContainerComponent {
                 <h1><Link to="/">
                     <span className="glyphicon glyphicon-arrow-left"></span>
                 </Link>
-                    <div className="row">
-                        <div className="col-xs-12 col-md-8">
-                            <div dangerouslySetInnerHTML={{__html: intro}}/>
-                        </div>
-                    </div>
-
+                    Intro
                 </h1>
+                <div className="row">
+                    <div className="col-xs-12 col-md-8">
+                        <div dangerouslySetInnerHTML={{__html: intro}}/>
+                    </div>
+                </div>
             </div>
         </div>;
     }
