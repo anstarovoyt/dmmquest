@@ -222,19 +222,25 @@ export function initServer() {
 
             let text;
             let type;
+            let values = null;
             if (typeof quest === "string") {
                 text = quest;
             } else if (quest) {
                 text = quest.text;
                 type = quest.type;
+                values = quest.values;
             }
 
             let result: Quest = {
                 id: i,
-                text: text
+                text: text,
             };
             if (type) {
                 result.type = type;
+            }
+
+            if (values) {
+                result.values = values;
             }
 
             resultQuests.push(result);

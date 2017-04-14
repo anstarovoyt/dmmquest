@@ -179,19 +179,24 @@ function initServer() {
             var quest = el.quest;
             var text;
             var type;
+            var values = null;
             if (typeof quest === "string") {
                 text = quest;
             }
             else if (quest) {
                 text = quest.text;
                 type = quest.type;
+                values = quest.values;
             }
             var result = {
                 id: i,
-                text: text
+                text: text,
             };
             if (type) {
                 result.type = type;
+            }
+            if (values) {
+                result.values = values;
             }
             resultQuests.push(result);
         });

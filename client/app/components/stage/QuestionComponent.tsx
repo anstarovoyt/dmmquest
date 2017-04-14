@@ -4,17 +4,17 @@ import {auth} from "../../authentication/AuthService";
 import {appStateService} from "../../state/AppStateService";
 
 
-export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, savedValues},
-    {value:string, noBackgroundActions:boolean, savedMark:ActionState}> {
+export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues },
+    { value: string, noBackgroundActions: boolean, savedMark: ActionState }> {
 
     private timeOutMarker = null;
 
     popupText = "";
 
-    constructor(props:any) {
+    constructor(props: any) {
         super(props);
 
-        var value = this.getDefaultValue() || "";
+        const value = this.getDefaultValue() || "";
         this.state = {
             value: value,
             savedMark: ActionState.NO,
@@ -25,7 +25,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
 
-    componentWillUnmount():void {
+    componentWillUnmount(): void {
         if (this.timeOutMarker != null) {
             clearTimeout(this.timeOutMarker);
             this.timeOutMarker = null;
@@ -33,19 +33,19 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     render() {
-        var savedMark = this.state.savedMark;
-        var savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+        const savedMark = this.state.savedMark;
+        const savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
 
         if (savedMark == ActionState.ERROR) {
             this.popupText = "Ошибка при отправке";
         } else if (savedMark == ActionState.SAVED) {
-            var type = this.props.quest.type;
-            this.popupText = (!type || type == QuestType.TEXT) ? "Ответы сохранены" : "Файл загружен";
+            let type = this.props.quest.type;
+            this.popupText = (!type || type == QuestType.TEXT || type == QuestType.LIST_BOX) ? "Ответы сохранены" : "Файл загружен";
         }
 
-        var stage = this.props.stage;
-        var isCompleted = stage.status == StageStatus.COMPLETED;
-        var text = {__html: this.props.quest.text};
+        const stage = this.props.stage;
+        const isCompleted = stage.status == StageStatus.COMPLETED;
+        const text = {__html: this.props.quest.text};
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -58,27 +58,52 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
 
-    private createInputField(isCompleted:boolean, savedHtmlClass:string) {
-        var type = this.props.quest.type;
+    private createInputField(isCompleted: boolean, savedHtmlClass: string) {
+        const type = this.props.quest.type;
         if (type == QuestType.UPLOAD || type == QuestType.UPLOAD_5) {
             return this.createUploadField(isCompleted, savedHtmlClass);
         }
+
+        if (type == QuestType.LIST_BOX) {
+            return this.createListBoxField(isCompleted, savedHtmlClass);
+        }
+
         return this.createTextInputField(isCompleted, savedHtmlClass);
     }
 
+    private createListBoxField(isCompleted: boolean, savedHtmlClass: string) {
+        const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
 
-    private createUploadField(isCompleted:boolean, savedHtmlClass:string) {
-        var hasBackground = !this.state.noBackgroundActions;
+        let items = this.props.quest.values.map(el => {
+            return <option value={el}>{el}</option>;
+        });
 
-        var iconSpan = hasBackground ? this.getAnimatedIconSpan() : this.getUploadIconSpan();
-        var downloadMessage = hasBackground ? "Загрузка..." : "Загрузить";
+        return <div className="input-group">
+            <select onChange={this.handlerChanged.bind(this)} disabled={isCompleted} value={this.state.value}>
+                {items}
+            </select>
+            <span className="input-group-btn">
+                              <button
+                                  disabled={isSendDisabled}
+                                  className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
+                                  {this.getSaveIconSpan()}&nbsp;Сохранить {this.getPopupSpan(savedHtmlClass)}</button>
+                            </span>
+        </div>
+    }
+
+
+    private createUploadField(isCompleted: boolean, savedHtmlClass: string) {
+        const hasBackground = !this.state.noBackgroundActions;
+
+        const iconSpan = hasBackground ? this.getAnimatedIconSpan() : this.getUploadIconSpan();
+        const downloadMessage = hasBackground ? "Загрузка..." : "Загрузить";
         return <div className="input-group">
             <input type="text"
                    disabled={true}
                    value={this.state.value}
                    className="form-control"
                    placeholder="Загрузите файл"/>
-                            <span className="input-group-btn">
+            <span className="input-group-btn">
                                 <label disabled={isCompleted} className="btn btn-info">
                               <input
                                   type="file"
@@ -91,8 +116,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
 
-    private createTextInputField(isCompleted:boolean, savedHtmlClass:string) {
-        var isSendDisabled = !this.state.noBackgroundActions || isCompleted;
+    private createTextInputField(isCompleted: boolean, savedHtmlClass: string) {
+        const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
         return <div className="input-group">
             <input type="text"
                    disabled={isCompleted}
@@ -100,7 +125,7 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                    onChange={this.handlerChanged.bind(this)}
                    placeholder="Ваш ответ"
                    value={this.state.value}/>
-                            <span className="input-group-btn">
+            <span className="input-group-btn">
                               <button
                                   disabled={isSendDisabled}
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
@@ -132,16 +157,16 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
         return <span className={savedHtmlClass}> {this.popupText} </span>;
     }
 
-    private getDefaultValue():string {
-        var props = this.props;
-        var answers = props.stage.questAnswers;
+    private getDefaultValue(): string {
+        const props = this.props;
+        let answers = props.stage.questAnswers;
 
         if (!answers) {
             return ""
         }
 
 
-        var answer = answers[props.quest.id];
+        let answer = answers[props.quest.id];
         if (!answer) {
             return ""
         }
@@ -150,8 +175,8 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     private handlerChanged(e) {
-        var newValue = e.target.value;
-        var state = {
+        const newValue = e.target.value;
+        const state = {
             value: newValue,
             noBackgroundActions: this.state.noBackgroundActions,
             savedMark: ActionState.NO
@@ -163,15 +188,15 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
     }
 
     private saveAnswer() {
-        var quest:Quest = this.props.quest;
-        var stage = this.props.stage;
-        var value = this.state.value;
+        const quest: Quest = this.props.quest;
+        const stage = this.props.stage;
+        const value = this.state.value;
         this.setState({
             value: value,
             noBackgroundActions: false,
             savedMark: ActionState.NO
         });
-        var answer:QuestAnswer = {
+        const answer: QuestAnswer = {
             id: quest.id,
             answer: value
         };
@@ -216,10 +241,10 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
 
     uploadFile(e) {
         e.preventDefault();
-        var target = e.target;
-        var files = target.files;
-        var file = files[0];
-        var stateValue = this.state.value;
+        const target = e.target;
+        const files = target.files;
+        const file = files[0];
+        const stateValue = this.state.value;
         if (file == null) {
             return;
         }
@@ -255,10 +280,10 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                 url: res.url
             }, (res) => {
                 if (res.success) {
-                    var newValue = getUpdatedValue(this.state.value);
-                    var quest:Quest = this.props.quest;
-                    var stage = this.props.stage;
-                    var answer:QuestAnswer = {
+                    const newValue = getUpdatedValue(this.state.value);
+                    const quest: Quest = this.props.quest;
+                    const stage = this.props.stage;
+                    const answer: QuestAnswer = {
                         id: quest.id,
                         answer: newValue
                     };
@@ -270,14 +295,14 @@ export class QuestComponent extends React.Component<{quest:Quest, stage:Stage, s
                         target.value = "";
                         if (res.success) {
                             appStateService.updateStage(res.stage);
-                            
+
                             this.setState({
                                 value: newValue,
                                 noBackgroundActions: true,
                                 savedMark: ActionState.SAVED
                             });
 
-                            
+
                         } else {
                             this.setState({
                                 value: stateValue,
@@ -306,10 +331,10 @@ function getUpdatedValue(value) {
         return "Файлов: 1";
     }
 
-    var index = value.indexOf(' ');
+    const index = value.indexOf(' ');
     if (index > 0) {
-        var numberString = value.substr(index);
-        var newNumber = 1 + Number(numberString);
+        const numberString = value.substr(index);
+        const newNumber = 1 + Number(numberString);
         return "Файлов: " + newNumber;
     }
     return "Файлов: 1";
