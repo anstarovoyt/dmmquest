@@ -11,15 +11,20 @@ function initStore(callback) {
         utils_1.logServer("Run local service");
         callback();
     });
+    var defaultTeams = utils_1.getDefaultTeams();
     return {
         saveTeamDB: function (team, callback) {
+            defaultTeams.push(team);
+            if (callback) {
+                callback();
+            }
         },
         saveAppDB: function (token, state, callback) {
         },
         removeTeamDB: function (team) {
         },
         getTeams: function () {
-            return utils_1.getDefaultTeams();
+            return defaultTeams;
         },
         getDefaultStates: function () {
             var result = {};

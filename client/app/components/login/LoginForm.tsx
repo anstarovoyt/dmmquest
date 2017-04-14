@@ -2,7 +2,7 @@ import * as React from "react";
 import {auth} from "../../authentication/AuthService";
 
 
-export class LoginForm extends React.Component<any, {secretCode:string, showError:boolean}> {
+export class LoginForm extends React.Component<any, { secretCode: string, showError: boolean }> {
 
     constructor() {
         super();
@@ -13,12 +13,12 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
     }
 
 
-    componentWillMount():void {
+    componentWillMount(): void {
         document.body.classList.add('open');
         document.getElementById('content').classList.add('site-wrapper')
     }
 
-    componentWillUnmount():void {
+    componentWillUnmount(): void {
         document.body.classList.remove('open');
         document.getElementById('content').classList.remove('site-wrapper')
     }
@@ -37,7 +37,7 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
                            className="form-control"
                            type="text"
                            placeholder="Введите секретный код"/>
-			                <span className="input-group-btn">
+                    <span className="input-group-btn">
 			                    <button className="btn btn-info" type="submit">
                                     <span className="glyphicon glyphicon-fire"></span> Вперед</button>
 			                </span>
@@ -59,12 +59,16 @@ export class LoginForm extends React.Component<any, {secretCode:string, showErro
 
     handleSubmit(e) {
         e.preventDefault();
-        auth.login(this.state.secretCode, (res)=> {
-            if (!res) {
+        auth.login(this.state.secretCode, (res) => {
+            if (!res.success) {
                 this.setState({
                     secretCode: "",
                     showError: true
                 })
+            } else if (res.redirect) {
+                setImmediate(() => {
+                    this.context["history"].push('/intro');
+                });
             }
         });
     }

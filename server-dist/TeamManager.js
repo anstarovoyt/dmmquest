@@ -78,6 +78,7 @@ var TeamManager = (function () {
     };
     TeamManager.prototype.login = function (secretCode) {
         var team = this.findTeamByCode(secretCode);
+        var first = false;
         if (team) {
             if (!team.firstLoginDate && !team.admin) {
                 var date = new Date();
@@ -85,6 +86,7 @@ var TeamManager = (function () {
                 endDate.setTime(date.getTime() + (exports.COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
+                first = true;
                 utils_1.logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + utils_1.toEkbString(team.firstLoginDate));
                 this.saveTeamToDB(team);
             }
@@ -92,7 +94,8 @@ var TeamManager = (function () {
                 authenticated: true,
                 name: team.name,
                 token: team.tokenId,
-                admin: team.admin
+                admin: team.admin,
+                first: first
             };
         }
         utils_1.logServer('Incorrect login secret code access "' + secretCode + '"');

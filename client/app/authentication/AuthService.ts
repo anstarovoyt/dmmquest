@@ -7,7 +7,7 @@ const auth = new class {
 
     private _noLocalStorage;
 
-    login(secretCode: string, callback: (result: boolean) => void): void {
+    login(secretCode: string, callback: (result: { success: boolean, redirect?: boolean }) => void): void {
         const token = this.getToken();
         if (token) {
             this.onChange({
@@ -29,10 +29,13 @@ const auth = new class {
                         authenticated: false
                     }
                 }
-                callback(res.authenticated);
+                let needRedirectToIntro: boolean = resp.first;
+                callback({success: res.authenticated});
                 this.onChange(res);
+
+
             } else {
-                callback(resp.authenticated);
+                callback({success: res.authenticated});
                 this.onChange(resp);
             }
         });

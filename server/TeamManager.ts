@@ -2,6 +2,7 @@ import {defaultData} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {Store} from "./Store";
 import {StateManager} from "./StateManager";
+
 export const COUNT_HOURS_TO_SOLVE = 7.5;
 
 export class TeamManager {
@@ -95,6 +96,9 @@ export class TeamManager {
 
     login(secretCode: string): LoginInfo {
         const team = this.findTeamByCode(secretCode);
+
+        let first = false;
+
         if (team) {
             if (!team.firstLoginDate && !team.admin) {
                 const date = new Date();
@@ -103,7 +107,7 @@ export class TeamManager {
                 endDate.setTime(date.getTime() + (COUNT_HOURS_TO_SOLVE * 60 * 60 * 1000));
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
-
+                first = true;
                 logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate))
                 this.saveTeamToDB(team);
             }
@@ -112,7 +116,8 @@ export class TeamManager {
                 authenticated: true,
                 name: team.name,
                 token: team.tokenId,
-                admin: team.admin
+                admin: team.admin,
+                first
             }
         }
 
