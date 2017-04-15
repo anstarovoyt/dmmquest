@@ -268,7 +268,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 <h4>Описание</h4>
                 <div dangerouslySetInnerHTML={{__html: description}}/>
                 <br/>
-                <h4>{currentStage.status == StageStatus.OPEN ? "После разблокирования этапа открылись новые бонусы! Проверь!" : ""}</h4>
+                <h5>{currentStage.status == StageStatus.OPEN ? "После открытия этапа появляются новые бонусы! Проверь!" : ""}</h5>
             </div>
         </div>;
     }
