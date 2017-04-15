@@ -4,6 +4,7 @@ import {initStore} from "./Store";
 import {StageManager} from "./StageManager";
 import {StateManager} from "./StateManager";
 import {QuestText} from "./data";
+import {processGetAWS} from "./AwsClient";
 
 let minimist = require('minimist');
 let express = require('express');

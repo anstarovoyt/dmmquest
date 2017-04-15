@@ -4,7 +4,7 @@ const S3_BUCKET = process.env.S3_BUCKET || "dmmquest";
 const aws = require('aws-sdk');
 
 
-function processGetAWS(request:GetAWSSignRequest, callback:(GetAWSSignResponse)=>void) {
+export function processGetAWS(request: GetAWSSignRequest, callback: (GetAWSSignResponse) => void) {
     aws.config.update({
         accessKeyId: AWS_ACCESS_KEY,
         secretAccessKey: AWS_SECRET_KEY,

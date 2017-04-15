@@ -5,6 +5,7 @@ var utils_1 = require("./utils");
 var Store_1 = require("./Store");
 var StageManager_1 = require("./StageManager");
 var StateManager_1 = require("./StateManager");
+var AwsClient_1 = require("./AwsClient");
 var minimist = require('minimist');
 var express = require('express');
 var serveStatic = require('serve-static');
@@ -118,7 +119,7 @@ function initServer() {
         if (!team) {
             return;
         }
-        processGetAWS(request, function (result) {
+        AwsClient_1.processGetAWS(request, function (result) {
             console.log('aws req: ' + JSON.stringify(result));
             response.json(result);
         });
