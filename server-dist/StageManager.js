@@ -14,6 +14,7 @@ var StageManager = (function () {
             return null;
         }
         if (stage.status == 2 /* COMPLETED */ ||
+            stage.status == 6 /* KILLER_COMPLETED */ ||
             stage.status == 0 /* LOCKED */) {
             return null;
         }
@@ -45,10 +46,10 @@ var StageManager = (function () {
     };
     StageManager.prototype.closeStage = function (token, stageId) {
         var stage = this.getStage(token, stageId);
-        if (!stage || stage.status != 1 /* OPEN */) {
+        if (!stage || (stage.status != 1 /* OPEN */ && stage.status != 5 /* KILLER */)) {
             return this.teamManager.getAppState(token);
         }
-        stage.status = 2 /* COMPLETED */;
+        stage.status = stage.status == 5 /* KILLER */ ? 6 /* KILLER_COMPLETED */ : 2 /* COMPLETED */;
         stage.closedTime = utils_1.toEkbString(new Date());
         var appState = this.teamManager.getAppState(token);
         var nextStage = this.getNextStage(appState, stage);
@@ -72,6 +73,17 @@ var StageManager = (function () {
             }
         });
         return appState;
+    };
+    StageManager.prototype.getGameResult = function (tokenId) {
+        var appState = this.teamManager.getAppState(tokenId);
+        for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
+            var stage = _a[_i];
+            if (stage.status == 6 /* KILLER_COMPLETED */) {
+                var stageInfo = data_1.defaultData.stages[Number(stage.id)];
+                break;
+            }
+        }
+        return "";
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
         var appState = this.teamManager.getAppState(token);
@@ -140,6 +152,9 @@ var StageManager = (function () {
         var stages = appState.stages;
         for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
             var stage = stages_1[_i];
+            if (stage.status == 5 /* KILLER */ || stage.status == 6 /* KILLER_COMPLETED */) {
+                break;
+            }
             number++;
             if (stage.status == 2 /* COMPLETED */) {
                 lastCompletedStage = stage;

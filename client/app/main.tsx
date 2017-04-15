@@ -8,7 +8,7 @@ import {StageContainerComponent} from "./components/stage/StageContainerComponen
 import {BonusStageContainerComponent} from "./components/stage/BonusStageContainer";
 import {AdminComponent} from "./components/admin/AdminComponent";
 import {IntroStageContainer} from "./components/stage/IntroStageContainer";
-import {KillerStageComponent} from "./components/stage/KillerStageComponent";
+import {KillerStageContainerComponent} from "./components/stage/KillerStageContainerComponent";
 
 //hack to reduce size
 var Router = require('react-router/lib/Router');
@@ -31,7 +31,7 @@ function renderRouter() {
                 <Route path="/intro" component={IntroStageContainer}/>
                 <Route path="/stage/:id" component={StageContainerComponent}/>
                 <Route path="/bonus" component={BonusStageContainerComponent}/>
-                <Route path="/killer" component={KillerStageComponent}/>
+                <Route path="/killer" component={KillerStageContainerComponent}/>
                 <Route path="/admin" component={AdminComponent}/>
             </Route>
         </Router>

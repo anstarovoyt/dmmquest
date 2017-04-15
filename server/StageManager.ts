@@ -21,6 +21,7 @@ export class StageManager {
             return null;
         }
         if (stage.status == StageStatus.COMPLETED ||
+            stage.status == StageStatus.KILLER_COMPLETED ||
             stage.status == StageStatus.LOCKED) {
             return null;
         }
@@ -59,11 +60,11 @@ export class StageManager {
 
     closeStage(token: string, stageId: string): AppState {
         let stage: Stage = this.getStage(token, stageId);
-        if (!stage || stage.status != StageStatus.OPEN) {
+        if (!stage || (stage.status != StageStatus.OPEN && stage.status != StageStatus.KILLER)) {
             return this.teamManager.getAppState(token);
         }
 
-        stage.status = StageStatus.COMPLETED;
+        stage.status = stage.status == StageStatus.KILLER ? StageStatus.KILLER_COMPLETED : StageStatus.COMPLETED;
         stage.closedTime = toEkbString(new Date());
         let appState = this.teamManager.getAppState(token);
         const nextStage = this.getNextStage(appState, stage);
@@ -92,6 +93,21 @@ export class StageManager {
         return appState;
     }
 
+
+    getGameResult(tokenId: string): string {
+        const appState = this.teamManager.getAppState(tokenId);
+        for (let stage of appState.stages) {
+
+            if (stage.status == StageStatus.KILLER_COMPLETED) {
+                const stageInfo: RawStage = defaultData.stages[Number(stage.id)];
+
+
+                break;
+            }
+        }
+
+        return "";
+    }
 
     getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean }[], description?: string } {
         const appState = this.teamManager.getAppState(token);
@@ -161,10 +177,15 @@ export class StageManager {
         let number = 0;
         const stages = appState.stages;
         for (let stage of stages) {
+            if (stage.status == StageStatus.KILLER || stage.status == StageStatus.KILLER_COMPLETED) {
+                break;
+            }
+
             number++;
             if (stage.status == StageStatus.COMPLETED) {
                 lastCompletedStage = stage;
             }
+
         }
 
         if (lastCompletedStage == null) {

@@ -101,7 +101,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
-            const isCompletedLevel = currentStage.status == StageStatus.COMPLETED;
+            const isCompletedLevel = currentStage.status == StageStatus.COMPLETED || currentStage.status == StageStatus.KILLER_COMPLETED;
             const buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
 
 
@@ -172,7 +172,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         return isCompletedLevel ? "Этап сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
     }
 
-    private saveAnswers() {
+    saveAnswers() {
         let stage = this.props.stage;
         if (!stage) {
             return;
@@ -182,35 +182,18 @@ export class StageComponent extends React.Component<{ stage: Stage },
         if (stage.status == StageStatus.OPEN && !window.confirm('Вы действительно хотите завершить этап?')) {
             return;
         }
+        this.completeStage(stage);
+    }
 
-        const answers: QuestAnswer[] = [];
-        const nestedValue = this.nestedValue;
-        for (let value in nestedValue) {
-            if (nestedValue.hasOwnProperty(value)) {
-                answers.push({
-                    id: Number(value),
-                    answer: nestedValue[value]
-                })
-            }
-        }
-
-
-        const token = auth.getToken();
-
-        this.setState({
-            questTexts: this.state.questTexts,
-            stage: this.state.stage,
-            isEnableSave: false,
-            savedMark: ActionState.NO,
-            loadState: this.state.loadState
-        })
+    private completeStage(stage: Stage) {
+        const {answers, token} = this.saveStateWithAnswers();
 
         complete({
             stageId: stage.id,
             token: token,
             answers: answers
         }, (r) => {
-            if (r.success) {
+            if (!r.error) {
                 appStateService.setState(r.res);
                 if (stage.status != StageStatus.BONUS) {
                     questService.reset("bonus");
@@ -249,6 +232,32 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 this.timeOutMarker = null;
             }, 1000);
         })
+    }
+
+    private saveStateWithAnswers() {
+        const answers: QuestAnswer[] = [];
+        const nestedValue = this.nestedValue;
+        for (let value in nestedValue) {
+            if (nestedValue.hasOwnProperty(value)) {
+                answers.push({
+                    id: Number(value),
+                    answer: nestedValue[value]
+                })
+            }
+        }
+
+
+        const token = auth.getToken();
+
+        this.setState({
+            questTexts: this.state.questTexts,
+            stage: this.state.stage,
+            isEnableSave: false,
+            savedMark: ActionState.NO,
+            loadState: this.state.loadState
+        });
+
+        return {answers, token};
     }
 
     private getDescription(currentStage: Stage, questTexts: QuestTexts) {

@@ -84,7 +84,8 @@ interface TeamSimple {
 
 interface CompleteStageResponse {
     res?: AppState,
-    success: boolean
+    success: boolean,
+    error?: boolean
 }
 
 declare const enum ActionState {

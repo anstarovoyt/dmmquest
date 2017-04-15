@@ -1,6 +1,6 @@
 import {getVideo} from "./stages/helper";
 
-export type QuestText = (string | { type: QuestType; text: string, values?: string[] });
+export type QuestText = (string | { type: QuestType; text: string, values?: string[], answer?: string[] });
 
 export interface RawStage {
     name: string,

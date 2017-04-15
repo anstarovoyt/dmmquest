@@ -1,6 +1,6 @@
-var reqwest:Reqwest.ReqwestStatic = require('reqwest');
+var reqwest: Reqwest.ReqwestStatic = require('reqwest');
 
-export function loadQuestions(toSend:QuestTextsRequest, successCallback:(res:QuestTextsResponse)=>void) {
+export function loadQuestions(toSend: QuestTextsRequest, successCallback: (res: QuestTextsResponse) => void) {
     reqwest({
         url: '/quest-texts',
         method: 'post',
@@ -15,7 +15,7 @@ export function loadQuestions(toSend:QuestTextsRequest, successCallback:(res:Que
 }
 
 
-export function authRequest(toSend:LoginRequest, callback:(info:LoginInfo) => void) {
+export function authRequest(toSend: LoginRequest, callback: (info: LoginInfo) => void) {
     reqwest({
         url: '/login',
         method: 'post',
@@ -29,7 +29,7 @@ export function authRequest(toSend:LoginRequest, callback:(info:LoginInfo) => vo
     });
 }
 
-export function loadState(toSend:AppStateRequest, successCallback:(res:FullAppStateResponse)=>void) {
+export function loadState(toSend: AppStateRequest, successCallback: (res: FullAppStateResponse) => void) {
     reqwest({
         url: '/state',
         method: 'post',
@@ -43,7 +43,7 @@ export function loadState(toSend:AppStateRequest, successCallback:(res:FullAppSt
     });
 }
 
-export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:AnswersUpdateResponse)=>void) {
+export function saveAnswers(toSend: AnswersUpdateRequest, successCallback: (res: AnswersUpdateResponse) => void) {
     reqwest({
         url: '/save',
         method: 'post',
@@ -58,13 +58,14 @@ export function saveAnswers(toSend:AnswersUpdateRequest, successCallback:(res:An
 }
 
 
-export function complete(toSend:AnswersUpdateRequest, successCallback:(res:CompleteStageResponse)=>void) {
+export function complete(toSend: AnswersUpdateRequest, successCallback: (res: CompleteStageResponse) => void) {
     reqwest({
         url: '/complete',
         method: 'post',
         data: toSend,
         error: () => {
             successCallback({
+                error: true,
                 success: false
             })
         },
@@ -72,7 +73,21 @@ export function complete(toSend:AnswersUpdateRequest, successCallback:(res:Compl
     });
 }
 
-export function loadTeam(toSend:TeamsRequest, successCallback:(res:TeamsResponse)=>void) {
+export function getResult(toSend: { token: string }, successCallback: (result: { error?: boolean, description?: string }) => void) {
+    reqwest({
+        url: '/result_killer',
+        method: 'post',
+        data: toSend,
+        error: () => {
+            successCallback({
+                error: true
+            })
+        },
+        success: successCallback
+    });
+}
+
+export function loadTeam(toSend: TeamsRequest, successCallback: (res: TeamsResponse) => void) {
     reqwest({
         url: '/teams',
         method: 'post',
@@ -86,7 +101,7 @@ export function loadTeam(toSend:TeamsRequest, successCallback:(res:TeamsResponse
     });
 }
 
-export function addTeam(toSend:AddTeamRequest, successCallback:(res:AddTeamResponse)=>void) {
+export function addTeam(toSend: AddTeamRequest, successCallback: (res: AddTeamResponse) => void) {
     reqwest({
         url: '/add-team',
         method: 'post',
@@ -100,7 +115,7 @@ export function addTeam(toSend:AddTeamRequest, successCallback:(res:AddTeamRespo
     });
 }
 
-export function removeTeam(toSend:RemoveTeamRequest, successCallback:(res:RemoveTeamResponse)=>void) {
+export function removeTeam(toSend: RemoveTeamRequest, successCallback: (res: RemoveTeamResponse) => void) {
     reqwest({
         url: '/remove-team',
         method: 'post',
@@ -114,7 +129,7 @@ export function removeTeam(toSend:RemoveTeamRequest, successCallback:(res:Remove
     });
 }
 
-export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetRestTimeResponse)=>void) {
+export function getRestTime(toSend: GetRestTimeRequest, successCallback: (res: GetRestTimeResponse) => void) {
     reqwest({
         url: '/rest-time',
         method: 'post',
@@ -128,7 +143,7 @@ export function getRestTime(toSend:GetRestTimeRequest, successCallback:(res:GetR
     });
 }
 
-export function uploadFileToAWS(toSend:AWSSendFileRequest, successCallback:(res:AWSSendFileResponse)=>void) {
+export function uploadFileToAWS(toSend: AWSSendFileRequest, successCallback: (res: AWSSendFileResponse) => void) {
     try {
         var xhr = new XMLHttpRequest();
         xhr.open("PUT", toSend.sign);
@@ -148,14 +163,14 @@ export function uploadFileToAWS(toSend:AWSSendFileRequest, successCallback:(res:
             })
         };
         xhr.send(toSend.file);
-    } catch(e) {
+    } catch (e) {
         successCallback({
-            success:false
+            success: false
         })
     }
 }
 
-export function getAWSSign(toSend:GetAWSSignRequest, successCallback:(res:GetAWSSignResponse)=>void) {
+export function getAWSSign(toSend: GetAWSSignRequest, successCallback: (res: GetAWSSignResponse) => void) {
     reqwest({
         url: '/sign_s3',
         method: 'post',
@@ -169,7 +184,7 @@ export function getAWSSign(toSend:GetAWSSignRequest, successCallback:(res:GetAWS
     });
 }
 
-export function unlockLastStage(toSend:UnlockLastCompletedStageRequest, successCallback:(res:UnlockLastCompletedStageResponse)=>void) {
+export function unlockLastStage(toSend: UnlockLastCompletedStageRequest, successCallback: (res: UnlockLastCompletedStageResponse) => void) {
     reqwest({
         url: '/unlock-stage',
         method: 'post',

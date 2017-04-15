@@ -123,6 +123,13 @@ function initServer() {
             response.json(result);
         });
     });
+    server.post('/result_killer', function (req, response, next) {
+        var request = req.body;
+        var team = checkToken(request.token);
+        if (!team) {
+            return;
+        }
+    });
     utils_1.logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
     function processStateRequest(req) {
         var token = req.token;

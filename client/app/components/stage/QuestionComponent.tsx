@@ -44,7 +44,8 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }
 
         const stage = this.props.stage;
-        const isCompleted = stage.status == StageStatus.COMPLETED;
+        const isCompleted = stage.status == StageStatus.COMPLETED || stage.status == StageStatus.KILLER_COMPLETED;
+
         const text = {__html: this.props.quest.text};
         return (
             <div className="row">
@@ -79,7 +80,8 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         });
 
         return <div className="input-group">
-            <select className="form-control my-select-no-border" onChange={this.handlerChanged.bind(this)} disabled={isCompleted}
+            <select className="form-control my-select-no-border" onChange={this.handlerChanged.bind(this)}
+                    disabled={isCompleted}
                     value={this.state.value}>
                 {items}
             </select>

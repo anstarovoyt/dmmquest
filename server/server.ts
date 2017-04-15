@@ -152,6 +152,16 @@ export function initServer() {
         })
     });
 
+    server.post('/result_killer', (req, response, next) => {
+        let request: {token:string} = req.body;
+        let team = checkToken(request.token);
+        if (!team) {
+            return;
+        }
+
+
+    });
+
 
     logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
 

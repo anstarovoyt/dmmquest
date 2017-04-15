@@ -22,7 +22,7 @@ export class StageListItemStatusComponent extends React.Component<{ stageStatus:
             return <div className="alert alert-success"> Intro</div>
         }
 
-        if (stageStatus == StageStatus.KILLER) {
+        if (stageStatus == StageStatus.KILLER || stageStatus == StageStatus.KILLER_COMPLETED) {
             return <div className="alert alert-success"> Killer</div>
         }
 
