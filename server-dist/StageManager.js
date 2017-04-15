@@ -80,7 +80,33 @@ var StageManager = (function () {
             var stage = _a[_i];
             if (stage.status == 6 /* KILLER_COMPLETED */) {
                 var stageInfo = data_1.defaultData.stages[Number(stage.id)];
-                break;
+                var id = -1;
+                var _loop_1 = function (quest) {
+                    id++;
+                    var questAnswer = appState.killer.questAnswers[id];
+                    if (!questAnswer) {
+                        return { value: data_1.resultUnSuccess };
+                    }
+                    var answer = questAnswer.answer;
+                    if (typeof quest != 'string') {
+                        var matched_1 = false;
+                        quest.answer.forEach(function (el) {
+                            if (el == answer) {
+                                matched_1 = true;
+                            }
+                        });
+                        if (!matched_1) {
+                            return { value: data_1.resultUnSuccess };
+                        }
+                    }
+                };
+                for (var _b = 0, _c = stageInfo.quests; _b < _c.length; _b++) {
+                    var quest = _c[_b];
+                    var state_1 = _loop_1(quest);
+                    if (typeof state_1 === "object")
+                        return state_1.value;
+                }
+                return data_1.resultSuccess;
             }
         }
         return "";
@@ -98,7 +124,7 @@ var StageManager = (function () {
             if (quests) {
                 quests.forEach(function (el) { return result_1.push({ quest: el, show: true }); });
             }
-            var _loop_1 = function (stage_1) {
+            var _loop_2 = function (stage_1) {
                 if (stage_1.status == 1 /* OPEN */ ||
                     stage_1.status == 0 /* LOCKED */ ||
                     stage_1.status == 2 /* COMPLETED */) {
@@ -118,7 +144,7 @@ var StageManager = (function () {
             };
             for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
                 var stage_1 = _a[_i];
-                _loop_1(stage_1);
+                _loop_2(stage_1);
             }
             return { texts: result_1 };
         }

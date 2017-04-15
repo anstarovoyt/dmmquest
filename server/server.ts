@@ -153,14 +153,18 @@ export function initServer() {
         })
     });
 
-    server.post('/result_killer', (req, response, next) => {
+    server.post('/result_killer', (req, res, next) => {
         let request: {token:string} = req.body;
         let team = checkToken(request.token);
         if (!team) {
             return;
         }
 
+        let gameResult = stageManager.getGameResult(request.token);
 
+        res.json({
+            description: gameResult
+        });
     });
 
 

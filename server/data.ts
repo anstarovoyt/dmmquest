@@ -85,6 +85,13 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawSta
     }
 }
 
+export const resultUnSuccess = getVideo(true, "https://www.youtube.com/embed/nntRxUD19yw") + `<br>
+<h3 style="color: red">Вы ПРОИГРАЛИ</h3>
+`;
+export const resultSuccess = getVideo(true, "https://www.youtube.com/embed/dQw4w9WgXcQ") + `<br>
+Это победа, Ватсон!
+`;
+
 export const defaultData = getDefaultData();
 
 export const intro = getVideo(true, "https://www.youtube.com/embed/ujjRcmhJh-I") + `<br>Для определения того, кто является убийцей, вам необходимо исключить из списка подозреваемых все те объекты, которые в явном и неявном виде встретятся в квесте на протяжении трех этапов (в бонусах нет). Например, одна из загадок привела вас к ответу "Петя", исключаем его из списка подозреваемых. Другой пример: ответ на загадку — земноводное, вычеркиваем из списка лягушку. В конце, при всех правильно решенных загадках, у вас должно остаться по одному человеку, месту, орудию. Не все загадки позволяют вычеркивать объекты.`;

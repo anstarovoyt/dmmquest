@@ -124,12 +124,16 @@ function initServer() {
             response.json(result);
         });
     });
-    server.post('/result_killer', function (req, response, next) {
+    server.post('/result_killer', function (req, res, next) {
         var request = req.body;
         var team = checkToken(request.token);
         if (!team) {
             return;
         }
+        var gameResult = stageManager.getGameResult(request.token);
+        res.json({
+            description: gameResult
+        });
     });
     utils_1.logServer('Created server for: ' + TARGET + ', listening on port ' + PORT);
     function processStateRequest(req) {

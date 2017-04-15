@@ -1,5 +1,5 @@
 import {TeamManager} from "./TeamManager";
-import {defaultData, intro, QuestText, RawStage} from "./data";
+import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from "./data";
 import {logServer, toEkbString} from "./utils";
 import {StateManager} from "./StateManager";
 
@@ -100,9 +100,30 @@ export class StageManager {
 
             if (stage.status == StageStatus.KILLER_COMPLETED) {
                 const stageInfo: RawStage = defaultData.stages[Number(stage.id)];
+                let id = -1;
+                for (let quest of stageInfo.quests) {
+                    id++;
+                    let questAnswer = appState.killer.questAnswers[id];
+                    if (!questAnswer) {
+                        return resultUnSuccess;
+                    }
 
+                    let answer = questAnswer.answer;
 
-                break;
+                    if (typeof quest != 'string') {
+                        let matched = false;
+                        quest.answer.forEach(el => {
+                            if (el == answer) {
+                                matched = true;
+                            }
+                        });
+                        if (!matched) {
+                            return resultUnSuccess;
+                        }
+                    }
+                }
+
+                return resultSuccess;
             }
         }
 
