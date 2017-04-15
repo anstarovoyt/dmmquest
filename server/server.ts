@@ -154,7 +154,7 @@ export function initServer() {
     });
 
     server.post('/result_killer', (req, res, next) => {
-        let request: {token:string} = req.body;
+        let request: { token: string } = req.body;
         let team = checkToken(request.token);
         if (!team) {
             return;
@@ -257,6 +257,10 @@ export function initServer() {
 
             if (values) {
                 result.values = values;
+            }
+
+            if (el.stageName) {
+                result.stageName = el.stageName;
             }
 
             resultQuests.push(result);

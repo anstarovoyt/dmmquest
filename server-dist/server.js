@@ -211,6 +211,9 @@ function initServer() {
             if (values) {
                 result.values = values;
             }
+            if (el.stageName) {
+                result.stageName = el.stageName;
+            }
             resultQuests.push(result);
         });
         return {

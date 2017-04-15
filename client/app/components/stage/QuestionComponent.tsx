@@ -47,10 +47,12 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const isCompleted = stage.status == StageStatus.COMPLETED || stage.status == StageStatus.KILLER_COMPLETED;
 
         const text = {__html: this.props.quest.text};
+        const stageInfo = this.props.quest.stageName == null ? "" : <i> Этап {this.props.quest.stageName} </i>;
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
+                    {stageInfo}
                     <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
                     {this.createInputField(isCompleted, savedHtmlClass)}

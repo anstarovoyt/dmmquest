@@ -128,10 +128,11 @@ var StageManager = (function () {
                     stage_1.status == 2 /* COMPLETED */) {
                     var stageNumber = Number(stage_1.id);
                     if (stageNumber != null) {
-                        var currentStage = data_1.defaultData.stages[stageNumber];
-                        if (currentStage.bonuses) {
-                            currentStage.bonuses.forEach(function (el) {
+                        var currentStage_1 = data_1.defaultData.stages[stageNumber];
+                        if (currentStage_1.bonuses) {
+                            currentStage_1.bonuses.forEach(function (el) {
                                 result_1.push({
+                                    stageName: currentStage_1.name,
                                     quest: el,
                                     show: stage_1.status != 0 /* LOCKED */
                                 });

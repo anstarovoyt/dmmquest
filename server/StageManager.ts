@@ -129,7 +129,7 @@ export class StageManager {
         return "";
     }
 
-    getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean }[], description?: string } {
+    getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean, stageName?: string }[], description?: string } {
         const appState = this.teamManager.getAppState(token);
         let stage = getStageById(appState, stageId);
         if (!stage || stage.status == StageStatus.LOCKED) {
@@ -138,7 +138,7 @@ export class StageManager {
 
         if (stage.status == StageStatus.BONUS ||
             stageId == "bonus") {
-            let result: { quest: QuestText, show?: boolean }[] = [];
+            let result: { quest: QuestText, show?: boolean, stageName?: string }[] = [];
             let quests = defaultData.bonus.quests;
             if (quests) {
                 quests.forEach(el => result.push({quest: el, show: true}));
@@ -153,6 +153,7 @@ export class StageManager {
                         if (currentStage.bonuses) {
                             currentStage.bonuses.forEach(el => {
                                 result.push({
+                                    stageName: currentStage.name,
                                     quest: el,
                                     show: stage.status != StageStatus.LOCKED
                                 })

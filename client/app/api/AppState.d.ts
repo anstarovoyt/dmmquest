@@ -43,6 +43,7 @@ interface QuestTexts {
 
 interface Quest extends HasId {
     text: string,
+    stageName?: string
     values?: string[]
     type?: QuestType
 }
