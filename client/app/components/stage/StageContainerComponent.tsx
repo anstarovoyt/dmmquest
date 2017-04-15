@@ -4,6 +4,7 @@ import {StageComponent} from "./StageComponent";
 import {appStateStore} from "../../state/AppStateStore";
 import {LoadingComponent} from "../common/LoadingComponent";
 import {StageLocked} from "./StageLocked";
+import {KillerStageComponent} from "./KillerStageComponent";
 
 type StageStage = { stage: Stage, loading: boolean, available: boolean };
 
@@ -85,6 +86,9 @@ export class StageContainerComponent extends React.Component<any, StageStage> {
     }
 
     createStageComponent(stage: Stage) {
+        if (stage.status == StageStatus.KILLER || stage.status == StageStatus.KILLER_COMPLETED) {
+            return <KillerStageComponent stage={stage}/>;
+        }
         return <StageComponent stage={stage}/>;
     }
 }

@@ -8,7 +8,6 @@ import {StageContainerComponent} from "./components/stage/StageContainerComponen
 import {BonusStageContainerComponent} from "./components/stage/BonusStageContainer";
 import {AdminComponent} from "./components/admin/AdminComponent";
 import {IntroStageContainer} from "./components/stage/IntroStageContainer";
-import {KillerStageContainerComponent} from "./components/stage/KillerStageContainerComponent";
 import {KillerResultComponent} from "./components/stage/KillerResultComponent";
 
 //hack to reduce size
@@ -32,7 +31,6 @@ function renderRouter() {
                 <Route path="/intro" component={IntroStageContainer}/>
                 <Route path="/stage/:id" component={StageContainerComponent}/>
                 <Route path="/bonus" component={BonusStageContainerComponent}/>
-                <Route path="/killer" component={KillerStageContainerComponent}/>
                 <Route path="/killer_result" component={KillerResultComponent}/>
                 <Route path="/admin" component={AdminComponent}/>
             </Route>
