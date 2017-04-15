@@ -79,10 +79,16 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
             return <option key={el} value={el}>{el}</option>;
         });
 
+        let currentValue = this.state.value;
+        if (!currentValue) {
+            //will be selected first value
+            this.props.savedValues[this.props.quest.id] = this.props.quest.values[0];
+        }
+
         return <div className="input-group">
             <select className="form-control my-select-no-border" onChange={this.handlerChanged.bind(this)}
                     disabled={isCompleted}
-                    value={this.state.value}>
+                    value={currentValue}>
                 {items}
             </select>
             <span className="input-group-btn my-padding-left">

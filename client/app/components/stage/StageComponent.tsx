@@ -185,7 +185,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         this.completeStage(stage);
     }
 
-    private completeStage(stage: Stage) {
+    completeStage(stage: Stage) {
         const {answers, token} = this.saveStateWithAnswers();
 
         complete({
@@ -198,7 +198,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 if (stage.status != StageStatus.BONUS) {
                     questService.reset("bonus");
 
-                    this.context["history"].push('/');
+                    this.redirectTo();
                     return;
                 }
 
@@ -232,6 +232,10 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 this.timeOutMarker = null;
             }, 1000);
         })
+    }
+
+    redirectTo() {
+        this.context["history"].push('/');
     }
 
     private saveStateWithAnswers() {

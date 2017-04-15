@@ -13,6 +13,11 @@ export class KillerStageComponent extends StageComponent {
             return;
         }
 
-
+        this.completeStage(stage);
     }
+
+    redirectTo() {
+        this.context["history"].push('/killer_result');
+    }
+
 }

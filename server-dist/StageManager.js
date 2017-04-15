@@ -76,38 +76,36 @@ var StageManager = (function () {
     };
     StageManager.prototype.getGameResult = function (tokenId) {
         var appState = this.teamManager.getAppState(tokenId);
-        for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
-            var stage = _a[_i];
-            if (stage.status == 6 /* KILLER_COMPLETED */) {
-                var stageInfo = data_1.defaultData.stages[Number(stage.id)];
-                var id = -1;
-                var _loop_1 = function (quest) {
-                    id++;
-                    var questAnswer = appState.killer.questAnswers[id];
-                    if (!questAnswer) {
+        var stage = appState.killer;
+        if (stage.status == 6 /* KILLER_COMPLETED */) {
+            var stageInfo = data_1.defaultData.killer;
+            var id = -1;
+            var _loop_1 = function (quest) {
+                id++;
+                var questAnswer = stage.questAnswers[id];
+                if (!questAnswer) {
+                    return { value: data_1.resultUnSuccess };
+                }
+                var answer = questAnswer.answer;
+                if (typeof quest != 'string') {
+                    var matched_1 = false;
+                    quest.answer.forEach(function (el) {
+                        if (el == answer) {
+                            matched_1 = true;
+                        }
+                    });
+                    if (!matched_1) {
                         return { value: data_1.resultUnSuccess };
                     }
-                    var answer = questAnswer.answer;
-                    if (typeof quest != 'string') {
-                        var matched_1 = false;
-                        quest.answer.forEach(function (el) {
-                            if (el == answer) {
-                                matched_1 = true;
-                            }
-                        });
-                        if (!matched_1) {
-                            return { value: data_1.resultUnSuccess };
-                        }
-                    }
-                };
-                for (var _b = 0, _c = stageInfo.quests; _b < _c.length; _b++) {
-                    var quest = _c[_b];
-                    var state_1 = _loop_1(quest);
-                    if (typeof state_1 === "object")
-                        return state_1.value;
                 }
-                return data_1.resultSuccess;
+            };
+            for (var _i = 0, _a = stageInfo.quests; _i < _a.length; _i++) {
+                var quest = _a[_i];
+                var state_1 = _loop_1(quest);
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
+            return data_1.resultSuccess;
         }
         return "";
     };

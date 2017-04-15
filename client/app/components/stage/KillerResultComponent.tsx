@@ -19,16 +19,16 @@ export class KillerResultComponent extends React.Component<any, { resultText?: s
 
     componentDidMount() {
         getResult({token: auth.getToken()}, (result => {
-            this.state = {
+            this.setState({
                 resultText: result.description,
                 error: result.error
-            }
+            });
         }));
     }
 
     render() {
         let link = this.state.resultText;
-        if (link) {
+        if (!link) {
             return <LoadingComponent/>;
         }
 

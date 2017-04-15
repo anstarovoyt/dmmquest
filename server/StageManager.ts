@@ -96,36 +96,35 @@ export class StageManager {
 
     getGameResult(tokenId: string): string {
         const appState = this.teamManager.getAppState(tokenId);
-        for (let stage of appState.stages) {
-
-            if (stage.status == StageStatus.KILLER_COMPLETED) {
-                const stageInfo: RawStage = defaultData.stages[Number(stage.id)];
-                let id = -1;
-                for (let quest of stageInfo.quests) {
-                    id++;
-                    let questAnswer = appState.killer.questAnswers[id];
-                    if (!questAnswer) {
-                        return resultUnSuccess;
-                    }
-
-                    let answer = questAnswer.answer;
-
-                    if (typeof quest != 'string') {
-                        let matched = false;
-                        quest.answer.forEach(el => {
-                            if (el == answer) {
-                                matched = true;
-                            }
-                        });
-                        if (!matched) {
-                            return resultUnSuccess;
-                        }
-                    }
+        let stage = appState.killer;
+        if (stage.status == StageStatus.KILLER_COMPLETED) {
+            const stageInfo: RawStage = defaultData.killer;
+            let id = -1;
+            for (let quest of stageInfo.quests) {
+                id++;
+                let questAnswer: QuestAnswer = stage.questAnswers[id];
+                if (!questAnswer) {
+                    return resultUnSuccess;
                 }
 
-                return resultSuccess;
+                let answer = questAnswer.answer;
+
+                if (typeof quest != 'string') {
+                    let matched = false;
+                    quest.answer.forEach(el => {
+                        if (el == answer) {
+                            matched = true;
+                        }
+                    });
+                    if (!matched) {
+                        return resultUnSuccess;
+                    }
+                }
             }
+
+            return resultSuccess;
         }
+
 
         return "";
     }
