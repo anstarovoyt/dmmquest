@@ -24,16 +24,18 @@ export class FileUploadControl extends React.Component<Props, {}> {
     render() {
         let isCompleted = this.props.isDisabled;
         let buttonMessage = this.props.buttonMessage;
-        let value = this.props.value;
+        let split = this.props.value ? this.props.value.split('\n') : [];
+        let value = this.props.value ? `Файлов: ${split.length}` : 'Нет файлов';
         const iconSpan = this.props.hasBackground ? FileUploadControl.getAnimatedIconSpan() : FileUploadControl.getUploadIconSpan();
 
-        return <div className="input-group">
-            <input type="text"
-                   disabled={true}
-                   value={value}
-                   className="form-control"
-                   placeholder="Загрузите файл"/>
-            <span className="input-group-btn">
+        return <div>
+            <div className="input-group">
+                <input type="text"
+                       disabled={true}
+                       value={value}
+                       className="form-control"
+                       placeholder="Загрузите файл"/>
+                <span className="input-group-btn">
                                 <label disabled={isCompleted} className="btn btn-info">
                               <input
                                   type="file"
@@ -42,6 +44,13 @@ export class FileUploadControl extends React.Component<Props, {}> {
                                   {iconSpan}&nbsp;{buttonMessage}{this.props.children}</input>
                                 </label>
                             </span>
+            </div>
+            <div className="input-group">
+                {split.map((el, i) => {
+                    return <a key={i} href={el}>File {i + 1}</a>;
+                })}
+
+            </div>
         </div>;
     }
 
@@ -74,7 +83,7 @@ export class FileUploadControl extends React.Component<Props, {}> {
                 url: res.url
             }, (res) => {
                 target.value = '';
-                this.props.fileUploadResult(res.success, res.success ? getUpdatedValue(this.props.value) : null);
+                this.props.fileUploadResult(res.success, res.success ? getUpdatedValue(this.props.value, res.url) : null);
             });
         });
     }
@@ -90,16 +99,10 @@ export class FileUploadControl extends React.Component<Props, {}> {
     }
 }
 
-function getUpdatedValue(value) {
+function getUpdatedValue(value: string, newUrl: string) {
     if (!value) {
-        return 'Файлов: 1';
+        return newUrl;
     }
 
-    const index = value.indexOf(' ');
-    if (index > 0) {
-        const numberString = value.substr(index);
-        const newNumber = 1 + Number(numberString);
-        return 'Файлов: ' + newNumber;
-    }
-    return 'Файлов: 1';
+    return value + '\n' + newUrl;
 }
