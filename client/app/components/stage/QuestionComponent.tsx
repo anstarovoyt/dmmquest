@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {saveAnswers, uploadFileToAWS, getAWSSign} from '../../communitation/Dispatcher';
+import {saveAnswers} from '../../communitation/Dispatcher';
 import {auth} from '../../authentication/AuthService';
 import {appStateService} from '../../state/AppStateService';
 import {FileUploadControl} from './controls/FileUploadControl';
@@ -109,14 +109,16 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
         const downloadMessage = hasBackground ? 'Загрузка...' : 'Загрузить';
 
-        return <FileUploadControl uploadFile={this.uploadFile.bind(this)}
+        return <FileUploadControl fileUploadResult={this.fileUploadResult.bind(this)}
+                                  startUpload={this.startUpload.bind(this)}
                                   buttonMessage={downloadMessage}
+                                  stageId={this.props.stage.id}
+                                  questId={this.props.quest.id}
                                   value={this.state.value}
                                   hasBackground={hasBackground}>
             {this.getPopupSpan(savedHtmlClass)}
         </FileUploadControl>;
     }
-
 
     private createTextInputField(isCompleted: boolean, savedHtmlClass: string) {
         const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
@@ -229,104 +231,53 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }, 3000);
     }
 
-    uploadFile(e) {
-        e.preventDefault();
-        const target = e.target;
-        const files = target.files;
-        const file = files[0];
-        const stateValue = this.state.value;
-        if (file == null) {
-            return;
-        }
-
+    startUpload() {
         this.setState({
-            value: stateValue,
+            value: this.state.value,
             noBackgroundActions: false,
             savedMark: ActionState.NO
         });
+    }
 
-        getAWSSign({
-            token: auth.getToken(),
-            fileName: file.name,
-            type: 'answer',
-            fileType: file.type,
-            stageId: this.props.stage.id,
-            questId: this.props.quest.id
-        }, (res) => {
-            if (!res.success) {
-                target.value = '';
-                this.setState({
-                    value: stateValue,
-                    noBackgroundActions: true,
-                    savedMark: ActionState.ERROR
-                });
-                this.setTimeoutToResetMarks();
-                return;
-            }
-
-
-            uploadFileToAWS({
-                file: file,
-                sign: res.sign,
-                url: res.url
+    fileUploadResult(success: boolean, newValue: string) {
+        if (success) {
+            const quest: Quest = this.props.quest;
+            const stage = this.props.stage;
+            const answer: QuestAnswer = {
+                id: quest.id,
+                answer: newValue
+            };
+            saveAnswers({
+                token: auth.getToken(),
+                stageId: stage.id,
+                answers: [answer]
             }, (res) => {
                 if (res.success) {
-                    const newValue = getUpdatedValue(this.state.value);
-                    const quest: Quest = this.props.quest;
-                    const stage = this.props.stage;
-                    const answer: QuestAnswer = {
-                        id: quest.id,
-                        answer: newValue
-                    };
-                    saveAnswers({
-                        token: auth.getToken(),
-                        stageId: stage.id,
-                        answers: [answer]
-                    }, (res) => {
-                        target.value = '';
-                        if (res.success) {
-                            appStateService.updateStage(res.stage);
+                    appStateService.updateStage(res.stage);
 
-                            this.setState({
-                                value: newValue,
-                                noBackgroundActions: true,
-                                savedMark: ActionState.SAVED
-                            });
-
-
-                        } else {
-                            this.setState({
-                                value: stateValue,
-                                noBackgroundActions: true,
-                                savedMark: ActionState.ERROR
-                            });
-                        }
-                        this.setTimeoutToResetMarks();
-                    });
-                } else {
-                    target.value = '';
                     this.setState({
-                        value: stateValue,
+                        value: newValue,
+                        noBackgroundActions: true,
+                        savedMark: ActionState.SAVED
+                    });
+
+
+                } else {
+                    this.setState({
+                        value: this.state.value,
                         noBackgroundActions: true,
                         savedMark: ActionState.ERROR
                     });
-                    this.setTimeoutToResetMarks();
                 }
+                this.setTimeoutToResetMarks();
             });
-        });
+        } else {
+            this.setState({
+                value: this.state.value,
+                noBackgroundActions: true,
+                savedMark: ActionState.ERROR
+            });
+            this.setTimeoutToResetMarks();
+        }
     }
-}
-
-function getUpdatedValue(value) {
-    if (!value) {
-        return 'Файлов: 1';
-    }
-
-    const index = value.indexOf(' ');
-    if (index > 0) {
-        const numberString = value.substr(index);
-        const newNumber = 1 + Number(numberString);
-        return 'Файлов: ' + newNumber;
-    }
-    return 'Файлов: 1';
 }
