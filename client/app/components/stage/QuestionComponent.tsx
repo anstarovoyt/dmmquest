@@ -1,25 +1,25 @@
-import * as React from "react";
-import {saveAnswers, uploadFileToAWS, getAWSSign} from "../../communitation/Dispatcher";
-import {auth} from "../../authentication/AuthService";
-import {appStateService} from "../../state/AppStateService";
+import * as React from 'react';
+import {saveAnswers, uploadFileToAWS, getAWSSign} from '../../communitation/Dispatcher';
+import {auth} from '../../authentication/AuthService';
+import {appStateService} from '../../state/AppStateService';
 
 
-export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues },
+export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues: { [id: number]: string } },
     { value: string, noBackgroundActions: boolean, savedMark: ActionState }> {
 
     private timeOutMarker = null;
 
-    popupText = "";
+    popupText = '';
 
     constructor(props: any) {
         super(props);
 
-        const value = this.getDefaultValue() || "";
+        const value = this.getDefaultValue() || '';
         this.state = {
             value: value,
             savedMark: ActionState.NO,
             noBackgroundActions: true
-        }
+        };
 
         this.props.savedValues[this.props.quest.id] = value;
     }
@@ -34,20 +34,20 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
     render() {
         const savedMark = this.state.savedMark;
-        const savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+        const savedHtmlClass = 'done-mark' + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? ' view' : '');
 
         if (savedMark == ActionState.ERROR) {
-            this.popupText = "Ошибка при отправке";
+            this.popupText = 'Ошибка при отправке';
         } else if (savedMark == ActionState.SAVED) {
             let type = this.props.quest.type;
-            this.popupText = (!type || type == QuestType.TEXT || type == QuestType.LIST_BOX) ? "Ответы сохранены" : "Файл загружен";
+            this.popupText = (!type || type == QuestType.TEXT || type == QuestType.LIST_BOX) ? 'Ответы сохранены' : 'Файл загружен';
         }
 
         const stage = this.props.stage;
         const isCompleted = stage.status == StageStatus.COMPLETED || stage.status == StageStatus.KILLER_COMPLETED;
 
         const text = {__html: this.props.quest.text};
-        const stageInfo = this.props.quest.stageName == null ? "" : <i> Этап {this.props.quest.stageName} </i>;
+        const stageInfo = this.props.quest.stageName == null ? '' : <i> Этап {this.props.quest.stageName} </i>;
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -57,7 +57,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                     <p className="lead"></p>
                     {this.createInputField(isCompleted, savedHtmlClass)}
                 </div>
-            </div>)
+            </div>);
     }
 
 
@@ -99,7 +99,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
                                   {this.getSaveIconSpan()}&nbsp;Сохранить {this.getPopupSpan(savedHtmlClass)}</button>
                             </span>
-        </div>
+        </div>;
     }
 
 
@@ -107,7 +107,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const hasBackground = !this.state.noBackgroundActions;
 
         const iconSpan = hasBackground ? this.getAnimatedIconSpan() : this.getUploadIconSpan();
-        const downloadMessage = hasBackground ? "Загрузка..." : "Загрузить";
+        const downloadMessage = hasBackground ? 'Загрузка...' : 'Загрузить';
         return <div className="input-group">
             <input type="text"
                    disabled={true}
@@ -123,7 +123,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                                   {iconSpan}&nbsp;{downloadMessage}{this.getPopupSpan(savedHtmlClass)}</input>
                                 </label>
                             </span>
-        </div>
+        </div>;
     }
 
 
@@ -142,7 +142,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
                                   {this.getSaveIconSpan()}&nbsp;Сохранить {this.getPopupSpan(savedHtmlClass)}</button>
                             </span>
-        </div>
+        </div>;
     }
 
     private getSaveIconSpan() {
@@ -173,16 +173,16 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         let answers = props.stage.questAnswers;
 
         if (!answers) {
-            return ""
+            return '';
         }
 
 
         let answer = answers[props.quest.id];
         if (!answer) {
-            return ""
+            return '';
         }
 
-        return answer.answer
+        return answer.answer;
     }
 
     private handlerChanged(e) {
@@ -195,7 +195,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
         this.props.savedValues[this.props.quest.id] = newValue;
 
-        this.setState(state)
+        this.setState(state);
     }
 
     private saveAnswer() {
@@ -231,7 +231,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                 });
             }
             this.setTimeoutToResetMarks();
-        })
+        });
     }
 
 
@@ -274,7 +274,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
             questId: this.props.quest.id
         }, (res) => {
             if (!res.success) {
-                target.value = "";
+                target.value = '';
                 this.setState({
                     value: stateValue,
                     noBackgroundActions: true,
@@ -303,7 +303,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                         stageId: stage.id,
                         answers: [answer]
                     }, (res) => {
-                        target.value = "";
+                        target.value = '';
                         if (res.success) {
                             appStateService.updateStage(res.stage);
 
@@ -324,7 +324,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                         this.setTimeoutToResetMarks();
                     });
                 } else {
-                    target.value = "";
+                    target.value = '';
                     this.setState({
                         value: stateValue,
                         noBackgroundActions: true,
@@ -332,21 +332,21 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                     });
                     this.setTimeoutToResetMarks();
                 }
-            })
-        })
+            });
+        });
     }
 }
 
 function getUpdatedValue(value) {
     if (!value) {
-        return "Файлов: 1";
+        return 'Файлов: 1';
     }
 
     const index = value.indexOf(' ');
     if (index > 0) {
         const numberString = value.substr(index);
         const newNumber = 1 + Number(numberString);
-        return "Файлов: " + newNumber;
+        return 'Файлов: ' + newNumber;
     }
-    return "Файлов: 1";
+    return 'Файлов: 1';
 }

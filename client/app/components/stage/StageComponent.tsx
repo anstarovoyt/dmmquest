@@ -1,11 +1,11 @@
-import * as React from "react";
-import {PropTypes} from "react";
-import {questService} from "../../state/QuestService";
-import {LoadingComponent} from "../common/LoadingComponent";
-import {QuestComponent} from "./QuestionComponent";
-import {complete} from "../../communitation/Dispatcher";
-import {auth} from "../../authentication/AuthService";
-import {appStateService} from "../../state/AppStateService";
+import * as React from 'react';
+import {PropTypes} from 'react';
+import {questService} from '../../state/QuestService';
+import {LoadingComponent} from '../common/LoadingComponent';
+import {QuestComponent} from './QuestionComponent';
+import {complete} from '../../communitation/Dispatcher';
+import {auth} from '../../authentication/AuthService';
+import {appStateService} from '../../state/AppStateService';
 
 const Link = require('react-router/lib/Link');
 
@@ -30,9 +30,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     private timeOutMarker = null;
 
-    private popupText = "";
+    private popupText = '';
 
-    nestedValue = {};
+    nestedValue: { [id: number]: string } = {};
 
     constructor(props: any, context) {
         super(props, context);
@@ -40,7 +40,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
             isEnableSave: true,
             savedMark: ActionState.NO,
             loadState: LoadState.NOT_LOADED
-        }
+        };
     }
 
 
@@ -61,7 +61,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                     isEnableSave: true,
                     savedMark: ActionState.NO,
                     loadState: LoadState.LOADED
-                })
+                });
             } else {
                 this.setState({
                     questTexts: res.texts,
@@ -69,9 +69,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
                     isEnableSave: true,
                     savedMark: ActionState.NO,
                     loadState: LoadState.ERROR
-                })
+                });
             }
-        })
+        });
     }
 
     private getCurrentStage() {
@@ -102,17 +102,17 @@ export class StageComponent extends React.Component<{ stage: Stage },
                                        stage={this.props.stage}/>;
             });
             const isCompletedLevel = currentStage.status == StageStatus.COMPLETED || currentStage.status == StageStatus.KILLER_COMPLETED;
-            const buttonStyle = "btn" + (isCompletedLevel ? " btn-success" : " btn-info");
+            const buttonStyle = 'btn' + (isCompletedLevel ? ' btn-success' : ' btn-info');
 
 
             const savedMark = this.state.savedMark;
-            const savedHtmlClass = "done-mark" + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? " view" : "");
+            const savedHtmlClass = 'done-mark' + (savedMark == ActionState.ERROR || savedMark == ActionState.SAVED ? ' view' : '');
 
 
             if (savedMark == ActionState.ERROR) {
-                this.popupText = "Ошибка при отправке";
+                this.popupText = 'Ошибка при отправке';
             } else if (savedMark == ActionState.SAVED) {
-                this.popupText = "Ответы сохранены";
+                this.popupText = 'Ответы сохранены';
             }
 
             return (
@@ -135,7 +135,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                                       onClick={this.saveAnswers.bind(this)}
                                       disabled={!this.state.isEnableSave || isCompletedLevel}>
                                   { this.getButtonName(currentStage, isCompletedLevel) }
-                                  {savedMark == ActionState.NO ? "" :
+                                  {savedMark == ActionState.NO ? '' :
                                       <span className={savedHtmlClass}>{this.popupText}</span>}
                               </button>
                             </span>
@@ -152,24 +152,24 @@ export class StageComponent extends React.Component<{ stage: Stage },
                         <span className="glyphicon glyphicon-arrow-left"></span>
                     </Link>
                         <span>{stageName} {currentStage.status == StageStatus.BONUS ?
-                            (<p> Сдаете последние этап — бонус блокируется </p>) : "" }</span></h1>
+                            (<p> Сдаете последние этап — бонус блокируется </p>) : '' }</span></h1>
                     {this.state.loadState == LoadState.ERROR ?
                         <span>Ошибка загрузки данных. Попробуйте обновить страницу</span> : <LoadingComponent />}
                 </div>
             </div>
-        )
+        );
     }
 
     getButtonName(currentStage: Stage, isCompletedLevel: boolean) {
         if (currentStage && currentStage.status == StageStatus.BONUS) {
-            return "Сохранить ответы";
+            return 'Сохранить ответы';
         }
 
         if (currentStage && currentStage.status == StageStatus.KILLER) {
-            return "Проверить!"
+            return 'Проверить!';
         }
 
-        return isCompletedLevel ? "Этап сдан" : currentStage.last ? "Сдать уровень и завершить квест" : "Сдать уровень";
+        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и завершить квест' : 'Сдать уровень';
     }
 
     saveAnswers() {
@@ -196,7 +196,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
             if (!r.error) {
                 appStateService.setState(r.res);
                 if (stage.status != StageStatus.BONUS) {
-                    questService.reset("bonus");
+                    questService.reset('bonus');
 
                     this.redirectTo();
                     return;
@@ -208,7 +208,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                     isEnableSave: true,
                     savedMark: ActionState.SAVED,
                     loadState: this.state.loadState
-                })
+                });
 
             } else {
                 this.setState({
@@ -217,7 +217,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                     isEnableSave: true,
                     savedMark: ActionState.ERROR,
                     loadState: this.state.loadState
-                })
+                });
             }
 
             this.timeOutMarker = setTimeout(() => {
@@ -231,11 +231,11 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
                 this.timeOutMarker = null;
             }, 1000);
-        })
+        });
     }
 
     redirectTo() {
-        this.context["history"].push('/');
+        this.context['history'].push('/');
     }
 
     private saveStateWithAnswers() {
@@ -246,7 +246,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 answers.push({
                     id: Number(value),
                     answer: nestedValue[value]
-                })
+                });
             }
         }
 
@@ -272,7 +272,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 <h4>Описание</h4>
                 <div dangerouslySetInnerHTML={{__html: description}}/>
                 <br/>
-                <h5>{currentStage.status == StageStatus.OPEN ? "После открытия этапа появляются новые бонусы! Проверь!" : ""}</h5>
+                <h5>{currentStage.status == StageStatus.OPEN ? 'После открытия этапа появляются новые бонусы! Проверь!' : ''}</h5>
             </div>
         </div>;
     }
