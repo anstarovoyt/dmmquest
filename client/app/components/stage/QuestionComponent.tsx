@@ -2,6 +2,7 @@ import * as React from 'react';
 import {saveAnswers, uploadFileToAWS, getAWSSign} from '../../communitation/Dispatcher';
 import {auth} from '../../authentication/AuthService';
 import {appStateService} from '../../state/AppStateService';
+import {FileUploadControl} from './controls/FileUploadControl';
 
 
 export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues: { [id: number]: string } },
@@ -106,24 +107,14 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     private createUploadField(isCompleted: boolean, savedHtmlClass: string) {
         const hasBackground = !this.state.noBackgroundActions;
 
-        const iconSpan = hasBackground ? this.getAnimatedIconSpan() : this.getUploadIconSpan();
         const downloadMessage = hasBackground ? 'Загрузка...' : 'Загрузить';
-        return <div className="input-group">
-            <input type="text"
-                   disabled={true}
-                   value={this.state.value}
-                   className="form-control"
-                   placeholder="Загрузите файл"/>
-            <span className="input-group-btn">
-                                <label disabled={isCompleted} className="btn btn-info">
-                              <input
-                                  type="file"
-                                  disabled={isCompleted}
-                                  onChange={this.uploadFile.bind(this)}>
-                                  {iconSpan}&nbsp;{downloadMessage}{this.getPopupSpan(savedHtmlClass)}</input>
-                                </label>
-                            </span>
-        </div>;
+
+        return <FileUploadControl uploadFile={this.uploadFile.bind(this)}
+                                  buttonMessage={downloadMessage}
+                                  value={this.state.value}
+                                  hasBackground={hasBackground}>
+            {this.getPopupSpan(savedHtmlClass)}
+        </FileUploadControl>;
     }
 
 
@@ -151,18 +142,6 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
             className="glyphicon glyphicon-floppy-save"></span>;
     }
 
-
-    private getUploadIconSpan() {
-        //noinspection CheckTagEmptyBody
-        return <span
-            className="glyphicon glyphicon-floppy-open"></span>;
-    }
-
-    private getAnimatedIconSpan() {
-        //noinspection CheckTagEmptyBody
-        // return <span className="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
-        return <span className="glyphicon glyphicon-refresh"></span>;
-    }
 
     private getPopupSpan(savedHtmlClass) {
         return <span className={savedHtmlClass}> {this.popupText} </span>;

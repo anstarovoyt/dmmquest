@@ -5,6 +5,9 @@ const aws = require('aws-sdk');
 const path = require('path');
 
 
+console.log('AWS_SECRET_KEY: ' + AWS_SECRET_KEY);
+console.log('AWS_ACCESS_KEY: ' + AWS_ACCESS_KEY);
+
 export function processGetAWS(request: GetAWSSignRequest, callback: (GetAWSSignResponse) => void) {
     aws.config.update({
         accessKeyId: AWS_ACCESS_KEY,
