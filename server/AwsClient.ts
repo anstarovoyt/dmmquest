@@ -1,7 +1,8 @@
-const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || "YOUR_AWS_KEY";
-const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || "YOUR_AWS_SECRET_KEY";
-const S3_BUCKET = process.env.S3_BUCKET || "dmmquest";
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || 'YOUR_AWS_KEY';
+const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || 'YOUR_AWS_SECRET_KEY';
+const S3_BUCKET = process.env.S3_BUCKET || 'dmmquest';
 const aws = require('aws-sdk');
+const path = require('path');
 
 
 export function processGetAWS(request: GetAWSSignRequest, callback: (GetAWSSignResponse) => void) {
@@ -12,7 +13,9 @@ export function processGetAWS(request: GetAWSSignRequest, callback: (GetAWSSignR
         region: 'eu-central-1'
     });
     const s3 = new aws.S3();
-    const url = request.token + '/stage_' + request.stageId + '/quest_' + request.questId + '/f' + new Date().getTime() + '_' + request.fileName;
+    let extension = path.extname(request.fileName == null ? 'default.jpg' : request.fileName);
+
+    const url = request.token + '/stage_' + request.stageId + '/quest_' + request.questId + '/f_' + new Date().getTime() + '_' + request.type + extension;
     const s3_params = {
         Bucket: S3_BUCKET,
         Key: url,

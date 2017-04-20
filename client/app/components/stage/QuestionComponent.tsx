@@ -269,6 +269,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         getAWSSign({
             token: auth.getToken(),
             fileName: file.name,
+            type: 'answer',
             fileType: file.type,
             stageId: this.props.stage.id,
             questId: this.props.quest.id

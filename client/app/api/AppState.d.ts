@@ -28,6 +28,9 @@ interface Stage {
         [id: number]: QuestAnswer
     }
 
+    teamBonus?: {
+        [id: number]: QuestAnswer
+    }
 }
 
 interface QuestAnswer extends HasId {
@@ -120,6 +123,7 @@ interface AWSSendFileResponse {
 interface GetAWSSignRequest {
     token: string,
     fileName: string,
+    type: string,
     fileType: string,
     stageId: string,
     questId: number

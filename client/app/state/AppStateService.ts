@@ -1,6 +1,6 @@
-import {appStateStore} from "./AppStateStore";
-import {loadState} from "../communitation/Dispatcher";
-import {auth} from "../authentication/AuthService";
+import {appStateStore} from './AppStateStore';
+import {loadState} from '../communitation/Dispatcher';
+import {auth} from '../authentication/AuthService';
 
 class AppStateService {
 
@@ -26,7 +26,7 @@ class AppStateService {
     getIntro() {
         const app = this.fullState;
         if (!app) {
-            return ""
+            return '';
         }
 
         return app.intro;
@@ -35,7 +35,7 @@ class AppStateService {
     getStageNameById(stageId: string) {
         let app = this.fullState;
         if (!app) {
-            return ""
+            return '';
         }
 
         return app.stagesNames[stageId];
@@ -43,7 +43,7 @@ class AppStateService {
 
     getStageName(stage: Stage) {
         if (!stage) {
-            return "";
+            return '';
         }
 
         return this.getStageNameById(stage.id);
@@ -53,11 +53,11 @@ class AppStateService {
         const newState = cloneAppState(this.fullState.appState);
 
         const id = newStage.id;
-        if (id == "bonus") {
+        if (id == 'bonus') {
             newState.bonus = newStage;
-            return
+            return;
         }
-        if (id == "killer") {
+        if (id == 'killer') {
             newState.killer = newStage;
             return;
         }
@@ -134,4 +134,4 @@ export function getStageById(state: AppState, stageId: string) {
 
 const appStateService = new AppStateService();
 
-export {appStateService}
+export {appStateService};
