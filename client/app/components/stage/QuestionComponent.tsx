@@ -6,7 +6,7 @@ import {FileUploadControl} from './controls/FileUploadControl';
 
 
 export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues: { [id: number]: string } },
-    { value: string, noBackgroundActions: boolean, savedMark: ActionState }> {
+    { value: string, savedMark: ActionState }> {
 
     private timeOutMarker = null;
 
@@ -18,8 +18,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const value = this.getDefaultValue() || '';
         this.state = {
             value: value,
-            savedMark: ActionState.NO,
-            noBackgroundActions: true
+            savedMark: ActionState.NO
         };
 
         this.props.savedValues[this.props.quest.id] = value;
@@ -76,7 +75,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     }
 
     private createListBoxField(isCompleted: boolean, savedHtmlClass: string) {
-        const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
+        const isSendDisabled = isCompleted;
 
         let items = this.props.quest.values.map(el => {
             return <option key={el} value={el}>{el}</option>;
@@ -105,23 +104,17 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
 
     private createUploadField(isCompleted: boolean, savedHtmlClass: string) {
-        const hasBackground = !this.state.noBackgroundActions;
-
-        const downloadMessage = hasBackground ? 'Загрузка...' : 'Загрузить';
 
         return <FileUploadControl fileUploadResult={this.fileUploadResult.bind(this)}
-                                  startUpload={this.startUpload.bind(this)}
-                                  buttonMessage={downloadMessage}
                                   stageId={this.props.stage.id}
                                   questId={this.props.quest.id}
-                                  value={this.state.value}
-                                  hasBackground={hasBackground}>
+                                  value={this.state.value}>
             {this.getPopupSpan(savedHtmlClass)}
         </FileUploadControl>;
     }
 
     private createTextInputField(isCompleted: boolean, savedHtmlClass: string) {
-        const isSendDisabled = !this.state.noBackgroundActions || isCompleted;
+        const isSendDisabled = isCompleted;
         return <div className="input-group">
             <input type="text"
                    disabled={isCompleted}
@@ -170,7 +163,6 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const newValue = e.target.value;
         const state = {
             value: newValue,
-            noBackgroundActions: this.state.noBackgroundActions,
             savedMark: ActionState.NO
         };
 
@@ -185,7 +177,6 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const value = this.state.value;
         this.setState({
             value: value,
-            noBackgroundActions: false,
             savedMark: ActionState.NO
         });
         const answer: QuestAnswer = {
@@ -201,13 +192,11 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                 appStateService.updateStage(res.stage);
                 this.setState({
                     value: value,
-                    noBackgroundActions: true,
                     savedMark: ActionState.SAVED
                 });
             } else {
                 this.setState({
                     value: value,
-                    noBackgroundActions: true,
                     savedMark: ActionState.ERROR
                 });
             }
@@ -223,7 +212,6 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         this.timeOutMarker = setTimeout(() => {
             this.setState({
                 value: this.state.value,
-                noBackgroundActions: this.state.noBackgroundActions,
                 savedMark: ActionState.NO
             });
 
@@ -231,15 +219,9 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }, 3000);
     }
 
-    startUpload() {
-        this.setState({
-            value: this.state.value,
-            noBackgroundActions: false,
-            savedMark: ActionState.NO
-        });
-    }
-
-    fileUploadResult(success: boolean, newValue: string) {
+    fileUploadResult(success: boolean, newValue?: string, resetState: () => void = () => {
+        return;
+    }) {
         if (success) {
             const quest: Quest = this.props.quest;
             const stage = this.props.stage;
@@ -254,27 +236,24 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
             }, (res) => {
                 if (res.success) {
                     appStateService.updateStage(res.stage);
-
+                    resetState();
                     this.setState({
                         value: newValue,
-                        noBackgroundActions: true,
                         savedMark: ActionState.SAVED
                     });
-
-
                 } else {
+                    resetState();
                     this.setState({
                         value: this.state.value,
-                        noBackgroundActions: true,
                         savedMark: ActionState.ERROR
                     });
                 }
                 this.setTimeoutToResetMarks();
             });
         } else {
+            resetState();
             this.setState({
                 value: this.state.value,
-                noBackgroundActions: true,
                 savedMark: ActionState.ERROR
             });
             this.setTimeoutToResetMarks();

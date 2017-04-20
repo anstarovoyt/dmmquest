@@ -5,28 +5,27 @@ import {getAWSSign, saveAnswers, uploadFileToAWS} from '../../../communitation/D
 
 type Props = {
     isDisabled?: boolean,
-    startUpload: () => void,
-    fileUploadResult(success: boolean, newValue?: string),
-    buttonMessage: string,
-    hasBackground: boolean,
+    fileUploadResult(success: boolean, newValue?: string, restoreState?: () => void): void,
     stageId: string,
     questId: number,
     value: string
 };
 
-export class FileUploadControl extends React.Component<Props, {}> {
+export class FileUploadControl extends React.Component<Props, { hasBackground: boolean }> {
 
 
     constructor(props: Props, context: any) {
         super(props, context);
+
+        this.state = {hasBackground: false};
     }
 
     render() {
         let isCompleted = this.props.isDisabled;
-        let buttonMessage = this.props.buttonMessage;
+        let buttonMessage = this.state.hasBackground ? 'Загрузка...' : 'Загрузить';
         let split = this.props.value ? this.props.value.split('\n') : [];
         let value = this.props.value ? `Файлов: ${split.length}` : 'Нет файлов';
-        const iconSpan = this.props.hasBackground ? FileUploadControl.getAnimatedIconSpan() : FileUploadControl.getUploadIconSpan();
+        const iconSpan = this.state.hasBackground ? FileUploadControl.getAnimatedIconSpan() : FileUploadControl.getUploadIconSpan();
 
         return <div>
             <div className="input-group">
@@ -63,7 +62,9 @@ export class FileUploadControl extends React.Component<Props, {}> {
             return;
         }
 
-        this.props.startUpload();
+        this.setState({
+            hasBackground: true
+        });
 
         getAWSSign({
             token: auth.getToken(),
@@ -75,6 +76,11 @@ export class FileUploadControl extends React.Component<Props, {}> {
         }, (res) => {
             if (!res.success) {
                 this.props.fileUploadResult(false);
+                this.setState({
+                    hasBackground: false
+                });
+
+                return;
             }
 
             uploadFileToAWS({
@@ -83,7 +89,13 @@ export class FileUploadControl extends React.Component<Props, {}> {
                 url: res.url
             }, (res) => {
                 target.value = '';
-                this.props.fileUploadResult(res.success, res.success ? getUpdatedValue(this.props.value, res.url) : null);
+                this.props.fileUploadResult(res.success,
+                    res.success ? getUpdatedValue(this.props.value, res.url) : null,
+                    () => {
+                        this.setState({
+                            hasBackground: false
+                        });
+                    });
             });
         });
     }
