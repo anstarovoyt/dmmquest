@@ -1,16 +1,19 @@
-import {RawStage} from "../data";
-import {getVideo} from "./helper";
+import {RawStage} from '../data';
+import {getVideo} from './helper';
 
 export const stage: RawStage = {
-    name: "Модерн",
-    internalName: "Динамо",
-    description: getVideo(true, "https://www.youtube.com/embed/7NUpDPaI3M4") +
-    `<br><h4>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме</h4>`,
+    name: 'Модерн',
+    internalName: 'Динамо',
+    description: getVideo(true, 'https://www.youtube.com/embed/7NUpDPaI3M4') +
+    `<br><h5>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме. 
+Добавьте его в ваш командный чат. Общайтесь с ним с помощью кнопок бота или отвечая 
+на его сообщения при помощи <a href="https://telegram.org/blog/replies-mentions-hashtags" >Reply</a>. 
+</h5>`,
     quests: [
-        "Кодовое слово, полученное после погони?",
+        'Кодовое слово, полученное после погони?',
 
 
-        "Бесконтрольность Челябинской авиационной тропинки приведет вас в это место. Над каким материком находится поезд?",
+        'Бесконтрольность Челябинской авиационной тропинки приведет вас в это место. Над каким материком находится поезд?',
 
 
         `МММ, а что если убийца — молочник? ДА, пожалуй проверю и эту версию, НО если это НЕ так, то как минимум сузится круг подозреваемых. 
@@ -54,4 +57,4 @@ export const stage: RawStage = {
 Когда ты найдешь все три в одном месте, скажи, сколько полных сегментов ты видишь?`,
 
     ]
-}
+};
