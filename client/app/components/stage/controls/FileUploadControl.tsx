@@ -32,7 +32,7 @@ export class FileUploadControl extends AnswerControl {
         let value = this.state.value ? `Файлов: ${split.length}` : 'Нет файлов';
         const iconSpan = this.state.hasBackground ? FileUploadControl.getAnimatedIconSpan() : FileUploadControl.getUploadIconSpan();
 
-        return <div>
+        return <div key={'fileUploader' + this.props.questId}>
             <div className="input-group">
                 <input type="text"
                        disabled={true}
@@ -43,18 +43,19 @@ export class FileUploadControl extends AnswerControl {
                                 <label disabled={isCompleted} className="btn btn-info">
                                     <input
                                         type="file"
-                                        disabled={isCompleted || this.state.hasBackground}
+                                        disabled={isCompleted}
                                         onChange={this.uploadFile.bind(this)}>
-                                        {iconSpan}&nbsp;
-                                        {buttonMessage}
-                                        {this.getPopupSpan()}
                                   </input>
+                                    {iconSpan}&nbsp;
+                                    {buttonMessage}
+                                    {this.getPopupSpan()}
                                 </label>
                             </span>
             </div>
             <div className="input-group">
                 {split.map((el, i) => {
-                    return <a key={i} href={el}>{this.props.typeText} {i + 1}</a>;
+                    return <a key={'refToFile_' + this.props.questId + '_' + i}
+                              href={el}>{this.props.typeText} {i + 1}</a>;
                 })}
 
             </div>

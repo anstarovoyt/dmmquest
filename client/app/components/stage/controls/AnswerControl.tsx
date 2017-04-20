@@ -17,19 +17,32 @@ export class AnswerControl extends React.Component<Props, {
 }> {
 
     private timeOutMarker = null;
+    private isDisposed = false;
 
     componentWillUnmount(): void {
         if (this.timeOutMarker != null) {
             clearTimeout(this.timeOutMarker);
             this.timeOutMarker = null;
         }
+        this.isDisposed = true;
+    }
+
+
+    componentWillMount() {
+        this.isDisposed = false;
     }
 
     setTimeoutToResetMarks() {
         if (this.timeOutMarker) {
             clearTimeout(this.timeOutMarker);
         }
+
+        if (this.isDisposed) return;
+
         this.timeOutMarker = setTimeout(() => {
+            if (this.isDisposed) {
+                return;
+            }
             this.setState({
                 hasBackground: false,
                 savedMark: ActionState.NO,
@@ -49,7 +62,8 @@ export class AnswerControl extends React.Component<Props, {
     }
 
     getPopupSpan() {
-        return <span className={this.getSavedClass()}> {this.getTextForPopup()} </span>;
+        return <span key={'spanPopup' + this.props.questId}
+                     className={this.getSavedClass()}> {this.getTextForPopup()} </span>;
     }
 
     getSavedClass() {
