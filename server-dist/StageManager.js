@@ -135,10 +135,6 @@ var StageManager = (function () {
         if (stage.status == 3 /* BONUS */ ||
             stageId == 'bonus') {
             var result_1 = [];
-            var quests = data_1.defaultData.bonus.quests;
-            if (quests) {
-                quests.forEach(function (el) { return result_1.push({ quest: el, show: true }); });
-            }
             var _loop_2 = function (stage_1) {
                 if (stage_1.status == 1 /* OPEN */ ||
                     stage_1.status == 0 /* LOCKED */ ||
@@ -161,6 +157,10 @@ var StageManager = (function () {
             for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
                 var stage_1 = _a[_i];
                 _loop_2(stage_1);
+            }
+            var quests = data_1.defaultData.bonus.quests;
+            if (quests) {
+                quests.forEach(function (el) { return result_1.push({ quest: el, show: true }); });
             }
             return { texts: result_1 };
         }

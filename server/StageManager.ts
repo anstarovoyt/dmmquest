@@ -158,10 +158,6 @@ export class StageManager {
         if (stage.status == StageStatus.BONUS ||
             stageId == 'bonus') {
             let result: { quest: QuestText, show?: boolean, stageName?: string }[] = [];
-            let quests = defaultData.bonus.quests;
-            if (quests) {
-                quests.forEach(el => result.push({quest: el, show: true}));
-            }
             for (let stage of appState.stages) {
                 if (stage.status == StageStatus.OPEN ||
                     stage.status == StageStatus.LOCKED ||
@@ -180,6 +176,11 @@ export class StageManager {
                         }
                     }
                 }
+            }
+
+            let quests = defaultData.bonus.quests;
+            if (quests) {
+                quests.forEach(el => result.push({quest: el, show: true}));
             }
 
             return {texts: result};
