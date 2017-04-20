@@ -15,7 +15,7 @@ export class StageManager {
     } = getStagesNames();
 
 
-    setAnswers(token: string, stageId: string, answers: QuestAnswer[], fromClose: boolean) {
+    setAnswers(token: string, stageId: string, answers: QuestAnswer[], teamBonuses: QuestAnswer[], fromClose: boolean) {
         let stage: Stage = this.getStage(token, stageId);
         if (!stage) {
             return null;
@@ -26,19 +26,8 @@ export class StageManager {
             return null;
         }
 
-        for (let answer of answers) {
-            if (!stage.questAnswers) {
-                stage.questAnswers = {};
-            }
-
-            const oldAnswer = stage.questAnswers[answer.id];
-            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
-                continue;
-            }
-
-            stage.questAnswers[answer.id] = answer;
-        }
-
+        this.updateAnswers(answers, stage, fromClose);
+        this.updateTeamBonuses(teamBonuses, stage, fromClose);
 
         const stagesName = this.stagesNames[stageId];
         logServer('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
@@ -51,6 +40,36 @@ export class StageManager {
             }
         });
         return stage;
+    }
+
+    private updateTeamBonuses(teamBonuses: QuestAnswer[], stage: Stage, fromClose: boolean) {
+        for (let answer of teamBonuses) {
+            if (!stage.teamBonuses) {
+                stage.teamBonuses = {};
+            }
+
+            const oldAnswer = stage.teamBonuses[answer.id];
+            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
+                continue;
+            }
+
+            stage.teamBonuses[answer.id] = answer;
+        }
+    }
+
+    private updateAnswers(answers: QuestAnswer[], stage: Stage, fromClose: boolean) {
+        for (let answer of answers) {
+            if (!stage.questAnswers) {
+                stage.questAnswers = {};
+            }
+
+            const oldAnswer = stage.questAnswers[answer.id];
+            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
+                continue;
+            }
+
+            stage.questAnswers[answer.id] = answer;
+        }
     }
 
     getStagesNames() {

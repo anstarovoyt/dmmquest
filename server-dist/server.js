@@ -162,7 +162,9 @@ function initServer() {
             utils_1.logServer('Try to save answers "' + token + '" after complete ' + JSON.stringify(req.answers));
             return { success: false };
         }
-        var answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
+        var reqAnswers = req.answers ? req.answers : [];
+        var reqTeamBonuses = req.teamBonuses ? req.teamBonuses : [];
+        var answers = stageManager.setAnswers(token, req.stageId, reqAnswers, reqTeamBonuses, fromClose);
         return {
             success: !!answers,
             stage: answers

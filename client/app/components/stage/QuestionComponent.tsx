@@ -5,7 +5,10 @@ import {appStateService} from '../../state/AppStateService';
 import {FileUploadControl} from './controls/FileUploadControl';
 
 
-export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues: { [id: number]: string } },
+export type AnswerWithBonus = { answer: string, teamBonus?: string };
+export type NestedValue = { [id: number]: AnswerWithBonus };
+
+export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage, savedValues: NestedValue },
     { value: string, savedMark: ActionState }> {
 
     private timeOutMarker = null;
@@ -16,12 +19,21 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         super(props);
 
         const value = this.getDefaultValue() || '';
+
         this.state = {
             value: value,
             savedMark: ActionState.NO
         };
 
-        this.props.savedValues[this.props.quest.id] = value;
+        let toSave: AnswerWithBonus = {
+            answer: value
+        };
+        const bonus = this.getDefaultValue(true) || '';
+        if (bonus) {
+            toSave.teamBonus = bonus;
+        }
+
+        this.props.savedValues[this.props.quest.id] = toSave;
     }
 
 
@@ -48,6 +60,8 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
         const text = {__html: this.props.quest.text};
         const stageInfo = this.props.quest.stageName == null ? '' : <i> Этап {this.props.quest.stageName} </i>;
+
+
         return (
             <div className="row">
                 <div className="col-xs-12 col-md-8">
@@ -56,15 +70,26 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                     <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
                     {this.createInputField(isCompleted, savedHtmlClass)}
+                    <br/>
+                    {stage.status == StageStatus.OPEN ? <b>Бонус за командность:</b> : ''}
+                    {stage.status == StageStatus.OPEN ? this.createTeamBonus() : ''}
                 </div>
             </div>);
+    }
+
+    private createTeamBonus() {
+        return <FileUploadControl saveValue={this.uploadTeamBonus.bind(this)}
+                                  stageId={this.props.stage.id}
+                                  questId={this.props.quest.id}
+                                  typeText="Team"
+                                  value={this.getDefaultValue(true) || ''}/>;
     }
 
 
     private createInputField(isCompleted: boolean, savedHtmlClass: string) {
         const type = this.props.quest.type;
         if (type == QuestType.UPLOAD || type == QuestType.UPLOAD_5) {
-            return this.createUploadField(isCompleted, savedHtmlClass);
+            return this.createUploadField();
         }
 
         if (type == QuestType.LIST_BOX) {
@@ -84,7 +109,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         let currentValue = this.state.value;
         if (!currentValue) {
             //will be selected first value
-            this.props.savedValues[this.props.quest.id] = this.props.quest.values[0];
+            this.props.savedValues[this.props.quest.id].answer = this.props.quest.values[0];
         }
 
         return <div className="input-group">
@@ -103,10 +128,11 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     }
 
 
-    private createUploadField(isCompleted: boolean, savedHtmlClass: string) {
+    private createUploadField() {
 
-        return <FileUploadControl saveValue={this.fileUploadResult.bind(this)}
+        return <FileUploadControl saveValue={this.uploadAnswer.bind(this)}
                                   stageId={this.props.stage.id}
+                                  typeText="Answer"
                                   questId={this.props.quest.id}
                                   value={this.getDefaultValue() || ''}/>;
     }
@@ -138,9 +164,9 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         return <span className={savedHtmlClass}> {this.popupText} </span>;
     }
 
-    private getDefaultValue(): string {
+    private getDefaultValue(team: boolean = false): string {
         const props = this.props;
-        let answers = props.stage.questAnswers;
+        let answers = team ? props.stage.teamBonuses : props.stage.questAnswers;
 
         if (!answers) {
             return '';
@@ -215,18 +241,34 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }, 3000);
     }
 
-    fileUploadResult(newValue: string, updateState: (success: boolean) => void) {
+    uploadAnswer(newValue: string, updateState: (success: boolean) => void) {
+        this.fileUploadResultImpl(false, newValue, updateState);
+    }
+
+    uploadTeamBonus(newValue: string, updateState: (success: boolean) => void) {
+        this.fileUploadResultImpl(true, newValue, updateState);
+    }
+
+
+    fileUploadResultImpl(teamBonus: boolean, newValue: string, updateState: (success: boolean) => void) {
         const quest: Quest = this.props.quest;
         const stage = this.props.stage;
         const answer: QuestAnswer = {
             id: quest.id,
             answer: newValue
         };
-        saveAnswers({
+        let toSend: AnswersUpdateRequest = {
             token: auth.getToken(),
-            stageId: stage.id,
-            answers: [answer]
-        }, (res) => {
+            stageId: stage.id
+        };
+
+        if (teamBonus) {
+            toSend.teamBonuses = [answer];
+        } else {
+            toSend.answers = [answer];
+        }
+
+        saveAnswers(toSend, (res) => {
             updateState(res.success);
             if (res.success) {
                 appStateService.updateStage(res.stage);

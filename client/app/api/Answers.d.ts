@@ -1,7 +1,8 @@
 interface AnswersUpdateRequest {
     token:string,
     stageId:string;
-    answers:QuestAnswer[]
+    answers?:QuestAnswer[]
+    teamBonuses?:QuestAnswer[]
 }
 
 interface AnswersUpdateResponse {

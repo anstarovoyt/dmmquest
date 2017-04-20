@@ -201,7 +201,9 @@ export function initServer() {
             return {success: false};
         }
 
-        let answers = stageManager.setAnswers(token, req.stageId, req.answers, fromClose);
+        let reqAnswers = req.answers ? req.answers : [];
+        let reqTeamBonuses = req.teamBonuses ? req.teamBonuses : [];
+        let answers = stageManager.setAnswers(token, req.stageId, reqAnswers, reqTeamBonuses, fromClose);
         return {
             success: !!answers,
             stage: answers

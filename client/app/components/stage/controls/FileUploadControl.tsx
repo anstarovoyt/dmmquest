@@ -1,16 +1,8 @@
 import * as React from 'react';
 import {auth} from '../../../authentication/AuthService';
 import {getAWSSign, uploadFileToAWS} from '../../../communitation/Dispatcher';
-import {AnswerControl} from './AnswerControl';
+import {AnswerControl, Props} from './AnswerControl';
 
-
-type Props = {
-    isDisabled?: boolean,
-    saveValue(newValue: string, restoreState: (success: boolean) => void): void,
-    stageId: string,
-    questId: number,
-    value: string
-};
 
 export class FileUploadControl extends AnswerControl {
 
@@ -62,7 +54,7 @@ export class FileUploadControl extends AnswerControl {
             </div>
             <div className="input-group">
                 {split.map((el, i) => {
-                    return <a key={i} href={el}>File {i + 1}</a>;
+                    return <a key={i} href={el}>{this.props.typeText} {i + 1}</a>;
                 })}
 
             </div>
@@ -87,7 +79,7 @@ export class FileUploadControl extends AnswerControl {
         getAWSSign({
             token: auth.getToken(),
             fileName: file.name,
-            type: 'answer',
+            type: this.props.typeText,
             fileType: file.type,
             stageId: this.props.stageId,
             questId: this.props.questId

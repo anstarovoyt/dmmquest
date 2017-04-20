@@ -28,7 +28,7 @@ interface Stage {
         [id: number]: QuestAnswer
     }
 
-    teamBonus?: {
+    teamBonuses?: {
         [id: number]: QuestAnswer
     }
 }

@@ -5,7 +5,8 @@ export type Props = {
     saveValue(newValue: string, restoreState: (success: boolean) => void): void,
     stageId: string,
     questId: number,
-    value: string
+    value: string,
+    typeText: string
 };
 
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {PropTypes} from 'react';
 import {questService} from '../../state/QuestService';
 import {LoadingComponent} from '../common/LoadingComponent';
-import {QuestComponent} from './QuestionComponent';
+import {NestedValue, QuestComponent} from './QuestionComponent';
 import {complete} from '../../communitation/Dispatcher';
 import {auth} from '../../authentication/AuthService';
 import {appStateService} from '../../state/AppStateService';
@@ -14,6 +14,7 @@ const enum LoadState {
     LOADED,
     ERROR
 }
+
 
 export class StageComponent extends React.Component<{ stage: Stage },
     {
@@ -32,7 +33,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     private popupText = '';
 
-    nestedValue: { [id: number]: string } = {};
+    nestedValue: NestedValue = {};
 
     constructor(props: any, context) {
         super(props, context);
@@ -186,12 +187,13 @@ export class StageComponent extends React.Component<{ stage: Stage },
     }
 
     completeStage(stage: Stage) {
-        const {answers, token} = this.saveStateWithAnswers();
+        const {answers, teamBonuses, token} = this.saveStateWithAnswers();
 
         complete({
             stageId: stage.id,
             token: token,
-            answers: answers
+            answers: answers,
+            teamBonuses: teamBonuses,
         }, (r) => {
             if (!r.error) {
                 appStateService.setState(r.res);
@@ -240,13 +242,21 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     private saveStateWithAnswers() {
         const answers: QuestAnswer[] = [];
+        const teamBonuses: QuestAnswer[] = [];
         const nestedValue = this.nestedValue;
         for (let value in nestedValue) {
             if (nestedValue.hasOwnProperty(value)) {
+                let current = nestedValue[value];
                 answers.push({
                     id: Number(value),
-                    answer: nestedValue[value]
+                    answer: current.answer
                 });
+                if (current.teamBonus) {
+                    teamBonuses.push({
+                        id: Number(value),
+                        answer: current.teamBonus
+                    });
+                }
             }
         }
 
@@ -261,7 +271,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
             loadState: this.state.loadState
         });
 
-        return {answers, token};
+        return {answers, teamBonuses, token};
     }
 
     private getDescription(currentStage: Stage, questTexts: QuestTexts) {
@@ -272,7 +282,6 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 <h4>Описание</h4>
                 <div dangerouslySetInnerHTML={{__html: description}}/>
                 <br/>
-                <h5>{currentStage.status == StageStatus.OPEN ? 'После открытия этапа появляются новые бонусы! Проверь!' : ''}</h5>
             </div>
         </div>;
     }

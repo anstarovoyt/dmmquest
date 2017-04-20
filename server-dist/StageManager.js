@@ -8,7 +8,7 @@ var StageManager = (function () {
         this.stateManager = stateManager;
         this.stagesNames = getStagesNames();
     }
-    StageManager.prototype.setAnswers = function (token, stageId, answers, fromClose) {
+    StageManager.prototype.setAnswers = function (token, stageId, answers, teamBonuses, fromClose) {
         var stage = this.getStage(token, stageId);
         if (!stage) {
             return null;
@@ -18,17 +18,8 @@ var StageManager = (function () {
             stage.status == 0 /* LOCKED */) {
             return null;
         }
-        for (var _i = 0, answers_1 = answers; _i < answers_1.length; _i++) {
-            var answer = answers_1[_i];
-            if (!stage.questAnswers) {
-                stage.questAnswers = {};
-            }
-            var oldAnswer = stage.questAnswers[answer.id];
-            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
-                continue;
-            }
-            stage.questAnswers[answer.id] = answer;
-        }
+        this.updateAnswers(answers, stage, fromClose);
+        this.updateTeamBonuses(teamBonuses, stage, fromClose);
         var stagesName = this.stagesNames[stageId];
         utils_1.logServer('Updated answers "' + token + '" for stage "' + stagesName + '". Answers: ' + JSON.stringify(answers));
         this.stateManager.saveAppDB(token, this.teamManager.getAppState(token), function (err) {
@@ -40,6 +31,32 @@ var StageManager = (function () {
             }
         });
         return stage;
+    };
+    StageManager.prototype.updateTeamBonuses = function (teamBonuses, stage, fromClose) {
+        for (var _i = 0, teamBonuses_1 = teamBonuses; _i < teamBonuses_1.length; _i++) {
+            var answer = teamBonuses_1[_i];
+            if (!stage.teamBonuses) {
+                stage.teamBonuses = {};
+            }
+            var oldAnswer = stage.teamBonuses[answer.id];
+            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
+                continue;
+            }
+            stage.teamBonuses[answer.id] = answer;
+        }
+    };
+    StageManager.prototype.updateAnswers = function (answers, stage, fromClose) {
+        for (var _i = 0, answers_1 = answers; _i < answers_1.length; _i++) {
+            var answer = answers_1[_i];
+            if (!stage.questAnswers) {
+                stage.questAnswers = {};
+            }
+            var oldAnswer = stage.questAnswers[answer.id];
+            if (fromClose && oldAnswer && oldAnswer.answer && !answer.answer) {
+                continue;
+            }
+            stage.questAnswers[answer.id] = answer;
+        }
     };
     StageManager.prototype.getStagesNames = function () {
         return this.stagesNames;
