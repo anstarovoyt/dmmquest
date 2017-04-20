@@ -1,7 +1,7 @@
-import {TeamManager} from "./TeamManager";
-import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from "./data";
-import {logServer, toEkbString} from "./utils";
-import {StateManager} from "./StateManager";
+import {TeamManager} from './TeamManager';
+import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from './data';
+import {logServer, toEkbString} from './utils';
+import {StateManager} from './StateManager';
 
 
 export class StageManager {
@@ -28,7 +28,7 @@ export class StageManager {
 
         for (let answer of answers) {
             if (!stage.questAnswers) {
-                stage.questAnswers = {}
+                stage.questAnswers = {};
             }
 
             const oldAnswer = stage.questAnswers[answer.id];
@@ -85,9 +85,9 @@ export class StageManager {
 
         this.stateManager.dbStore.saveAppDB(token, appState, (err) => {
             if (!err) {
-                logServer('Update app state for ' + info)
+                logServer('Update app state for ' + info);
             } else {
-                logServer('ALERT: Error update app state for ' + info)
+                logServer('ALERT: Error update app state for ' + info);
             }
         });
         return appState;
@@ -126,7 +126,7 @@ export class StageManager {
         }
 
 
-        return "";
+        return '';
     }
 
     getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean, stageName?: string }[], description?: string } {
@@ -137,7 +137,7 @@ export class StageManager {
         }
 
         if (stage.status == StageStatus.BONUS ||
-            stageId == "bonus") {
+            stageId == 'bonus') {
             let result: { quest: QuestText, show?: boolean, stageName?: string }[] = [];
             let quests = defaultData.bonus.quests;
             if (quests) {
@@ -155,8 +155,8 @@ export class StageManager {
                                 result.push({
                                     stageName: currentStage.name,
                                     quest: el,
-                                    show: stage.status != StageStatus.LOCKED
-                                })
+                                    show: true
+                                });
                             });
                         }
                     }
@@ -166,10 +166,10 @@ export class StageManager {
             return {texts: result};
         }
 
-        if (stage.status == StageStatus.KILLER || stageId == "killer") {
+        if (stage.status == StageStatus.KILLER || stageId == 'killer') {
             return {
                 texts: defaultData.killer.quests.map(el => {
-                    return {quest: el, show: true}
+                    return {quest: el, show: true};
                 })
             };
         }
@@ -180,10 +180,10 @@ export class StageManager {
 
         return {
             texts: stageInfo.quests.map(el => {
-                return {quest: el, show: true}
+                return {quest: el, show: true};
             }),
             description: stageInfo.description
-        }
+        };
     }
 
     unlockLastStage(tokenId: string): boolean {
@@ -226,9 +226,9 @@ export class StageManager {
 
         this.stateManager.dbStore.saveAppDB(team.tokenId, appState, (err) => {
             if (!err) {
-                logServer('Update unlock stage for ' + team.tokenId + "  stage " + this.stagesNames[lastCompletedStage.id]);
+                logServer('Update unlock stage for ' + team.tokenId + '  stage ' + this.stagesNames[lastCompletedStage.id]);
             } else {
-                logServer('ALERT: Error update unlock stage for ' + team.tokenId)
+                logServer('ALERT: Error update unlock stage for ' + team.tokenId);
             }
         });
 

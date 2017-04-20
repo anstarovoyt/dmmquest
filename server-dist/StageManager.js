@@ -107,7 +107,7 @@ var StageManager = (function () {
             }
             return data_1.resultSuccess;
         }
-        return "";
+        return '';
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
         var appState = this.teamManager.getAppState(token);
@@ -116,7 +116,7 @@ var StageManager = (function () {
             return null;
         }
         if (stage.status == 3 /* BONUS */ ||
-            stageId == "bonus") {
+            stageId == 'bonus') {
             var result_1 = [];
             var quests = data_1.defaultData.bonus.quests;
             if (quests) {
@@ -134,7 +134,7 @@ var StageManager = (function () {
                                 result_1.push({
                                     stageName: currentStage_1.name,
                                     quest: el,
-                                    show: stage_1.status != 0 /* LOCKED */
+                                    show: true
                                 });
                             });
                         }
@@ -147,7 +147,7 @@ var StageManager = (function () {
             }
             return { texts: result_1 };
         }
-        if (stage.status == 5 /* KILLER */ || stageId == "killer") {
+        if (stage.status == 5 /* KILLER */ || stageId == 'killer') {
             return {
                 texts: data_1.defaultData.killer.quests.map(function (el) {
                     return { quest: el, show: true };
@@ -199,7 +199,7 @@ var StageManager = (function () {
         }
         this.stateManager.dbStore.saveAppDB(team.tokenId, appState, function (err) {
             if (!err) {
-                utils_1.logServer('Update unlock stage for ' + team.tokenId + "  stage " + _this.stagesNames[lastCompletedStage.id]);
+                utils_1.logServer('Update unlock stage for ' + team.tokenId + '  stage ' + _this.stagesNames[lastCompletedStage.id]);
             }
             else {
                 utils_1.logServer('ALERT: Error update unlock stage for ' + team.tokenId);
