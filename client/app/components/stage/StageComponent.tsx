@@ -198,8 +198,6 @@ export class StageComponent extends React.Component<{ stage: Stage },
             if (!r.error) {
                 appStateService.setState(r.res);
                 if (stage.status != StageStatus.BONUS) {
-                    questService.reset('bonus');
-
                     this.redirectTo();
                     return;
                 }
