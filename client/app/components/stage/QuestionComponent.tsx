@@ -105,16 +105,13 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
     private createUploadField(isCompleted: boolean, savedHtmlClass: string) {
 
-        return <FileUploadControl fileUploadResult={this.fileUploadResult.bind(this)}
+        return <FileUploadControl saveValue={this.fileUploadResult.bind(this)}
                                   stageId={this.props.stage.id}
                                   questId={this.props.quest.id}
-                                  value={this.state.value}>
-            {this.getPopupSpan(savedHtmlClass)}
-        </FileUploadControl>;
+                                  value={this.getDefaultValue() || ''}/>;
     }
 
     private createTextInputField(isCompleted: boolean, savedHtmlClass: string) {
-        const isSendDisabled = isCompleted;
         return <div className="input-group">
             <input type="text"
                    disabled={isCompleted}
@@ -124,7 +121,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                    value={this.state.value}/>
             <span className="input-group-btn">
                               <button
-                                  disabled={isSendDisabled}
+                                  disabled={isCompleted}
                                   className="btn btn-info" type="button" onClick={this.saveAnswer.bind(this)}>
                                   {this.getSaveIconSpan()}&nbsp;Сохранить {this.getPopupSpan(savedHtmlClass)}</button>
                             </span>
@@ -133,8 +130,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
     private getSaveIconSpan() {
         //noinspection CheckTagEmptyBody
-        return <span
-            className="glyphicon glyphicon-floppy-save"></span>;
+        return <span className="glyphicon glyphicon-floppy-save"></span>;
     }
 
 
@@ -219,44 +215,22 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }, 3000);
     }
 
-    fileUploadResult(success: boolean, newValue?: string, resetState: () => void = () => {
-        return;
-    }) {
-        if (success) {
-            const quest: Quest = this.props.quest;
-            const stage = this.props.stage;
-            const answer: QuestAnswer = {
-                id: quest.id,
-                answer: newValue
-            };
-            saveAnswers({
-                token: auth.getToken(),
-                stageId: stage.id,
-                answers: [answer]
-            }, (res) => {
-                if (res.success) {
-                    appStateService.updateStage(res.stage);
-                    resetState();
-                    this.setState({
-                        value: newValue,
-                        savedMark: ActionState.SAVED
-                    });
-                } else {
-                    resetState();
-                    this.setState({
-                        value: this.state.value,
-                        savedMark: ActionState.ERROR
-                    });
-                }
-                this.setTimeoutToResetMarks();
-            });
-        } else {
-            resetState();
-            this.setState({
-                value: this.state.value,
-                savedMark: ActionState.ERROR
-            });
-            this.setTimeoutToResetMarks();
-        }
+    fileUploadResult(newValue: string, updateState: (success: boolean) => void) {
+        const quest: Quest = this.props.quest;
+        const stage = this.props.stage;
+        const answer: QuestAnswer = {
+            id: quest.id,
+            answer: newValue
+        };
+        saveAnswers({
+            token: auth.getToken(),
+            stageId: stage.id,
+            answers: [answer]
+        }, (res) => {
+            updateState(res.success);
+            if (res.success) {
+                appStateService.updateStage(res.stage);
+            }
+        });
     }
 }

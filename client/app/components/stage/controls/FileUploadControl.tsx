@@ -1,30 +1,43 @@
 import * as React from 'react';
 import {auth} from '../../../authentication/AuthService';
-import {getAWSSign, saveAnswers, uploadFileToAWS} from '../../../communitation/Dispatcher';
+import {getAWSSign, uploadFileToAWS} from '../../../communitation/Dispatcher';
+import {AnswerControl} from './AnswerControl';
 
 
 type Props = {
     isDisabled?: boolean,
-    fileUploadResult(success: boolean, newValue?: string, restoreState?: () => void): void,
+    saveValue(newValue: string, restoreState: (success: boolean) => void): void,
     stageId: string,
     questId: number,
     value: string
 };
 
-export class FileUploadControl extends React.Component<Props, { hasBackground: boolean }> {
+export class FileUploadControl extends AnswerControl {
 
 
     constructor(props: Props, context: any) {
         super(props, context);
 
-        this.state = {hasBackground: false};
+        this.state = {
+            hasBackground: false,
+            savedMark: ActionState.NO,
+            value: this.props.value
+        };
+    }
+
+    getTextForPopup() {
+        let savedMark = this.state.savedMark;
+        if (savedMark == ActionState.SAVED) return 'Файл загружен';
+        if (savedMark == ActionState.ERROR) return 'Ошибка при отправке';
+
+        return '';
     }
 
     render() {
         let isCompleted = this.props.isDisabled;
         let buttonMessage = this.state.hasBackground ? 'Загрузка...' : 'Загрузить';
-        let split = this.props.value ? this.props.value.split('\n') : [];
-        let value = this.props.value ? `Файлов: ${split.length}` : 'Нет файлов';
+        let split = this.state.value ? this.state.value.split('\n') : [];
+        let value = this.state.value ? `Файлов: ${split.length}` : 'Нет файлов';
         const iconSpan = this.state.hasBackground ? FileUploadControl.getAnimatedIconSpan() : FileUploadControl.getUploadIconSpan();
 
         return <div>
@@ -36,11 +49,14 @@ export class FileUploadControl extends React.Component<Props, { hasBackground: b
                        placeholder="Загрузите файл"/>
                 <span className="input-group-btn">
                                 <label disabled={isCompleted} className="btn btn-info">
-                              <input
-                                  type="file"
-                                  disabled={isCompleted}
-                                  onChange={this.uploadFile.bind(this)}>
-                                  {iconSpan}&nbsp;{buttonMessage}{this.props.children}</input>
+                                    <input
+                                        type="file"
+                                        disabled={isCompleted || this.state.hasBackground}
+                                        onChange={this.uploadFile.bind(this)}>
+                                        {iconSpan}&nbsp;
+                                        {buttonMessage}
+                                        {this.getPopupSpan()}
+                                  </input>
                                 </label>
                             </span>
             </div>
@@ -63,7 +79,9 @@ export class FileUploadControl extends React.Component<Props, { hasBackground: b
         }
 
         this.setState({
-            hasBackground: true
+            value: this.state.value,
+            hasBackground: true,
+            savedMark: ActionState.NO
         });
 
         getAWSSign({
@@ -75,11 +93,12 @@ export class FileUploadControl extends React.Component<Props, { hasBackground: b
             questId: this.props.questId
         }, (res) => {
             if (!res.success) {
-                this.props.fileUploadResult(false);
                 this.setState({
-                    hasBackground: false
+                    value: this.state.value,
+                    hasBackground: false,
+                    savedMark: ActionState.ERROR
                 });
-
+                this.setTimeoutToResetMarks();
                 return;
             }
 
@@ -89,13 +108,28 @@ export class FileUploadControl extends React.Component<Props, { hasBackground: b
                 url: res.url
             }, (res) => {
                 target.value = '';
-                this.props.fileUploadResult(res.success,
-                    res.success ? getUpdatedValue(this.props.value, res.url) : null,
-                    () => {
-                        this.setState({
-                            hasBackground: false
-                        });
+                let success = res.success;
+                if (!success) {
+                    this.setState({
+                        value: this.state.value,
+                        hasBackground: false,
+                        savedMark: ActionState.ERROR
                     });
+                    this.setTimeoutToResetMarks();
+                    return;
+                }
+
+                let updatedValue = getUpdatedValue(this.state.value, res.url);
+                this.props.saveValue(updatedValue, (requestSuccess) => {
+
+                    this.setState({
+                        value: requestSuccess ? updatedValue : this.state.value,
+                        hasBackground: false,
+                        savedMark: requestSuccess ? ActionState.SAVED : ActionState.ERROR
+                    });
+
+                    this.setTimeoutToResetMarks();
+                });
             });
         });
     }
