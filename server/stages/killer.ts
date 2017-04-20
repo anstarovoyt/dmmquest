@@ -1,27 +1,27 @@
-import {RawStage} from "../data";
+import {RawStage} from '../data';
 
 export const stage: RawStage = {
     status: StageStatus.KILLER,
-    name: "Убийца",
-    internalName: "Killer",
+    name: 'Убийца',
+    internalName: 'Killer',
     quests: [
         {
-            text: "Кто",
+            text: 'Кто',
             type: QuestType.LIST_BOX,
-            values: ["Александрийский М.М.", "Архитектор", "Ваня", "Косой", "Маша", "Настя", "Петрович"],
-            answer: ["Петрович"]
+            values: ['Иван', 'Елизавета', 'Косой', 'М. Александрийский', 'Мария', 'Настасья'],
+            answer: ['Елизавета']
         },
         {
-            text: "Где",
+            text: 'Где',
             type: QuestType.LIST_BOX,
-            values: ["Аэропорт", "Метро", "Перекрёсток", "Прачечная", "Фонтан", "Храм", "Школа"],
-            answer: ["Перекрёсток"]
+            values: ['Мамаев Курган', 'Прачечная', 'Инстик'],
+            answer: ['Инстик']
         },
         {
-            text: "С помощью чего",
+            text: 'С помощью чего',
             type: QuestType.LIST_BOX,
-            values: ["Волосы", "Горячий жир", "Камень", "Молот", "Питон", "Собака Баскервилей", "Топор"],
-            answer: ["Топор"]
+            values: ['Горячий жир', 'Собака Баскервилей', 'Топор'],
+            answer: ['Топор']
         }
     ]
-}
+};
