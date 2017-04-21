@@ -55,6 +55,7 @@ export class FileUploadControl extends AnswerControl {
             <div className="input-group">
                 {split.map((el, i) => {
                     return <a key={'refToFile_' + this.props.questId + '_' + i}
+                              target="_blank"
                               href={el}>{this.props.typeText} {i + 1}</a>;
                 })}
 
