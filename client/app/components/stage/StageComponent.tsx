@@ -127,9 +127,11 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
                         {quests}
                     </div>
-                    <div className="col-lg-12 save-level">
-                        <p className="lead"></p>
-                        <div className="input-group">
+                    {currentStage.status == StageStatus.BONUS ? 
+                        '' :
+                        <div className="col-lg-12 save-level">
+                            <p className="lead"></p>
+                            <div className="input-group">
                             <span className="input-group-btn">
                               <button className={buttonStyle}
                                       type="button"
@@ -140,8 +142,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
                                       <span className={savedHtmlClass}>{this.popupText}</span>}
                               </button>
                             </span>
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
             );
         }
@@ -163,14 +166,14 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     getButtonName(currentStage: Stage, isCompletedLevel: boolean) {
         if (currentStage && currentStage.status == StageStatus.BONUS) {
-            return 'Сохранить ответы';
+            return 'Сохранить ответы и сдать уровень';
         }
 
         if (currentStage && currentStage.status == StageStatus.KILLER) {
             return 'Проверить!';
         }
 
-        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и завершить квест' : 'Сдать уровень';
+        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и завершить квест' : 'Сохранить все ответы и сдать уровень';
     }
 
     saveAnswers() {
