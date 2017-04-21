@@ -2,14 +2,14 @@ import * as React from "react";
 import {auth} from "../../authentication/AuthService";
 import {TimerComponent} from "./TimerComponent";
 
-var Link = require('react-router/lib/Link');
+const Link = require('react-router/lib/Link');
 
 
 export class HeaderComponent extends React.Component<any, any> {
 
     render() {
 
-        var buttons = []
+        const buttons = [];
         buttons.push(<li key="/"><Link to="/">Главная</Link></li>);
         buttons.push(<li key="/bonus"><Link to="/bonus">Бонус</Link></li>);
         if (auth.isAdmin()) {
