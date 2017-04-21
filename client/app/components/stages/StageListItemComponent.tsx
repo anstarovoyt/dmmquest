@@ -23,6 +23,10 @@ export class StageListItemComponent extends AbstractStageListItemComponent<{ sta
     }
 
 
+    getStage(): Stage | any {
+        return this.props.stage;
+    }
+
     getStatus(): StageStatus {
         const stage = this.props.stage;
         return stage.status;

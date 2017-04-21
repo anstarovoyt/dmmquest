@@ -14,12 +14,12 @@ export abstract class AbstractStageListItemComponent<T, Q> extends React.Compone
 
         return <div className="row">
             <div className="col-xs-12 col-md-8">
-                <h5><Link to={stageLink}>{this.getName()}</Link></h5>
+                <h4><Link to={stageLink}>{this.getName()}</Link></h4>
 
             </div>
 
             <div className="col-xs-6 col-md-4">
-                <StageListItemStatusComponent stageStatus={this.getStatus()}/>
+                <StageListItemStatusComponent stage={this.getStage()} stageStatus={this.getStatus()}/>
             </div>
         </div>;
     }
@@ -28,6 +28,9 @@ export abstract class AbstractStageListItemComponent<T, Q> extends React.Compone
 
     abstract getName(): string;
 
+    getStage(): Stage | null {
+        return null;
+    }
 
     abstract getStatus(): StageStatus;
 }

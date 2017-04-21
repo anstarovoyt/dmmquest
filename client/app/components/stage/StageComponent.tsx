@@ -88,6 +88,12 @@ export class StageComponent extends React.Component<{ stage: Stage },
         if (currentStage.status == StageStatus.KILLER) {
             return <h4>У вас будет только одна попытка проверить свою догадку, используйте ее с умом</h4>;
         }
+
+        if (currentStage.status == StageStatus.OPEN && currentStage.expectedClosedTime) {
+            return <h4>Закрыть до {currentStage.expectedClosedTime}</h4>;
+        }
+
+
         return <h4/>;
     }
 
@@ -124,7 +130,8 @@ export class StageComponent extends React.Component<{ stage: Stage },
                         <h1><Link to="/">
                             <span className="glyphicon glyphicon-arrow-left"></span>
                         </Link>
-                            <span>{stageName} { this.getTitleText(currentStage) }</span></h1>
+                            <span>{stageName} <br/>
+                                { this.getTitleText(currentStage) }</span></h1>
                         {this.getDescription(currentStage, questTexts)}
 
                         {quests}
