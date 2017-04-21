@@ -66,11 +66,13 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
         return (
             <div className="row">
-                <div className="col-xs-12 col-md-8">
+                <div >
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
                     {stageInfo}
                     <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
+                </div>
+                <div className="col-xs-12 col-md-8">
                     {this.createInputField(isCompleted, savedHtmlClass)}
                     <br/>
                     {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ?
