@@ -35,7 +35,7 @@ var TeamManager = (function () {
             return false;
         }
         delete this.stageModifier.states[tokenId];
-        utils_1.logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
+        utils_1.logServer('ALERT: Removed team from app ' + team.name + ' token: ' + team.tokenId);
         this.dbStore.removeTeamDB(team);
         return true;
     };
@@ -115,8 +115,8 @@ var TeamManager = (function () {
         this.dbStore.saveTeamDB(team, callback);
     };
     TeamManager.makeid = function () {
-        var text = "";
-        var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+        var text = '';
+        var possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
         for (var i = 0; i < 8; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;

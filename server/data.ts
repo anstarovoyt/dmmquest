@@ -86,10 +86,10 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawSta
 }
 
 export const resultUnSuccess = getVideo(true, "https://www.youtube.com/embed/nntRxUD19yw") + `<br>
-<h3 style="color: red">Вы ПРОИГРАЛИ</h3>
+<h5>... Возвращайтесь через год!</h5>
 `;
 export const resultSuccess = getVideo(true, "https://www.youtube.com/embed/dQw4w9WgXcQ") + `<br>
-Это победа, Ватсон!
+<h5>Это победа, Ватсон!</h5>
 `;
 
 export const defaultData = getDefaultData();

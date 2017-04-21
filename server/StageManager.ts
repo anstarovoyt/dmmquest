@@ -1,6 +1,6 @@
 import {TeamManager} from './TeamManager';
 import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from './data';
-import {logServer, toEkbString} from './utils';
+import {getCloseDate, logServer, toEkbString} from './utils';
 import {StateManager} from './StateManager';
 
 
@@ -40,6 +40,24 @@ export class StageManager {
             }
         });
         return stage;
+    }
+
+    updateInitialState(tokenId: string, startDate: Date) {
+        const appState = this.teamManager.getAppState(tokenId);
+        for (let obj of appState.stages) {
+            if (obj.status == StageStatus.OPEN) {
+                obj.expectedClosedTime = getCloseDate(startDate);
+                break;
+            }
+        }
+
+        this.stateManager.dbStore.saveAppDB(tokenId, appState, (err) => {
+            if (!err) {
+                logServer('Update app state for ' + tokenId);
+            } else {
+                logServer('ALERT: Error update app state for ' + tokenId);
+            }
+        });
     }
 
     private updateTeamBonuses(teamBonuses: QuestAnswer[], stage: Stage, fromClose: boolean) {
@@ -84,17 +102,19 @@ export class StageManager {
         }
 
         stage.status = stage.status == StageStatus.KILLER ? StageStatus.KILLER_COMPLETED : StageStatus.COMPLETED;
-        stage.closedTime = toEkbString(new Date());
+        let currentDateObject = new Date();
+        stage.closedTime = toEkbString(currentDateObject);
         let appState = this.teamManager.getAppState(token);
         const nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
             nextStage.status = StageStatus.OPEN;
+            nextStage.expectedClosedTime = getCloseDate(currentDateObject);
         }
 
         if (stage.last) {
             //close bonus if the stage is last
             appState.bonus.status = StageStatus.COMPLETED;
-            appState.bonus.closedTime = toEkbString(new Date());
+            appState.bonus.closedTime = toEkbString(currentDateObject);
         }
 
         const info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
@@ -112,8 +132,7 @@ export class StageManager {
         return appState;
     }
 
-
-    getGameResult(tokenId: string): string {
+    private isSuccessGameResult(tokenId: string) {
         const appState = this.teamManager.getAppState(tokenId);
         let stage = appState.killer;
         if (stage.status == StageStatus.KILLER_COMPLETED) {
@@ -136,16 +155,25 @@ export class StageManager {
                         }
                     });
                     if (!matched) {
-                        return resultUnSuccess;
+                        return false;
                     }
                 }
             }
 
-            return resultSuccess;
+            return true;
         }
 
 
-        return '';
+        return undefined;
+    }
+
+
+    getGameResult(tokenId: string): string {
+        let result = this.isSuccessGameResult(tokenId);
+        if (result === undefined) return '';
+
+        return result ? resultSuccess : resultUnSuccess;
+
     }
 
     getQuestionTexts(token: string, stageId: string): { texts: { quest: QuestText, show?: boolean, stageName?: string }[], description?: string } {

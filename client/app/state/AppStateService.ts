@@ -45,8 +45,9 @@ class AppStateService {
         if (!stage) {
             return '';
         }
-
-        return this.getStageNameById(stage.id);
+        const date = stage.expectedClosedTime && stage.status == StageStatus.OPEN ?
+            ' [До ' + stage.expectedClosedTime + ']' : '';
+        return this.getStageNameById(stage.id) + date;
     }
 
     updateStage(newStage: Stage) {

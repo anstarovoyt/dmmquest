@@ -24,6 +24,7 @@ interface Stage {
     showNumber: number,
     last?: boolean,
     closedTime?: string,
+    expectedClosedTime?: string
     questAnswers?: {
         [id: number]: QuestAnswer
     }

@@ -22,7 +22,7 @@ var startDir = path.dirname(__dirname);
 utils_1.logServer(startDir);
 var TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 function initServer() {
-    utils_1.logServer("Start http server");
+    utils_1.logServer('Start http server');
     var stateManager = new StateManager_1.StateManager(dbStore);
     var teamManager = new TeamManager_1.TeamManager(stateManager, dbStore);
     var stageManager = new StageManager_1.StageManager(teamManager, stateManager);
@@ -33,7 +33,7 @@ function initServer() {
         extended: true
     }));
     var appStatics = path.join(startDir, TARGET_PATH_MAPPING[TARGET]);
-    utils_1.logServer("App: " + appStatics);
+    utils_1.logServer('App: ' + appStatics);
     var resources = path.join(startDir, 'statics');
     server
         .use(serveStatic(appStatics))
@@ -171,7 +171,11 @@ function initServer() {
         };
     }
     function processLoginRequest(req) {
-        return teamManager.login(req.secretCode);
+        var result = teamManager.login(req.secretCode);
+        if (result.authenticated && result.first) {
+            stageManager.updateInitialState(result.token, new Date());
+        }
+        return result;
     }
     function processQuestTextsRequest(request) {
         var token = request.token;
@@ -195,7 +199,7 @@ function initServer() {
             var text;
             var type;
             var values = null;
-            if (typeof quest === "string") {
+            if (typeof quest === 'string') {
                 text = quest;
             }
             else if (quest) {
@@ -296,7 +300,7 @@ function initServer() {
         }
         if (!team.endQuestDate) {
             return {
-                restTimeInSeconds: "-1",
+                restTimeInSeconds: '-1',
                 success: true
             };
         }

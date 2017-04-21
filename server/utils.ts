@@ -1,6 +1,6 @@
-import {defaultData} from "./data";
+import {defaultData} from './data';
 
-const moment = require("moment");
+const moment = require('moment');
 
 export function logServer(message: string) {
     console.log('DMM QUEST: ' + message);
@@ -38,12 +38,12 @@ export function createDefaultAppState(team: Team) {
     stages[stages.length - 1].last = true;
 
     appState.bonus = {
-        id: "bonus",
+        id: 'bonus',
         status: StageStatus.BONUS,
         showNumber: pushNumber++
     };
     appState.killer = {
-        id: "killer",
+        id: 'killer',
         status: StageStatus.KILLER,
         showNumber: pushNumber++
     };
@@ -53,16 +53,20 @@ export function createDefaultAppState(team: Team) {
 
 
 export function toEkbString(date) {
-    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm")
+    return moment(date).tz('Asia/Yekaterinburg').format('YYYY-MM-DD HH:mm');
+}
+
+export function getCloseDate(date) {
+    return moment(date).add('hours', 2).tz('Asia/Yekaterinburg').format('HH:mm');
 }
 
 export function getDefaultTeams() {
     const teams: Team[] = [];
 
     teams.push({
-        name: "Тестовая админская команда",
-        secretCode: "трувеганыедяттольконатуральноемясо",
-        tokenId: "трувеганыедяттольконатуральноемясо",
+        name: 'Тестовая админская команда',
+        secretCode: 'трувеганыедяттольконатуральноемясо',
+        tokenId: 'трувеганыедяттольконатуральноемясо',
         admin: true,
         startFromStage: 0
     });

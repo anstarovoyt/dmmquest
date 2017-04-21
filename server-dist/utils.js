@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_1 = require("./data");
-var moment = require("moment");
+var moment = require('moment');
 function logServer(message) {
     console.log('DMM QUEST: ' + message);
 }
@@ -34,12 +34,12 @@ function createDefaultAppState(team) {
     }
     stages[stages.length - 1].last = true;
     appState.bonus = {
-        id: "bonus",
+        id: 'bonus',
         status: 3 /* BONUS */,
         showNumber: pushNumber++
     };
     appState.killer = {
-        id: "killer",
+        id: 'killer',
         status: 5 /* KILLER */,
         showNumber: pushNumber++
     };
@@ -47,15 +47,19 @@ function createDefaultAppState(team) {
 }
 exports.createDefaultAppState = createDefaultAppState;
 function toEkbString(date) {
-    return moment(date).tz('Asia/Yekaterinburg').format("YYYY-MM-DD HH:mm");
+    return moment(date).tz('Asia/Yekaterinburg').format('YYYY-MM-DD HH:mm');
 }
 exports.toEkbString = toEkbString;
+function getCloseDate(date) {
+    return moment(date).add('hours', 2).tz('Asia/Yekaterinburg').format('HH:mm');
+}
+exports.getCloseDate = getCloseDate;
 function getDefaultTeams() {
     var teams = [];
     teams.push({
-        name: "Тестовая админская команда",
-        secretCode: "трувеганыедяттольконатуральноемясо",
-        tokenId: "трувеганыедяттольконатуральноемясо",
+        name: 'Тестовая админская команда',
+        secretCode: 'трувеганыедяттольконатуральноемясо',
+        tokenId: 'трувеганыедяттольконатуральноемясо',
         admin: true,
         startFromStage: 0
     });

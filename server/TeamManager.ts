@@ -1,7 +1,7 @@
-import {defaultData} from "./data";
-import {logServer, toEkbString} from "./utils";
-import {Store} from "./Store";
-import {StateManager} from "./StateManager";
+import {defaultData} from './data';
+import {logServer, toEkbString} from './utils';
+import {Store} from './Store';
+import {StateManager} from './StateManager';
 
 export const COUNT_HOURS_TO_SOLVE = 8;
 
@@ -40,7 +40,7 @@ export class TeamManager {
         }
 
         delete this.stageModifier.states[tokenId];
-        logServer('ALERT: Removed team from app ' + team.name + " token: " + team.tokenId);
+        logServer('ALERT: Removed team from app ' + team.name + ' token: ' + team.tokenId);
 
         this.dbStore.removeTeamDB(team);
 
@@ -108,7 +108,7 @@ export class TeamManager {
                 team.endQuestDate = endDate;
                 team.firstLoginDate = date;
                 first = true;
-                logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate))
+                logServer('First login for team: ' + team.name + ' token ' + team.tokenId + ' time: ' + toEkbString(team.firstLoginDate));
                 this.saveTeamToDB(team);
             }
 
@@ -118,11 +118,11 @@ export class TeamManager {
                 token: team.tokenId,
                 admin: team.admin,
                 first
-            }
+            };
         }
 
         logServer('Incorrect login secret code access "' + secretCode + '"');
-        return {authenticated: false}
+        return {authenticated: false};
     }
 
     private getNextStartFromStage() {
@@ -142,8 +142,8 @@ export class TeamManager {
     }
 
     private static makeid() {
-        let text = "";
-        const possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+        let text = '';
+        const possible = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
         for (let i = 0; i < 8; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));

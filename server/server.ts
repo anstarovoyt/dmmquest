@@ -1,10 +1,10 @@
-import {TeamManager} from "./TeamManager";
-import {logServer, toEkbString} from "./utils";
-import {initStore} from "./Store";
-import {StageManager} from "./StageManager";
-import {StateManager} from "./StateManager";
-import {QuestText} from "./data";
-import {processGetAWS} from "./AwsClient";
+import {TeamManager} from './TeamManager';
+import {logServer, toEkbString} from './utils';
+import {initStore} from './Store';
+import {StageManager} from './StageManager';
+import {StateManager} from './StateManager';
+import {QuestText} from './data';
+import {processGetAWS} from './AwsClient';
 
 let minimist = require('minimist');
 let express = require('express');
@@ -25,7 +25,7 @@ logServer(startDir);
 let TARGET = minimist(process.argv.slice(2)).TARGET || 'BUILD';
 
 export function initServer() {
-    logServer("Start http server");
+    logServer('Start http server');
     const stateManager = new StateManager(dbStore);
     const teamManager: TeamManager = new TeamManager(stateManager, dbStore);
     const stageManager = new StageManager(teamManager, stateManager);
@@ -40,7 +40,7 @@ export function initServer() {
 
 
     let appStatics = path.join(startDir, TARGET_PATH_MAPPING[TARGET]);
-    logServer("App: " + appStatics);
+    logServer('App: ' + appStatics);
     let resources = path.join(startDir, 'statics');
     server
         .use(serveStatic(appStatics))
@@ -103,7 +103,7 @@ export function initServer() {
 
     server.get('/stages', function (req, res, next) {
         res.sendFile(path.join(startDir, TARGET, '/index.html'));
-    })
+    });
 
     server.post('/teams', (req, res, next) => {
         let request: TeamsRequest = req.body;
@@ -132,7 +132,7 @@ export function initServer() {
         if (!team || !team.admin) {
             res.json({
                 success: false
-            })
+            });
         }
 
         res.json({
@@ -150,7 +150,7 @@ export function initServer() {
         processGetAWS(request, (result) => {
             console.log('aws req: ' + JSON.stringify(result));
             response.json(result);
-        })
+        });
     });
 
     server.post('/result_killer', (req, res, next) => {
@@ -175,7 +175,7 @@ export function initServer() {
         let team = checkToken(token);
         if (!team) {
             logServer('Internal error. No team for token ' + token);
-            return {success: false}
+            return {success: false};
         }
 
         return {
@@ -185,7 +185,7 @@ export function initServer() {
                 stagesNames: stageManager.getStagesNames(),
                 intro: stageManager.getIntro()
             }
-        }
+        };
     }
 
     function processAnswerUpdateRequest(req: AnswersUpdateRequest, fromClose: boolean): AnswersUpdateResponse {
@@ -207,11 +207,15 @@ export function initServer() {
         return {
             success: !!answers,
             stage: answers
-        }
+        };
     }
 
     function processLoginRequest(req: LoginRequest): LoginInfo {
-        return teamManager.login(req.secretCode);
+        let result = teamManager.login(req.secretCode);
+        if (result.authenticated && result.first) {
+            stageManager.updateInitialState(result.token, new Date());
+        }
+        return result;
     }
 
     function processQuestTextsRequest(request: QuestTextsRequest): QuestTextsResponse {
@@ -226,7 +230,7 @@ export function initServer() {
         if (!quests) {
             return {
                 success: false
-            }
+            };
         }
 
         let resultQuests: Quest[] = [];
@@ -241,7 +245,7 @@ export function initServer() {
             let text;
             let type;
             let values = null;
-            if (typeof quest === "string") {
+            if (typeof quest === 'string') {
                 text = quest;
             } else if (quest) {
                 text = quest.text;
@@ -276,7 +280,7 @@ export function initServer() {
                 quests: resultQuests,
                 stageDescription: questsInfo.description
             }
-        }
+        };
     }
 
     function processRemoveTeamRequest(request: RemoveTeamRequest): RemoveTeamResponse {
@@ -285,14 +289,14 @@ export function initServer() {
         if (!team || !team.admin) {
             return {
                 success: false
-            }
+            };
         }
 
         let result = teamManager.removeTeam(request.teamTokenId);
 
         return {
             success: result
-        }
+        };
     }
 
     function processGetTeamsRequest(request: TeamsRequest): TeamsResponse {
@@ -301,7 +305,7 @@ export function initServer() {
         if (!team || !team.admin) {
             return {
                 success: false
-            }
+            };
         }
 
         let result: TeamInfo[] = [];
@@ -313,7 +317,7 @@ export function initServer() {
                 secretCode: cur.secretCode,
                 startFromStage: cur.startFromStage,
                 tokenId: cur.tokenId
-            }
+            };
 
             let info: TeamInfo = {
                 team: cur,
@@ -329,7 +333,7 @@ export function initServer() {
         return {
             success: true,
             teams: result
-        }
+        };
     }
 
     function processAddTeamRequest(request: AddTeamRequest): AddTeamResponse {
@@ -342,7 +346,7 @@ export function initServer() {
 
         let newTeam = teamManager.createTeam(request.teamName);
 
-        return {success: !!newTeam}
+        return {success: !!newTeam};
     }
 
 
@@ -356,14 +360,14 @@ export function initServer() {
         if (!team) {
             return {
                 success: false
-            }
+            };
         }
 
         if (!team.endQuestDate) {
             return {
-                restTimeInSeconds: "-1",
+                restTimeInSeconds: '-1',
                 success: true
-            }
+            };
         }
 
         let result = diffWithCurrentTime(team);
@@ -371,7 +375,7 @@ export function initServer() {
             success: true,
             restTimeInSeconds: String(result),
             isCompleted: result <= 0
-        }
+        };
     }
 
 

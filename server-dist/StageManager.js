@@ -32,6 +32,24 @@ var StageManager = (function () {
         });
         return stage;
     };
+    StageManager.prototype.updateInitialState = function (tokenId, startDate) {
+        var appState = this.teamManager.getAppState(tokenId);
+        for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
+            var obj = _a[_i];
+            if (obj.status == 1 /* OPEN */) {
+                obj.expectedClosedTime = utils_1.getCloseDate(startDate);
+                break;
+            }
+        }
+        this.stateManager.dbStore.saveAppDB(tokenId, appState, function (err) {
+            if (!err) {
+                utils_1.logServer('Update app state for ' + tokenId);
+            }
+            else {
+                utils_1.logServer('ALERT: Error update app state for ' + tokenId);
+            }
+        });
+    };
     StageManager.prototype.updateTeamBonuses = function (teamBonuses, stage, fromClose) {
         for (var _i = 0, teamBonuses_1 = teamBonuses; _i < teamBonuses_1.length; _i++) {
             var answer = teamBonuses_1[_i];
@@ -67,16 +85,18 @@ var StageManager = (function () {
             return this.teamManager.getAppState(token);
         }
         stage.status = stage.status == 5 /* KILLER */ ? 6 /* KILLER_COMPLETED */ : 2 /* COMPLETED */;
-        stage.closedTime = utils_1.toEkbString(new Date());
+        var currentDateObject = new Date();
+        stage.closedTime = utils_1.toEkbString(currentDateObject);
         var appState = this.teamManager.getAppState(token);
         var nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == 0 /* LOCKED */) {
             nextStage.status = 1 /* OPEN */;
+            nextStage.expectedClosedTime = utils_1.getCloseDate(currentDateObject);
         }
         if (stage.last) {
             //close bonus if the stage is last
             appState.bonus.status = 2 /* COMPLETED */;
-            appState.bonus.closedTime = utils_1.toEkbString(new Date());
+            appState.bonus.closedTime = utils_1.toEkbString(currentDateObject);
         }
         var info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
         utils_1.logServer('Closed stage token ' + token + ' stage ' + info);
@@ -91,7 +111,7 @@ var StageManager = (function () {
         });
         return appState;
     };
-    StageManager.prototype.getGameResult = function (tokenId) {
+    StageManager.prototype.isSuccessGameResult = function (tokenId) {
         var appState = this.teamManager.getAppState(tokenId);
         var stage = appState.killer;
         if (stage.status == 6 /* KILLER_COMPLETED */) {
@@ -112,7 +132,7 @@ var StageManager = (function () {
                         }
                     });
                     if (!matched_1) {
-                        return { value: data_1.resultUnSuccess };
+                        return { value: false };
                     }
                 }
             };
@@ -122,9 +142,15 @@ var StageManager = (function () {
                 if (typeof state_1 === "object")
                     return state_1.value;
             }
-            return data_1.resultSuccess;
+            return true;
         }
-        return '';
+        return undefined;
+    };
+    StageManager.prototype.getGameResult = function (tokenId) {
+        var result = this.isSuccessGameResult(tokenId);
+        if (result === undefined)
+            return '';
+        return result ? data_1.resultSuccess : data_1.resultUnSuccess;
     };
     StageManager.prototype.getQuestionTexts = function (token, stageId) {
         var appState = this.teamManager.getAppState(token);
