@@ -56,6 +56,7 @@ export class FileUploadControl extends AnswerControl {
                 {split.map((el, i) => {
                     return <a key={'refToFile_' + this.props.questId + '_' + i}
                               target="_blank"
+                              style={{ textDecorationLine: 'underline' }}
                               href={el}>{this.props.typeText} {i + 1}</a>;
                 })}
 

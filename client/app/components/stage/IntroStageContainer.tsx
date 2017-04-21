@@ -2,8 +2,7 @@ import * as React from 'react';
 import {appStateService} from '../../state/AppStateService';
 import {StageContainerComponent} from './StageContainerComponent';
 import {LoadingComponent} from '../common/LoadingComponent';
-
-var Link = require('react-router/lib/Link');
+const Link = require('react-router/lib/Link');
 
 
 export class IntroStageContainer extends StageContainerComponent {
@@ -28,7 +27,7 @@ export class IntroStageContainer extends StageContainerComponent {
                         <br/>
                         <br/>
 
-                        <Link to="/">
+                        <Link style={{ textDecorationLine: 'underline' }} to="/">
                             <h4>Перейти к этапам</h4>
                         </Link>
 
