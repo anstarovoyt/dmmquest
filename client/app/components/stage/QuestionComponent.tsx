@@ -71,8 +71,9 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                     <p className="lead"></p>
                     {this.createInputField(isCompleted, savedHtmlClass)}
                     <br/>
-                    {stage.status == StageStatus.OPEN ? <b>Бонус за командность:</b> : ''}
-                    {stage.status == StageStatus.OPEN ? this.createTeamBonus() : ''}
+                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ?
+                        <b>Бонус за командность:</b> : ''}
+                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ? this.createTeamBonus() : ''}
                 </div>
             </div>);
     }
@@ -182,13 +183,20 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     }
 
     private handlerChanged(e) {
-        const newValue = e.target.value;
+        const newValue: string = e.target.value;
         const state = {
             value: newValue,
             savedMark: ActionState.NO
         };
 
-        this.props.savedValues[this.props.quest.id] = newValue;
+        let oldValue = this.props.savedValues[this.props.quest.id];
+
+        this.props.savedValues[this.props.quest.id] = {
+            answer: newValue,
+        };
+        if (oldValue.teamBonus) {
+            this.props.savedValues[this.props.quest.id].teamBonus = oldValue.teamBonus;
+        }
 
         this.setState(state);
     }

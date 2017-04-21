@@ -2,7 +2,7 @@ import * as React from 'react';
 import {PropTypes} from 'react';
 import {questService} from '../../state/QuestService';
 import {LoadingComponent} from '../common/LoadingComponent';
-import {NestedValue, QuestComponent} from './QuestionComponent';
+import {AnswerWithBonus, NestedValue, QuestComponent} from './QuestionComponent';
 import {complete} from '../../communitation/Dispatcher';
 import {auth} from '../../authentication/AuthService';
 import {appStateService} from '../../state/AppStateService';
@@ -127,7 +127,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
                         {quests}
                     </div>
-                    {currentStage.status == StageStatus.BONUS ? 
+                    {currentStage.status == StageStatus.BONUS ?
                         '' :
                         <div className="col-lg-12 save-level">
                             <p className="lead"></p>
@@ -244,10 +244,11 @@ export class StageComponent extends React.Component<{ stage: Stage },
     private saveStateWithAnswers() {
         const answers: QuestAnswer[] = [];
         const teamBonuses: QuestAnswer[] = [];
-        const nestedValue = this.nestedValue;
+        const nestedValue: NestedValue = this.nestedValue;
         for (let value in nestedValue) {
             if (nestedValue.hasOwnProperty(value)) {
-                let current = nestedValue[value];
+                let current: AnswerWithBonus = nestedValue[value];
+
                 answers.push({
                     id: Number(value),
                     answer: current.answer
