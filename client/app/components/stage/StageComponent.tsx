@@ -165,6 +165,8 @@ export class StageComponent extends React.Component<{ stage: Stage },
                         <span className="glyphicon glyphicon-arrow-left"></span>
                     </Link>
                     </h1>
+                    <br/>
+                    <br/>
                     {this.state.loadState == LoadState.ERROR ?
                         <span>Ошибка загрузки данных. Попробуйте обновить страницу</span> : <LoadingComponent />}
                 </div>
