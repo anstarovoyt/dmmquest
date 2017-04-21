@@ -183,7 +183,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
             return 'Проверить!';
         }
 
-        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и продолжить собирать бонусы' : 'Сохранить все ответы и сдать уровень';
+        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать и продолжить собирать бонусы' : 'Сохранить ответы и сдать уровень';
     }
 
     saveAnswers() {
