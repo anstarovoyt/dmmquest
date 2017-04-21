@@ -1,7 +1,7 @@
-import * as React from "react";
-import {appStateService} from "../../state/AppStateService";
-import {StageContainerComponent} from "./StageContainerComponent";
-import {LoadingComponent} from "../common/LoadingComponent";
+import * as React from 'react';
+import {appStateService} from '../../state/AppStateService';
+import {StageContainerComponent} from './StageContainerComponent';
+import {LoadingComponent} from '../common/LoadingComponent';
 
 var Link = require('react-router/lib/Link');
 
@@ -25,6 +25,13 @@ export class IntroStageContainer extends StageContainerComponent {
                 <div className="row">
                     <div className="col-xs-12 col-md-8">
                         <div dangerouslySetInnerHTML={{__html: intro}}/>
+                        <br/>
+                        <br/>
+
+                        <Link to="/">
+                            <h4>Перейти к этапам</h4>
+                        </Link>
+
                     </div>
                 </div>
             </div>
