@@ -11,10 +11,10 @@ export class StageListItemStatusComponent extends React.Component<{ stageStatus:
         if (stageStatus == StageStatus.OPEN) {
             if (stage.expectedClosedTime) {
                 const date = stage.expectedClosedTime;
-                return <div className="alert alert-info">Закрыть до {date} </div>;
+                return <div className="alert alert-danger">Закрыть до {date} </div>;
             }
 
-            return <div className="alert alert-info">В процессе</div>;
+            return <div className="alert alert-danger">В процессе</div>;
         }
         if (stageStatus == StageStatus.COMPLETED) {
             return <div className="alert alert-success"> Завершен</div>;
@@ -32,6 +32,6 @@ export class StageListItemStatusComponent extends React.Component<{ stageStatus:
             return <div className="alert alert-success"> Killer</div>;
         }
 
-        return <div className="alert alert-danger">Не открыт</div>;
+        return <div className="alert alert-info">Не открыт</div>;
     }
 }
