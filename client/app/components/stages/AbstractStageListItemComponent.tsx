@@ -14,7 +14,7 @@ export abstract class AbstractStageListItemComponent<T, Q> extends React.Compone
 
         return <div className="row">
             <div className="col-xs-12 col-md-8">
-                <h4><Link to={stageLink}>{this.getName()}</Link></h4>
+                <h5><Link to={stageLink}>{this.getName()}</Link></h5>
 
             </div>
 
