@@ -40,7 +40,7 @@ function createDefaultAppState(team) {
     };
     appState.killer = {
         id: 'killer',
-        status: 5 /* KILLER */,
+        status: 6 /* KILLER */,
         showNumber: pushNumber++
     };
     return appState;

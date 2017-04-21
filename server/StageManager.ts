@@ -22,6 +22,7 @@ export class StageManager {
         }
         if (stage.status == StageStatus.COMPLETED ||
             stage.status == StageStatus.KILLER_COMPLETED ||
+            stage.status == StageStatus.BONUS_COMPLETED ||
             stage.status == StageStatus.LOCKED) {
             return null;
         }
@@ -94,14 +95,21 @@ export class StageManager {
         return this.stagesNames;
     }
 
+    private static isAllowToClose(stage: Stage) {
+        if (!stage) return false;
+        if (stage.status == StageStatus.OPEN) return true;
+        if (stage.status == StageStatus.KILLER) return true;
+
+        return stage.status == StageStatus.BONUS && stage.last;
+    }
 
     closeStage(token: string, stageId: string): AppState {
         let stage: Stage = this.getStage(token, stageId);
-        if (!stage || (stage.status != StageStatus.OPEN && stage.status != StageStatus.KILLER)) {
+        if (!StageManager.isAllowToClose(stage)) {
             return this.teamManager.getAppState(token);
         }
 
-        stage.status = stage.status == StageStatus.KILLER ? StageStatus.KILLER_COMPLETED : StageStatus.COMPLETED;
+        stage.status = StageManager.getCompleteStatus(stage);
         let currentDateObject = new Date();
         stage.closedTime = toEkbString(currentDateObject);
         let appState = this.teamManager.getAppState(token);
@@ -113,8 +121,9 @@ export class StageManager {
 
         if (stage.last) {
             //close bonus if the stage is last
-            appState.bonus.status = StageStatus.COMPLETED;
-            appState.bonus.closedTime = toEkbString(currentDateObject);
+            // appState.bonus.status = StageStatus.COMPLETED;
+            // appState.bonus.closedTime = toEkbString(currentDateObject);
+            appState.bonus.last = true;
         }
 
         const info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
@@ -130,6 +139,13 @@ export class StageManager {
             }
         });
         return appState;
+    }
+
+    private static getCompleteStatus(stage: Stage) {
+        if (stage.status == StageStatus.KILLER)  return StageStatus.KILLER_COMPLETED;
+        if (stage.status == StageStatus.BONUS)  return StageStatus.BONUS_COMPLETED;
+
+        return StageStatus.COMPLETED;
     }
 
     private isSuccessGameResult(tokenId: string) {

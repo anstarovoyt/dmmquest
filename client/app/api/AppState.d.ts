@@ -67,6 +67,7 @@ declare const enum StageStatus {
     OPEN,
     COMPLETED,
     BONUS,
+    BONUS_COMPLETED,
     INTRO,
     KILLER,
     KILLER_COMPLETED

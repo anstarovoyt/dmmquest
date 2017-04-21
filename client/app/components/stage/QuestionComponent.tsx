@@ -56,7 +56,9 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         }
 
         const stage = this.props.stage;
-        const isCompleted = stage.status == StageStatus.COMPLETED || stage.status == StageStatus.KILLER_COMPLETED;
+        const isCompleted = stage.status == StageStatus.COMPLETED ||
+            stage.status == StageStatus.KILLER_COMPLETED ||
+            stage.status == StageStatus.BONUS_COMPLETED;
 
         const text = {__html: this.props.quest.text};
         const stageInfo = this.props.quest.stageName == null ? '' : <i> Этап {this.props.quest.stageName} </i>;
@@ -73,15 +75,16 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                     <br/>
                     {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ?
                         <b>Бонус за командность:</b> : ''}
-                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ? this.createTeamBonus() : ''}
+                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ? this.createTeamBonus(isCompleted) : ''}
                 </div>
             </div>);
     }
 
-    private createTeamBonus() {
+    private createTeamBonus(isCompleted: boolean) {
         return <FileUploadControl saveValue={this.uploadTeamBonus.bind(this)}
                                   stageId={this.props.stage.id}
                                   questId={this.props.quest.id}
+                                  isDisabled={isCompleted}
                                   typeText="Team"
                                   value={this.getDefaultValue(true) || ''}/>;
     }
@@ -90,7 +93,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     private createInputField(isCompleted: boolean, savedHtmlClass: string) {
         const type = this.props.quest.type;
         if (type == QuestType.UPLOAD || type == QuestType.UPLOAD_5) {
-            return this.createUploadField();
+            return this.createUploadField(isCompleted);
         }
 
         if (type == QuestType.LIST_BOX) {
@@ -129,11 +132,12 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
     }
 
 
-    private createUploadField() {
+    private createUploadField(isCompleted: boolean) {
 
         return <FileUploadControl saveValue={this.uploadAnswer.bind(this)}
                                   stageId={this.props.stage.id}
                                   typeText="Answer"
+                                  isDisabled={isCompleted}
                                   questId={this.props.quest.id}
                                   value={this.getDefaultValue() || ''}/>;
     }

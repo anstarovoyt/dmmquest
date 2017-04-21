@@ -14,7 +14,8 @@ var StageManager = (function () {
             return null;
         }
         if (stage.status == 2 /* COMPLETED */ ||
-            stage.status == 6 /* KILLER_COMPLETED */ ||
+            stage.status == 7 /* KILLER_COMPLETED */ ||
+            stage.status == 4 /* BONUS_COMPLETED */ ||
             stage.status == 0 /* LOCKED */) {
             return null;
         }
@@ -79,12 +80,21 @@ var StageManager = (function () {
     StageManager.prototype.getStagesNames = function () {
         return this.stagesNames;
     };
+    StageManager.isAllowToClose = function (stage) {
+        if (!stage)
+            return false;
+        if (stage.status == 1 /* OPEN */)
+            return true;
+        if (stage.status == 6 /* KILLER */)
+            return true;
+        return stage.status == 3 /* BONUS */ && stage.last;
+    };
     StageManager.prototype.closeStage = function (token, stageId) {
         var stage = this.getStage(token, stageId);
-        if (!stage || (stage.status != 1 /* OPEN */ && stage.status != 5 /* KILLER */)) {
+        if (!StageManager.isAllowToClose(stage)) {
             return this.teamManager.getAppState(token);
         }
-        stage.status = stage.status == 5 /* KILLER */ ? 6 /* KILLER_COMPLETED */ : 2 /* COMPLETED */;
+        stage.status = StageManager.getCompleteStatus(stage);
         var currentDateObject = new Date();
         stage.closedTime = utils_1.toEkbString(currentDateObject);
         var appState = this.teamManager.getAppState(token);
@@ -95,8 +105,9 @@ var StageManager = (function () {
         }
         if (stage.last) {
             //close bonus if the stage is last
-            appState.bonus.status = 2 /* COMPLETED */;
-            appState.bonus.closedTime = utils_1.toEkbString(currentDateObject);
+            // appState.bonus.status = StageStatus.COMPLETED;
+            // appState.bonus.closedTime = toEkbString(currentDateObject);
+            appState.bonus.last = true;
         }
         var info = this.stagesNames[stageId] + ' team ' + this.teamManager.findTeamByToken(token).name;
         utils_1.logServer('Closed stage token ' + token + ' stage ' + info);
@@ -111,10 +122,17 @@ var StageManager = (function () {
         });
         return appState;
     };
+    StageManager.getCompleteStatus = function (stage) {
+        if (stage.status == 6 /* KILLER */)
+            return 7 /* KILLER_COMPLETED */;
+        if (stage.status == 3 /* BONUS */)
+            return 4 /* BONUS_COMPLETED */;
+        return 2 /* COMPLETED */;
+    };
     StageManager.prototype.isSuccessGameResult = function (tokenId) {
         var appState = this.teamManager.getAppState(tokenId);
         var stage = appState.killer;
-        if (stage.status == 6 /* KILLER_COMPLETED */) {
+        if (stage.status == 7 /* KILLER_COMPLETED */) {
             var stageInfo = data_1.defaultData.killer;
             var id = -1;
             var _loop_1 = function (quest) {
@@ -190,7 +208,7 @@ var StageManager = (function () {
             }
             return { texts: result_1 };
         }
-        if (stage.status == 5 /* KILLER */ || stageId == 'killer') {
+        if (stage.status == 6 /* KILLER */ || stageId == 'killer') {
             return {
                 texts: data_1.defaultData.killer.quests.map(function (el) {
                     return { quest: el, show: true };
@@ -220,7 +238,7 @@ var StageManager = (function () {
         var stages = appState.stages;
         for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
             var stage = stages_1[_i];
-            if (stage.status == 5 /* KILLER */ || stage.status == 6 /* KILLER_COMPLETED */) {
+            if (stage.status == 6 /* KILLER */ || stage.status == 7 /* KILLER_COMPLETED */) {
                 break;
             }
             number++;

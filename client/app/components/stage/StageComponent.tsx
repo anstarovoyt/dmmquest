@@ -81,8 +81,8 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
 
     private getTitleText(currentStage: Stage) {
-        if (currentStage.status == StageStatus.BONUS) {
-            return <h4> Сдаете последний (третий) этап — квест завершается и бонусы блокируются </h4>;
+        if (currentStage.status == StageStatus.BONUS && currentStage.last) {
+            return <h4>Для завершения квеста нажмите кнопку "Завершить квест"</h4>;
         }
 
         if (currentStage.status == StageStatus.KILLER) {
@@ -102,7 +102,9 @@ export class StageComponent extends React.Component<{ stage: Stage },
                 return <QuestComponent savedValues={this.nestedValue} key={item.id} quest={item}
                                        stage={this.props.stage}/>;
             });
-            const isCompletedLevel = currentStage.status == StageStatus.COMPLETED || currentStage.status == StageStatus.KILLER_COMPLETED;
+            const isCompletedLevel = currentStage.status == StageStatus.COMPLETED ||
+                currentStage.status == StageStatus.KILLER_COMPLETED ||
+                currentStage.status == StageStatus.BONUS_COMPLETED;
             const buttonStyle = 'btn' + (isCompletedLevel ? ' btn-success' : ' btn-info');
 
 
@@ -127,7 +129,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
                         {quests}
                     </div>
-                    {currentStage.status == StageStatus.BONUS ?
+                    {currentStage.status == StageStatus.BONUS && !currentStage.last ?
                         '' :
                         <div className="col-lg-12 save-level">
                             <p className="lead"></p>
@@ -155,8 +157,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
                     <h1><Link to="/">
                         <span className="glyphicon glyphicon-arrow-left"></span>
                     </Link>
-                        <span>{stageName} {currentStage.status == StageStatus.BONUS ?
-                            (<p> Сдаете последние этап — бонус блокируется </p>) : '' }</span></h1>
+                    </h1>
                     {this.state.loadState == LoadState.ERROR ?
                         <span>Ошибка загрузки данных. Попробуйте обновить страницу</span> : <LoadingComponent />}
                 </div>
@@ -166,14 +167,14 @@ export class StageComponent extends React.Component<{ stage: Stage },
 
     getButtonName(currentStage: Stage, isCompletedLevel: boolean) {
         if (currentStage && currentStage.status == StageStatus.BONUS) {
-            return 'Сохранить ответы и сдать уровень';
+            return 'Завершить квест';
         }
 
         if (currentStage && currentStage.status == StageStatus.KILLER) {
             return 'Проверить!';
         }
 
-        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и завершить квест' : 'Сохранить все ответы и сдать уровень';
+        return isCompletedLevel ? 'Этап сдан' : currentStage.last ? 'Сдать уровень и продолжить собирать бонусы' : 'Сохранить все ответы и сдать уровень';
     }
 
     saveAnswers() {
@@ -201,9 +202,10 @@ export class StageComponent extends React.Component<{ stage: Stage },
             if (!r.error) {
                 appStateService.setState(r.res);
                 if (stage.status != StageStatus.BONUS) {
-                    this.redirectTo();
+                    this.redirectTo(stage);
                     return;
                 }
+
 
                 this.setState({
                     questTexts: this.state.questTexts,
@@ -237,8 +239,8 @@ export class StageComponent extends React.Component<{ stage: Stage },
         });
     }
 
-    redirectTo() {
-        this.context['history'].push('/');
+    redirectTo(stage: Stage) {
+        this.context['history'].push(stage.last && stage.status == StageStatus.OPEN ? '/bonus' : '/');
     }
 
     private saveStateWithAnswers() {

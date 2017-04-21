@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stage = {
-    status: 5 /* KILLER */,
+    status: 6 /* KILLER */,
     name: 'Убийца',
     internalName: 'Killer',
     quests: [
