@@ -13,14 +13,17 @@ export abstract class AbstractStageListItemComponent<T, Q> extends React.Compone
         const stageLink = this.getLink();
 
         return <div className="row">
-            <div className="col-xs-12 col-md-8">
-                <h4><Link to={stageLink}>{this.getName()}</Link></h4>
+            <Link to={stageLink}>
+                <div className="col-xs-6">
+                    <h4>{this.getName()}</h4>
 
-            </div>
+                </div>
 
-            <div className="col-xs-6 col-md-4">
-                <StageListItemStatusComponent stage={this.getStage()} stageStatus={this.getStatus()}/>
-            </div>
+                <div className="col-xs-6 status-stage-left">
+                    <StageListItemStatusComponent stage={this.getStage()}
+                                                  stageStatus={this.getStatus()}/>
+                </div>
+            </Link>
         </div>;
     }
 

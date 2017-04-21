@@ -385,3 +385,7 @@ input[type="file"] {
     padding-left: 5px;
 }
 
+
+.status-stage-left {
+    float: right;
+}
