@@ -29,7 +29,7 @@ html,
 body {
     height: 100%;
     background-color: #f1f1f1;
-    color: #333;
+    color: #000000;
     font-family: 'PT Sans', sans-serif;
     font-weight: 100;
 }
@@ -95,7 +95,7 @@ h1 a {
 }
 
 .row .row {
-    background: rgba(51, 51, 51, 0.08);
+    background: #0BD9CA;
     border-radius: 2px;
 }
 
@@ -227,15 +227,15 @@ h1 a {
 }
 
 .alert-success {
-    color: #7BAA7C;
+    color: #000000;
 }
 
 .alert-info {
-    color: #77A3B8;
+    color: #F2FF49;
 }
 
 .alert-danger {
-    color: #DF5454;
+    color: #FD2128;
 }
 
 .form-control {
