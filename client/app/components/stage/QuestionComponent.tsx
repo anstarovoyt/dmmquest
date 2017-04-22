@@ -52,7 +52,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
             this.popupText = 'Ошибка при отправке';
         } else if (savedMark == ActionState.SAVED) {
             let type = this.props.quest.type;
-            this.popupText = (!type || type == QuestType.TEXT || type == QuestType.LIST_BOX) ? 'Ответы сохранены' : 'Файл загружен';
+            this.popupText = (!type || type == QuestType.TEXT || type == QuestType.TEXT_NO_TEAM_BONUS || type == QuestType.LIST_BOX) ? 'Ответы сохранены' : 'Файл загружен';
         }
 
         const stage = this.props.stage;
@@ -63,6 +63,7 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
         const text = {__html: this.props.quest.text};
         const stageInfo = this.props.quest.stageName == null ? '' : <i> Этап {this.props.quest.stageName} </i>;
 
+        const showTeamBonus = this.props.quest.type != QuestType.TEXT_NO_TEAM_BONUS && (stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED);
 
         return (
             <div className="row">
@@ -75,9 +76,8 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
                 </div>
                 <div className="col-xs-12 col-md-8">
                     {this.createInputField(isCompleted, savedHtmlClass)}
-                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ?
-                        <i><p className="lead"></p>&nbsp;Бонус за командность:</i> : ''}
-                    {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ? this.createTeamBonus(isCompleted) : ''}
+                    {(showTeamBonus) ? <i><p className="lead"></p>&nbsp;Бонус за командность:</i> : ''}
+                    {(showTeamBonus) ? this.createTeamBonus(isCompleted) : ''}
                 </div>
             </div>);
     }

@@ -9,7 +9,7 @@ export const stage: RawStage = {
         {
             text: 'Код по результатам прохождения этапа.',
             type: QuestType.TEXT,
-            answer: ['ДММ31415']
+            answer: ['ДММ31415', 'Проверяйте листочки']
         }
     ],
     bonuses: [

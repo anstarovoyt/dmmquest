@@ -5,16 +5,16 @@ export const stage: RawStage = {
     name: 'Модерн',
     internalName: 'Динамо',
     description: getVideo(true, 'https://www.youtube.com/embed/7NUpDPaI3M4') +
-    `<br><h5>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме.<br> 
+    `<br><h5>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a style="text-decoration: underline;color:blue" href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме.<br> 
 Добавьте его в ваш командный чат. 
 Общайтесь с ним с помощью кнопок бота или отвечая 
-на его сообщения при помощи <a href="https://telegram.org/blog/replies-mentions-hashtags" >Reply.</a>
+на его сообщения при помощи <a style="text-decoration: underline;color:blue" href="https://telegram.org/blog/replies-mentions-hashtags" >Reply.</a> Бонус за командность будет получен, если на всех фотографиях будет присутствовать вся команда
 </h5>`,
     quests: [
         {
             text: 'Кодовое слово, полученное после погони?',
-            type: QuestType.TEXT,
-            answer: ['ВеганДММ2017']
+            type: QuestType.TEXT_NO_TEAM_BONUS,
+            answer: ['ВеганДММ2017', 'Проверяйте бота']
         },
 
 
@@ -55,7 +55,7 @@ export const stage: RawStage = {
         {
             text: `Это сейчас там приличное место и располагается сетевой магазин, о котором и не все знают. А раньше, во времена сухого закона там отоваривали водочные талоны, и об этом месте знали все посетители заоперного. Прибавьте 29 к номеру дома, в котором магазин. Во дворе найдите представителей известной детской книги. На заборе граффити, где сивер?`,
             type: QuestType.TEXT,
-            answer:['Курган']
+            answer: ['Курган']
         },
 
     ]

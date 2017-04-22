@@ -7,19 +7,19 @@ exports.stage = {
     quests: [
         {
             text: 'Кто',
-            type: 3 /* LIST_BOX */,
+            type: 4 /* LIST_BOX */,
             values: ['Иван', 'Елизавета', 'Косой', 'М. Александрийский', 'Мария', 'Настасья'],
             answer: ['Елизавета']
         },
         {
             text: 'Где',
-            type: 3 /* LIST_BOX */,
+            type: 4 /* LIST_BOX */,
             values: ['Мамаев Курган', 'Прачечная', 'Инстик'],
             answer: ['Инстик']
         },
         {
             text: 'С помощью чего',
-            type: 3 /* LIST_BOX */,
+            type: 4 /* LIST_BOX */,
             values: ['Горячий жир', 'Собака Баскервилей', 'Топор'],
             answer: ['Топор']
         }
