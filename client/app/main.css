@@ -388,3 +388,8 @@ input[type="file"] {
 .status-stage-right {
     float: right;
 }
+
+.hideShowLink {
+    text-decoration: underline;
+    float: right;
+}
