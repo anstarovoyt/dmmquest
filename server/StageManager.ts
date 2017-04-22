@@ -1,6 +1,6 @@
 import {TeamManager} from './TeamManager';
 import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from './data';
-import {getCloseDate, logServer, toEkbString} from './utils';
+import {getCloseDate, logServer, toEkbString, toEkbOnlyTimeString} from './utils';
 import {StateManager} from './StateManager';
 
 
@@ -111,7 +111,7 @@ export class StageManager {
 
         stage.status = StageManager.getCompleteStatus(stage);
         let currentDateObject = new Date();
-        stage.closedTime = toEkbString(currentDateObject);
+        stage.closedTime = toEkbOnlyTimeString(currentDateObject);
         let appState = this.teamManager.getAppState(token);
         const nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
@@ -250,7 +250,75 @@ export class StageManager {
         };
     }
 
-    unlockLastStage(tokenId: string): boolean {
+    getFullStagesInfo() {
+        let result: FullStagesInfo = {};
+
+        let stages = defaultData.stages;
+        for (let i = 0; i < stages.length; i++) {
+            let stage = stages[i];
+            this.processStage(result, stage, String(i));
+        }
+
+        this.processStage(result, defaultData.killer, 'killer');
+
+        let bonusStage = defaultData.bonus;
+        let bonusAnswers: FullQuestAnswer[] = [];
+        let bonusInfo: FullStageInfo = {
+            realName: bonusStage.name,
+            questsAnswer: bonusAnswers
+        };
+
+        for (let obj of stages) {
+            if (obj.bonuses) {
+                for (let bonus of obj.bonuses) {
+                    this.processQuest(bonus, bonusAnswers);
+                }
+            }
+        }
+        for (let bonus of bonusStage.quests) {
+            this.processQuest(bonus, bonusAnswers);
+        }
+        result['bonus'] = bonusInfo;
+
+        return result;
+    }
+
+
+    private processStage(result: FullStagesInfo, stage: RawStage, id: string) {
+        let answers: FullQuestAnswer[] = [];
+        let info: FullStageInfo = {
+            realName: stage.internalName ? (stage.internalName + ' (' + stage.name + ')') : stage.name,
+            questsAnswer: answers
+        };
+
+        let quests = stage.quests;
+        for (let i = 0; i < quests.length; i++) {
+            let quest: QuestText = quests[i];
+            this.processQuest(quest, answers);
+        }
+
+        result[id] = info;
+    }
+
+    private processQuest(quest: QuestText, answers: FullQuestAnswer[]) {
+        if (typeof quest == 'string' || !quest.answer) {
+            answers.push({
+                answers: [],
+                type: typeof quest == 'string' ? undefined : quest.type
+            });
+        } else {
+            answers.push({
+                type: quest.type,
+                answers: quest.answer ? quest.answer : []
+            });
+        }
+    }
+
+    unlockStage(tokenId: string, stageId?: string): boolean {
+        //todo unlock bonus & killer
+        if (stageId) {
+
+        }
 
         const appState = this.teamManager.getAppState(tokenId);
         let team = this.teamManager.findTeamByToken(tokenId);
@@ -280,13 +348,6 @@ export class StageManager {
         lastCompletedStage.status = StageStatus.OPEN;
         logServer('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
         delete lastCompletedStage.closedTime;
-
-        if (number == stages.length &&
-            appState.bonus.status == StageStatus.COMPLETED) {
-            appState.bonus.status = StageStatus.BONUS;
-            delete lastCompletedStage.closedTime;
-            logServer('Unlocked bonus for ' + tokenId);
-        }
 
         this.stateManager.dbStore.saveAppDB(team.tokenId, appState, (err) => {
             if (!err) {

@@ -50,6 +50,10 @@ function toEkbString(date) {
     return moment(date).tz('Asia/Yekaterinburg').format('YYYY-MM-DD HH:mm');
 }
 exports.toEkbString = toEkbString;
+function toEkbOnlyTimeString(date) {
+    return moment(date).tz('Asia/Yekaterinburg').format('HH:mm');
+}
+exports.toEkbOnlyTimeString = toEkbOnlyTimeString;
 function getCloseDate(date) {
     return moment(date).add('hours', 2).add('minutes', '30').tz('Asia/Yekaterinburg').format('HH:mm');
 }

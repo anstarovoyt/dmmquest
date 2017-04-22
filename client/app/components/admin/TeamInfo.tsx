@@ -2,6 +2,7 @@ import * as React from 'react';
 import {auth} from '../../authentication/AuthService';
 import {appStateService} from '../../state/AppStateService';
 import {removeTeam, unlockLastStage} from '../../communitation/Dispatcher';
+import {StageElementComponent} from './StageElementComponent';
 
 const Link: ReactRouter.Link = require('react-router/lib/Link');
 
@@ -17,13 +18,16 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
     }
 
     render() {
-        var teamInfo = this.props.info;
+        const teamInfo = this.props.info;
 
-        var team = teamInfo.team;
+        const team = teamInfo.team;
 
-        var answers = this.getStatus();
+        const answers = this.getStatus();
 
-        var unlockElement = this.getUnlockElement();
+        const unlockElement = this.getUnlockElement();
+
+        let startStage: string = String(team.startFromStage + 1) + ', ' + teamInfo.stagesInfo[String(team.startFromStage)].realName;
+
         return (
             <div className="row">
                 <div className="col-xs-18 col-md-12">
@@ -39,7 +43,7 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
                     {this.state.showInfo ?
                         <div>
                             <p><b>Токен</b>: {team.tokenId}</p>
-                            <p><b>Начальный этап (отсчет от 1)</b>: {team.startFromStage + 1}</p>
+                            <p><b>Начальный этап (отсчет от 1)</b>: {startStage}</p>
                             <p>
                                 Время первого
                                 логина {teamInfo.firstLoginDateEkbTimezone ? teamInfo.firstLoginDateEkbTimezone : ' — не определено'}
@@ -67,10 +71,10 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
     }
 
     getUnlockElement() {
-        var teamInfo = this.props.info;
+        const teamInfo = this.props.info;
 
-        var lastCompletedStage: Stage = null;
-        for (var stage of teamInfo.appState.stages) {
+        let lastCompletedStage: Stage = null;
+        for (let stage of teamInfo.appState.stages) {
             if (stage.status == StageStatus.COMPLETED) {
                 lastCompletedStage = stage;
             }
@@ -113,8 +117,8 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
         if (!window.confirm('Вы действительно хотите удалить команду?')) {
             return;
         }
-        var teamInfo = this.props.info;
-        var team = teamInfo.team;
+        const teamInfo = this.props.info;
+        const team = teamInfo.team;
         removeTeam({
             teamTokenId: team.tokenId,
             token: auth.getToken()
@@ -126,63 +130,20 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
     }
 
     getStatus() {
-        var result = [];
-        var teamInfo = this.props.info;
-        var i = 0;
-        for (var stage of teamInfo.appState.stages) {
-            result.push(this.getStageElement(stage));
-
+        const result = [];
+        const teamInfo = this.props.info;
+        const i = 0;
+        for (let stage of teamInfo.appState.stages) {
+            result.push(<StageElementComponent key={stage.id} stage={stage} info={this.props.info}/>);
         }
 
-        result.push(this.getStageElement(teamInfo.appState.bonus));
+        let bonus = teamInfo.appState.bonus;
+        result.push((<StageElementComponent key={bonus.id} stage={teamInfo.appState.bonus} info={this.props.info}/>));
+        let killer = teamInfo.appState.killer;
+        result.push((<StageElementComponent key={killer.id} stage={killer} info={this.props.info}/>));
 
         return result;
     }
 
 
-    getStageElement(stage: Stage) {
-        var stageNumber = stage.status == StageStatus.BONUS ? 'Бонус' : Number(stage.id) + 1;
-        return <span key={stage.id}>
-                <b>Этап {stageNumber}</b>: {appStateService.getStageNameById(stage.id)}
-            — <b>{this.getStageStatusText(stage)}</b>
-            <div>
-                {this.getAnswers(stage)}
-            </div>
-                </span>;
-    }
-
-    getStageStatusText(stage) {
-        var status = stage.status;
-        if (status == StageStatus.OPEN) {
-            return 'В процессе';
-        }
-
-        if (status == StageStatus.COMPLETED) {
-            var res = 'Сдан';
-            if (stage.closedTime) {
-                res += ' (' + stage.closedTime + ')';
-            }
-            return res;
-        }
-
-        if (status == StageStatus.BONUS) {
-            return 'Бонус';
-        }
-
-        return 'Не открыт';
-    }
-
-    getAnswers(stage: Stage) {
-        var result = [];
-
-        var questAnswers = stage.questAnswers;
-        for (var answerId in questAnswers) {
-            if (questAnswers.hasOwnProperty(answerId)) {
-                result.push(<p key={answerId}>&nbsp;&nbsp;&nbsp;Вопрос {Number(answerId) + 1}
-                    — {questAnswers[answerId].answer} </p>);
-            }
-        }
-
-        return result;
-    }
 }

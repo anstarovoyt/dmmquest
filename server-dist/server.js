@@ -110,7 +110,7 @@ function initServer() {
             });
         }
         res.json({
-            success: stageManager.unlockLastStage(request.teamTokenId)
+            success: stageManager.unlockStage(request.teamTokenId)
         });
     });
     server.post('/sign_s3', function (req, response, next) {
@@ -262,7 +262,9 @@ function initServer() {
                 startFromStage: cur.startFromStage,
                 tokenId: cur.tokenId
             };
+            var fullStagesInfo = stageManager.getFullStagesInfo();
             var info = {
+                stagesInfo: fullStagesInfo,
                 team: cur,
                 appState: teamManager.getAppState(cur.tokenId)
             };

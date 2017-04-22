@@ -136,7 +136,7 @@ export function initServer() {
         }
 
         res.json({
-            success: stageManager.unlockLastStage(request.teamTokenId)
+            success: stageManager.unlockStage(request.teamTokenId)
         });
     });
 
@@ -319,7 +319,11 @@ export function initServer() {
                 tokenId: cur.tokenId
             };
 
+
+            let fullStagesInfo = stageManager.getFullStagesInfo();
+
             let info: TeamInfo = {
+                stagesInfo: fullStagesInfo,
                 team: cur,
                 appState: teamManager.getAppState(cur.tokenId)
             };

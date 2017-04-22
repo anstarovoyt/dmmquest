@@ -15,7 +15,22 @@ interface TeamInfo {
     team: TeamSimple,
     firstLoginDateEkbTimezone?: string,
     endQuestEkbTimezone?: string,
-    appState: AppState
+    appState: AppState,
+    stagesInfo: FullStagesInfo
+}
+
+interface FullStagesInfo {
+    [stageId: string]: FullStageInfo
+}
+
+interface FullStageInfo {
+    realName: string,
+    questsAnswer?: FullQuestAnswer[]
+}
+
+interface FullQuestAnswer {
+    type?: QuestType,
+    answers: string[]
 }
 
 interface TeamsResponse {
