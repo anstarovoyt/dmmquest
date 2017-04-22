@@ -148,13 +148,6 @@ export class StageElementComponent extends React.Component<{ info: TeamInfo, sta
             })}</span>;
         }
 
-        if (userAnswer.indexOf('http:/') == 0 || userAnswer.indexOf('https:/') == 0) {
-            let from = userAnswer.indexOf(' ');
-            return <span>&nbsp;<a target="_blank"
-                                  style={{textDecorationLine: 'underline', display: 'inline'}}
-                                  href={userAnswer.substr(0, from > 0 ? from : userAnswer.length)}>from</a></span>;
-        }
-
         return <span>{userAnswer}</span>;
     }
 };
