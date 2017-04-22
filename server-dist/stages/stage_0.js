@@ -6,7 +6,11 @@ exports.stage = {
     internalName: 'Уралмаш',
     description: helper_1.getVideo(true, 'https://www.youtube.com/embed/oEV83TYje64'),
     quests: [
-        'Код по результатам прохождения этапа.'
+        {
+            text: 'Код по результатам прохождения этапа.',
+            type: 0 /* TEXT */,
+            answer: ['ДММ31415']
+        }
     ],
     bonuses: [
         {
