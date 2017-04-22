@@ -250,8 +250,9 @@ export class StageManager {
         };
     }
 
-    getFullStagesInfo() {
+    getFullStagesInfo(team: Team) {
         let result: FullStagesInfo = {};
+        const appState = this.teamManager.getAppState(team.tokenId);
 
         let stages = defaultData.stages;
         for (let i = 0; i < stages.length; i++) {
@@ -268,10 +269,15 @@ export class StageManager {
             questsAnswer: bonusAnswers
         };
 
-        for (let obj of stages) {
-            if (obj.bonuses) {
-                for (let bonus of obj.bonuses) {
-                    this.processQuest(bonus, bonusAnswers);
+        for (let stage of appState.stages) {
+            let stageNumber = Number(stage.id);
+
+            if (stageNumber) {
+                let rawStage = defaultData.stages[stageNumber];
+                if (rawStage.bonuses) {
+                    for (let bonus of rawStage.bonuses) {
+                        this.processQuest(bonus, bonusAnswers);
+                    }
                 }
             }
         }

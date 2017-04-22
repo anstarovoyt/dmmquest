@@ -225,8 +225,9 @@ var StageManager = (function () {
             description: stageInfo.description
         };
     };
-    StageManager.prototype.getFullStagesInfo = function () {
+    StageManager.prototype.getFullStagesInfo = function (team) {
         var result = {};
+        var appState = this.teamManager.getAppState(team.tokenId);
         var stages = data_1.defaultData.stages;
         for (var i = 0; i < stages.length; i++) {
             var stage = stages[i];
@@ -239,17 +240,21 @@ var StageManager = (function () {
             realName: bonusStage.name,
             questsAnswer: bonusAnswers
         };
-        for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
-            var obj = stages_1[_i];
-            if (obj.bonuses) {
-                for (var _a = 0, _b = obj.bonuses; _a < _b.length; _a++) {
-                    var bonus = _b[_a];
-                    this.processQuest(bonus, bonusAnswers);
+        for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
+            var stage = _a[_i];
+            var stageNumber = Number(stage.id);
+            if (stageNumber) {
+                var rawStage = data_1.defaultData.stages[stageNumber];
+                if (rawStage.bonuses) {
+                    for (var _b = 0, _c = rawStage.bonuses; _b < _c.length; _b++) {
+                        var bonus = _c[_b];
+                        this.processQuest(bonus, bonusAnswers);
+                    }
                 }
             }
         }
-        for (var _c = 0, _d = bonusStage.quests; _c < _d.length; _c++) {
-            var bonus = _d[_c];
+        for (var _d = 0, _e = bonusStage.quests; _d < _e.length; _d++) {
+            var bonus = _e[_d];
             this.processQuest(bonus, bonusAnswers);
         }
         result['bonus'] = bonusInfo;
@@ -296,8 +301,8 @@ var StageManager = (function () {
         var lastCompletedStage = null;
         var number = 0;
         var stages = appState.stages;
-        for (var _i = 0, stages_2 = stages; _i < stages_2.length; _i++) {
-            var stage = stages_2[_i];
+        for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
+            var stage = stages_1[_i];
             if (stage.status == 6 /* KILLER */ || stage.status == 7 /* KILLER_COMPLETED */) {
                 break;
             }
