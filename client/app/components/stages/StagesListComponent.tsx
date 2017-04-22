@@ -1,11 +1,12 @@
-import * as React from "react";
-import {appStateStore} from "../../state/AppStateStore";
-import {appStateService} from "../../state/AppStateService";
-import {LoadingComponent} from "../common/LoadingComponent";
-import {StageListItemComponent} from "./StageListItemComponent";
-import {auth} from "../../authentication/AuthService";
-import {IntroStageContainer} from "../stage/IntroStageContainer";
-import {IntroStageListItemComponent} from "./IntroStageListItemComponent";
+import * as React from 'react';
+import {appStateStore} from '../../state/AppStateStore';
+import {appStateService} from '../../state/AppStateService';
+import {LoadingComponent} from '../common/LoadingComponent';
+import {StageListItemComponent} from './StageListItemComponent';
+import {auth} from '../../authentication/AuthService';
+import {IntroStageContainer} from '../stage/IntroStageContainer';
+import {IntroStageListItemComponent} from './IntroStageListItemComponent';
+import {KillerResultListItemComponent} from './KillerResultListItemComponent';
 
 
 type StateList = {
@@ -26,7 +27,7 @@ export class StagesListComponent extends React.Component<any, StateList> {
         if (!state) {
             this.state = {loading: true, stages: null, bonus: null, killer: null};
         } else {
-            this.state = {stages: state.stages, bonus: state.bonus, killer: state.killer, loading: false}
+            this.state = {stages: state.stages, bonus: state.bonus, killer: state.killer, loading: false};
         }
     }
 
@@ -65,28 +66,33 @@ export class StagesListComponent extends React.Component<any, StateList> {
                         <LoadingComponent/>
                     </div>
                 </div>
-            )
+            );
         }
 
 
         var stages = this.state.stages;
         var result = [<IntroStageListItemComponent key="intro"/>];
         result = result.concat(stages.map(function (el) {
-            return <StageListItemComponent key={el.id} stage={el}/>
+            return <StageListItemComponent key={el.id} stage={el}/>;
         }));
 
         let bonus = state.bonus;
         if (bonus) {
-            result.push(<StageListItemComponent key={bonus.id} stage={bonus}/>)
+            result.push(<StageListItemComponent key={bonus.id} stage={bonus}/>);
         } else {
-            console.log("No Bonus");
+            console.log('No Bonus');
         }
 
         let killer = state.killer;
         if (killer) {
-            result.push(<StageListItemComponent key={killer.id} stage={killer}/>)
+            result.push(<StageListItemComponent key={killer.id} stage={killer}/>);
+
+            if (killer.status == StageStatus.KILLER_COMPLETED) {
+                result.push(<KillerResultListItemComponent key='killer_result'/>);
+            }
+
         } else {
-            console.log("No killer");
+            console.log('No killer');
         }
 
         return <div className="row">
@@ -94,6 +100,6 @@ export class StagesListComponent extends React.Component<any, StateList> {
                 <h1>{auth.getName()}</h1>
                 {result}
             </div>
-        </div>
+        </div>;
     }
 }
