@@ -49,7 +49,8 @@ interface AddTeamResponse {
 
 interface UnlockLastCompletedStageRequest {
     token: string,
-    teamTokenId: string
+    teamTokenId: string,
+    stageId?:string
 }
 
 interface UnlockLastCompletedStageResponse {

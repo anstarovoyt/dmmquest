@@ -136,7 +136,7 @@ export function initServer() {
         }
 
         res.json({
-            success: stageManager.unlockStage(request.teamTokenId)
+            success: stageManager.unlockStage(request.teamTokenId, request.stageId)
         });
     });
 

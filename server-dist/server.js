@@ -110,7 +110,7 @@ function initServer() {
             });
         }
         res.json({
-            success: stageManager.unlockStage(request.teamTokenId)
+            success: stageManager.unlockStage(request.teamTokenId, request.stageId)
         });
     });
     server.post('/sign_s3', function (req, response, next) {

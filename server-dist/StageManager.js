@@ -288,24 +288,23 @@ var StageManager = (function () {
         }
     };
     StageManager.prototype.unlockStage = function (tokenId, stageId) {
-        var _this = this;
-        //todo unlock bonus & killer
-        if (stageId) {
-        }
         var appState = this.teamManager.getAppState(tokenId);
         var team = this.teamManager.findTeamByToken(tokenId);
         if (!team) {
-            utils_1.logServer('Unlock request for incorrect team ' + team.tokenId);
+            utils_1.logServer('Unlock request for incorrect team ' + tokenId);
             return false;
+        }
+        if (stageId) {
+            if (stageId == 'bonus' && appState.bonus.status == 4 /* BONUS_COMPLETED */) {
+                this.unlock(appState.bonus, tokenId, team, appState, 3 /* BONUS */);
+            }
+            return;
         }
         var lastCompletedStage = null;
         var number = 0;
         var stages = appState.stages;
         for (var _i = 0, stages_1 = stages; _i < stages_1.length; _i++) {
             var stage = stages_1[_i];
-            if (stage.status == 6 /* KILLER */ || stage.status == 7 /* KILLER_COMPLETED */) {
-                break;
-            }
             number++;
             if (stage.status == 2 /* COMPLETED */) {
                 lastCompletedStage = stage;
@@ -314,18 +313,23 @@ var StageManager = (function () {
         if (lastCompletedStage == null) {
             return false;
         }
-        lastCompletedStage.status = 1 /* OPEN */;
-        utils_1.logServer('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
-        delete lastCompletedStage.closedTime;
+        this.unlock(lastCompletedStage, tokenId, team, appState, 1 /* OPEN */);
+        return true;
+    };
+    StageManager.prototype.unlock = function (stage, tokenId, team, appState, openStatus) {
+        var _this = this;
+        stage.status = openStatus;
+        var stagesName = this.stagesNames[stage.id];
+        utils_1.logServer('Unlocked stage ' + (stagesName ? openStatus : stage.id) + ' for ' + tokenId);
+        delete stage.closedTime;
         this.stateManager.dbStore.saveAppDB(team.tokenId, appState, function (err) {
             if (!err) {
-                utils_1.logServer('Update unlock stage for ' + team.tokenId + '  stage ' + _this.stagesNames[lastCompletedStage.id]);
+                utils_1.logServer('Update unlock stage for ' + team.tokenId + '  stage ' + _this.stagesNames[stage.id]);
             }
             else {
                 utils_1.logServer('ALERT: Error update unlock stage for ' + team.tokenId);
             }
         });
-        return true;
     };
     StageManager.prototype.getNextStage = function (appState, stage) {
         if (stage.status == 3 /* BONUS */) {

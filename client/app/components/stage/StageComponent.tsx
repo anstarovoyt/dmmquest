@@ -193,7 +193,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         }
 
 
-        if (stage.status == StageStatus.OPEN && !window.confirm('Вы действительно хотите завершить этап?')) {
+        if ((stage.status == StageStatus.OPEN || stage.status == StageStatus.BONUS) && !window.confirm('Вы действительно хотите завершить этап?')) {
             return;
         }
         this.completeStage(stage);
@@ -293,7 +293,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         return <div className="row">
             <div className="col-xs-18 col-md-12">
                 <h4>Описание</h4>
-                <div dangerouslySetInnerHTML={{__html: description}}/>
+                <div className="status-float-center" dangerouslySetInnerHTML={{__html: description}}/>
                 <br/>
             </div>
         </div>;

@@ -321,49 +321,54 @@ export class StageManager {
     }
 
     unlockStage(tokenId: string, stageId?: string): boolean {
-        //todo unlock bonus & killer
-        if (stageId) {
-
-        }
 
         const appState = this.teamManager.getAppState(tokenId);
         let team = this.teamManager.findTeamByToken(tokenId);
         if (!team) {
-            logServer('Unlock request for incorrect team ' + team.tokenId);
+            logServer('Unlock request for incorrect team ' + tokenId);
             return false;
         }
+
+        if (stageId) {
+            if (stageId == 'bonus' && appState.bonus.status == StageStatus.BONUS_COMPLETED) {
+                this.unlock(appState.bonus, tokenId, team, appState, StageStatus.BONUS);
+            }
+
+            return;
+        }
+
+
         let lastCompletedStage: Stage = null;
         let number = 0;
         const stages = appState.stages;
         for (let stage of stages) {
-            if (stage.status == StageStatus.KILLER || stage.status == StageStatus.KILLER_COMPLETED) {
-                break;
-            }
-
             number++;
             if (stage.status == StageStatus.COMPLETED) {
                 lastCompletedStage = stage;
             }
-
         }
 
         if (lastCompletedStage == null) {
             return false;
         }
+        this.unlock(lastCompletedStage, tokenId, team, appState, StageStatus.OPEN);
 
-        lastCompletedStage.status = StageStatus.OPEN;
-        logServer('Unlocked stage ' + this.stagesNames[lastCompletedStage.id] + ' for ' + tokenId);
-        delete lastCompletedStage.closedTime;
+        return true;
+    }
+
+    private unlock(stage: Stage, tokenId: string, team: Team, appState: AppState, openStatus: StageStatus) {
+        stage.status = openStatus;
+        let stagesName = this.stagesNames[stage.id];
+        logServer('Unlocked stage ' + (stagesName ? openStatus : stage.id) + ' for ' + tokenId);
+        delete stage.closedTime;
 
         this.stateManager.dbStore.saveAppDB(team.tokenId, appState, (err) => {
             if (!err) {
-                logServer('Update unlock stage for ' + team.tokenId + '  stage ' + this.stagesNames[lastCompletedStage.id]);
+                logServer('Update unlock stage for ' + team.tokenId + '  stage ' + this.stagesNames[stage.id]);
             } else {
                 logServer('ALERT: Error update unlock stage for ' + team.tokenId);
             }
         });
-
-        return true;
     }
 
     getNextStage(appState: AppState, stage: Stage): Stage {

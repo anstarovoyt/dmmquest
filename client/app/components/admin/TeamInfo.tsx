@@ -57,20 +57,25 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
                             <br />
                             <div>
                                 {unlockElement ? <h4>{unlockElement}</h4> : ''}
-                                {team.tokenId == auth.getToken() ? <h4>Это вы</h4> :
-                                    <h4><a href="#"
-                                           onClick={this.removeTeam.bind(this)}>Удалить</a>
-                                    </h4>}
+
 
                             </div>
                         </div> : ''}
 
+                    <div>
+                        {team.tokenId == auth.getToken() ? <h4>Это вы</h4> :
+                            <h5 className="status-stage-right"><br/><a href="#"
+                                                                       onClick={this.removeTeam.bind(this)}>Удалить</a>
+                            </h5>}
+                    </div>
                 </div>
             </div>
         );
     }
 
     getUnlockElement() {
+        let result = [];
+
         const teamInfo = this.props.info;
 
         let lastCompletedStage: Stage = null;
@@ -80,25 +85,46 @@ export class TeamInfoComponent extends React.Component<{ info: TeamInfo, reloadP
             }
         }
 
+
         if (lastCompletedStage == null) {
             return null;
         }
 
+        if (lastCompletedStage) {
+            result.push(<a key={'lastStage'} href="#"
+                           onClick={this.unlockLastStage.bind(this)}>Разблокировать последний этап</a>);
+        }
 
-        return <a href="#"
-                  onClick={this.unlockLastStage.bind(this)}>Разблокировать последний этап</a>;
+        if (teamInfo.appState.bonus.status == StageStatus.BONUS_COMPLETED) {
+            result.push(<a key={'bonus'} href="#"
+                           onClick={this.unlockBonusStage.bind(this)}>Разблокировать бонус этап</a>);
+        }
+        return result;
     }
 
     unlockLastStage(e) {
         e.preventDefault();
+        this.unlockCommon();
+    }
+
+    unlockBonusStage(e) {
+        e.preventDefault();
+        this.unlockCommon('bonus');
+    }
+
+    unlockCommon(stageId?: string) {
         if (!window.confirm('Вы действительно хотите закрытый разблокировать этап?')) {
             return;
         }
 
-        unlockLastStage({
+        let toSend: UnlockLastCompletedStageRequest = {
             teamTokenId: this.props.info.team.tokenId,
             token: auth.getToken()
-        }, (res) => {
+        };
+        if (stageId) {
+            toSend.stageId = stageId;
+        }
+        unlockLastStage(toSend, (res) => {
             if (res.success) {
                 this.props.reloadParent();
             }
