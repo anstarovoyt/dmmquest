@@ -8,7 +8,7 @@ export const stage: RawStage = {
     `<br><h5>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a style="text-decoration: underline;color:blue" href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме.<br> 
 Добавьте его в ваш командный чат. 
 Общайтесь с ним с помощью кнопок бота или отвечая 
-на его сообщения при помощи <a style="text-decoration: underline;color:blue" href="https://telegram.org/blog/replies-mentions-hashtags" >Reply.</a> Бонус за командность будет получен, если на всех фотографиях будет присутствовать вся команда
+на его сообщения при помощи <a style="text-decoration: underline;color:blue" href="https://telegram.org/blog/replies-mentions-hashtags" >Reply</a> Бонус за командность будет получен, если на всех фотографиях будет присутствовать вся команда
 </h5>`,
     quests: [
         {
