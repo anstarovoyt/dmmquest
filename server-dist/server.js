@@ -262,7 +262,7 @@ function initServer() {
                 startFromStage: cur.startFromStage,
                 tokenId: cur.tokenId
             };
-            var fullStagesInfo = stageManager.getFullStagesInfo();
+            var fullStagesInfo = stageManager.getFullStagesInfo(team);
             var info = {
                 stagesInfo: fullStagesInfo,
                 team: cur,
