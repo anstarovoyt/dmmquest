@@ -57,7 +57,7 @@ export function toEkbString(date) {
 }
 
 export function getCloseDate(date) {
-    return moment(date).add('hours', 2).tz('Asia/Yekaterinburg').format('HH:mm');
+    return moment(date).add('hours', 2).add('minutes', '30').tz('Asia/Yekaterinburg').format('HH:mm');
 }
 
 export function getDefaultTeams() {
