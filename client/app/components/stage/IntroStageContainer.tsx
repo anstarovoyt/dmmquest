@@ -22,7 +22,7 @@ export class IntroStageContainer extends StageContainerComponent {
                     Intro
                 </h1>
                 <div className="row">
-                    <div className="col-xs-12 col-md-8">
+                    <div className="col-xs-18 col-md-12">
                         <div dangerouslySetInnerHTML={{__html: intro}}/>
                         <br/>
                         <br/>

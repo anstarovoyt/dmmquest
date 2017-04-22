@@ -44,7 +44,7 @@ export class KillerResultComponent extends React.Component<any, { resultText?: s
                     Result
                 </h1>
                 <div className="row">
-                    <div className="col-xs-12 col-md-8">
+                    <div className="col-xs-18 col-md-12">
                         <div dangerouslySetInnerHTML={{__html: link}}/>
                     </div>
                 </div>

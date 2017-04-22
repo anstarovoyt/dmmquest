@@ -66,17 +66,17 @@ export class QuestComponent extends React.Component<{ quest: Quest, stage: Stage
 
         return (
             <div className="row">
-                <div >
+                <div className="col-xs-18 col-md-12">
                     <h4>Вопрос {this.props.quest.id + 1}</h4>
+                    <br/>
                     {stageInfo}
                     <div dangerouslySetInnerHTML={text}/>
                     <p className="lead"></p>
                 </div>
                 <div className="col-xs-12 col-md-8">
                     {this.createInputField(isCompleted, savedHtmlClass)}
-                    <br/>
                     {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ?
-                        <b>Бонус за командность:</b> : ''}
+                        <i><p className="lead"></p>&nbsp;Бонус за командность:</i> : ''}
                     {(stage.status == StageStatus.OPEN || stage.status == StageStatus.COMPLETED) ? this.createTeamBonus(isCompleted) : ''}
                 </div>
             </div>);

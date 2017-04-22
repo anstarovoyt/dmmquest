@@ -291,7 +291,7 @@ export class StageComponent extends React.Component<{ stage: Stage },
         let description = questTexts.stageDescription;
         if (!description) return <div/>;
         return <div className="row">
-            <div className="col-xs-12 col-md-8">
+            <div className="col-xs-18 col-md-12">
                 <h4>Описание</h4>
                 <div dangerouslySetInnerHTML={{__html: description}}/>
                 <br/>
