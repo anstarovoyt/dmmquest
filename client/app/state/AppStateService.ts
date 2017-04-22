@@ -81,6 +81,11 @@ class AppStateService {
     private loadFullState() {
         const token = auth.getToken();
         loadState({token: token}, response => {
+            if (!response.error && !response.success) {
+                auth.logout();
+                return;
+            }
+
             this.fullState = response.state;
             this.onChange();
         });

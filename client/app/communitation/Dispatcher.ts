@@ -36,6 +36,7 @@ export function loadState(toSend: AppStateRequest, successCallback: (res: FullAp
         data: toSend,
         error: () => {
             successCallback({
+                error: true,
                 success: false
             })
         },

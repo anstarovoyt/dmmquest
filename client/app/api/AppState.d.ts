@@ -58,7 +58,8 @@ interface AppStateRequest {
 
 interface FullAppStateResponse {
     state?: FullAppState,
-    success: boolean
+    success: boolean,
+    error?: boolean
 }
 
 
