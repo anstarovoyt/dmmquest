@@ -1,5 +1,5 @@
-const AWS_ACCESS_KEY = 'YOUR_AWS_KEY';
-const AWS_SECRET_KEY = 'YOUR_AWS_SECRET_KEY';
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || 'YOUR_AWS_KEY';
+const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || 'YOUR_AWS_SECRET_KEY';
 const S3_BUCKET = process.env.S3_BUCKET || 'dmmquest';
 const aws = require('aws-sdk');
 const path = require('path');

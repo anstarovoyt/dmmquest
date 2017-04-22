@@ -1,3 +1,5 @@
+import {getVideo} from './stages/helper';
+
 export type QuestText = (string | { type: QuestType; text: string, values?: string[], answer?: string[] });
 
 export interface RawStage {
@@ -10,8 +12,28 @@ export interface RawStage {
 }
 
 
-function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawStage } {
+let allStages: RawStage[] = null;
+let killer: RawStage = null;
+let bonus: RawStage = null;
+try {
+    allStages = [
+        require('./stages/stage_0').stage,
+        require('./stages/stage_1').stage,
+        require('./stages/stage_2').stage];
 
+    killer = require('./stages/killer').stage;
+    bonus = require('./stages/bonus').stage;
+} catch (e) {
+}
+
+function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawStage } {
+    if (allStages) {
+        return {
+            stages: allStages,
+            killer,
+            bonus
+        };
+    }
 
     return {
         stages: [
@@ -61,9 +83,13 @@ function getDefaultData(): { stages: RawStage[], bonus: RawStage, killer: RawSta
     };
 }
 
-export const resultUnSuccess = '';
-export const resultSuccess = '';
+export const resultUnSuccess = getVideo(true, 'https://www.youtube.com/embed/nntRxUD19yw') + `<br>
+<h5>Вы глуповаты, Ватсон, но я верю, что через год вы наберетесь знаний и опыта!</h5>
+`;
+export const resultSuccess = getVideo(true, 'https://www.youtube.com/embed/zLIXYBdQbk8') + `<br>
+<h5>Это победа, Ватсон!</h5>
+`;
 
 export const defaultData = getDefaultData();
 
-export const intro = 'Туту';
+export const intro = getVideo(true, 'https://www.youtube.com/embed/ujjRcmhJh-I') + `<br>Для определения того, кто является убийцей, вам необходимо исключить из списка подозреваемых все те объекты, которые в явном и неявном виде встретятся в ответах квеста на протяжении трех этапов (в бонусах нет). Например, одна из загадок привела вас к ответу "Петя", исключаем его из списка подозреваемых. Другой пример: ответ на загадку — земноводное, вычеркиваем из списка лягушку. В конце, при всех правильно решенных загадках, у вас должно остаться по одному человеку, месту, орудию. Не все загадки позволяют вычеркивать объекты.`;

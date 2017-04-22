@@ -75,9 +75,9 @@ export function getDefaultTeams() {
         startFromStage: 0
     });
     teams.push({
-        name: 'Тестовая команда',
-        secretCode: 'god',
-        tokenId: 'god',
+        name: 'Тестовая НЕадминская команда',
+        secretCode: 'testTOOOOOTOOOHARD123',
+        tokenId: 'testTOOOOOTOOOHARD123',
         admin: false,
         startFromStage: 0
     });
