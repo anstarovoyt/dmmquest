@@ -31,7 +31,7 @@ export const stage: RawStage = {
         {
             text: `В месте отправления посчитайте количество эмблем скрещенных молотов.` + getVideo(true, 'https://www.youtube.com/embed/me6vAVmXR_Q'),
             type: QuestType.TEXT,
-            answer: ['19']
+            answer: ['19', '22']
         },
 
         {

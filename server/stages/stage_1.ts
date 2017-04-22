@@ -4,7 +4,7 @@ import {getVideo} from './helper';
 export const stage: RawStage = {
     name: 'Модерн',
     internalName: 'Динамо',
-    description: getVideo(true, 'https://www.youtube.com/embed/7NUpDPaI3M4') +
+    description: getVideo(true, 'https://www.youtube.com/embed/cuAbItGtKgg') +
     `<br><h5>Ватсон за нами погоня, ваша первоочередная задача — следовать указаниям <a style="text-decoration: underline;color:blue" href="http://t.me/Wwwatsonbot" />@sherloсkbot (Wwwatsonbot)</a> в телеграмме.<br> 
 Добавьте его в ваш командный чат. 
 Общайтесь с ним с помощью кнопок бота или отвечая 
