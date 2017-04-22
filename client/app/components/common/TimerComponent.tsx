@@ -46,12 +46,12 @@ export class TimerComponent extends React.Component<any, { rest: number, isCompl
                 });
 
                 if (!res.isCompleted && rest > 0) {
-                    this.updateTimer = 15;
+                    this.updateTimer = 30;
                     this.updateTimeTrigger();
                 }
             } else {
                 //undefined
-                this.updateTimer = 15;
+                this.updateTimer = 10;
             }
         });
     }
