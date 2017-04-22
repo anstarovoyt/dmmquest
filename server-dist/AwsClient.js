@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || 'YOUR_AWS_KEY';
-var AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || 'YOUR_AWS_SECRET_KEY';
+var AWS_ACCESS_KEY = 'YOUR_AWS_KEY';
+var AWS_SECRET_KEY = 'YOUR_AWS_SECRET_KEY';
 var S3_BUCKET = process.env.S3_BUCKET || 'dmmquest';
 var aws = require('aws-sdk');
 var path = require('path');

@@ -1,12 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var RedisClient_1 = require("./RedisClient");
 var utils_1 = require("./utils");
 function initStore(callback) {
-    if (process.env.REDIS_URL) {
-        utils_1.logServer("Run service with redis");
-        return RedisClient_1.initRedisStore(callback);
-    }
     setImmediate(function () {
         utils_1.logServer("Run local service");
         callback();

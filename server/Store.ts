@@ -14,10 +14,6 @@ export interface Store {
 }
 
 export function initStore(callback: () => void): Store {
-    if (process.env.REDIS_URL) {
-        logServer("Run service with redis");
-        return initRedisStore(callback);
-    }
 
     setImmediate(() => {
         logServer("Run local service");
