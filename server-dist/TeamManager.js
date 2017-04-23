@@ -69,7 +69,7 @@ var TeamManager = (function () {
         utils_1.logServer('Init state:' + token);
         var team = this.findTeamByToken(token);
         if (!team) {
-            return;
+            return null;
         }
         return this.stageModifier.initDefaultStateObject(team);
     };

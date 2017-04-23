@@ -240,6 +240,30 @@ var StageManager = (function () {
             description: stageInfo.description
         };
     };
+    StageManager.prototype.geStagePenalties = function (team, appState) {
+        for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
+            var stage = _a[_i];
+            if (stage.expectedClosedTime) {
+                //has expected time
+                var id = stage.id;
+                var stageIdNumber = Number(id);
+                if (stageIdNumber == null) {
+                    continue;
+                }
+                var rawStageInfo = data_1.defaultData.stages[id];
+                var timeHours = rawStageInfo.timeHours;
+                var timeMinutes = rawStageInfo.timeMinutes;
+                if (stage.closedTime) {
+                    //we need diff
+                }
+                else {
+                    //doesn't have close time
+                    //so it can be timeout
+                }
+            }
+        }
+        return;
+    };
     StageManager.prototype.getFullStagesInfo = function (team) {
         var result = {};
         var appState = this.teamManager.getAppState(team.tokenId);

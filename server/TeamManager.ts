@@ -70,7 +70,7 @@ export class TeamManager {
         return team;
     }
 
-    getAppState(token) {
+    getAppState(token): AppState {
         let state = this.stageModifier.getState(token);
         if (state) {
             return state;
@@ -79,11 +79,11 @@ export class TeamManager {
         return this.createAppState(token);
     }
 
-    createAppState(token: string) {
+    createAppState(token: string): AppState {
         logServer('Init state:' + token);
         let team = this.findTeamByToken(token);
         if (!team) {
-            return;
+            return null;
         }
 
         return this.stageModifier.initDefaultStateObject(team);

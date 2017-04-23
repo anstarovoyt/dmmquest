@@ -322,10 +322,13 @@ export function initServer() {
 
             let fullStagesInfo = stageManager.getFullStagesInfo(cur);
 
+            let appState = teamManager.getAppState(cur.tokenId);
+
             let info: TeamInfo = {
+                stagePenalties: {},
                 stagesInfo: fullStagesInfo,
                 team: cur,
-                appState: teamManager.getAppState(cur.tokenId)
+                appState: appState
             };
             if (cur.firstLoginDate) {
                 info.firstLoginDateEkbTimezone = toEkbString(cur.firstLoginDate);

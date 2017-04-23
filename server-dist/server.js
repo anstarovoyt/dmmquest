@@ -263,10 +263,12 @@ function initServer() {
                 tokenId: cur.tokenId
             };
             var fullStagesInfo = stageManager.getFullStagesInfo(cur);
+            var appState = teamManager.getAppState(cur.tokenId);
             var info = {
+                stagePenalties: {},
                 stagesInfo: fullStagesInfo,
                 team: cur,
-                appState: teamManager.getAppState(cur.tokenId)
+                appState: appState
             };
             if (cur.firstLoginDate) {
                 info.firstLoginDateEkbTimezone = utils_1.toEkbString(cur.firstLoginDate);

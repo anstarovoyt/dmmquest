@@ -267,6 +267,37 @@ export class StageManager {
         };
     }
 
+    geStagePenalties(team: Team, appState: AppState): { [stageId: string]: number } {
+
+
+        for (let stage of appState.stages) {
+            if (stage.expectedClosedTime) {
+                //has expected time
+
+                let id = stage.id;
+                let stageIdNumber = Number(id);
+                if (stageIdNumber == null) {
+                    continue;
+                }
+                let rawStageInfo = defaultData.stages[id];
+
+                let timeHours = rawStageInfo.timeHours;
+                let timeMinutes = rawStageInfo.timeMinutes;
+                if (stage.closedTime) {
+
+                    //we need diff
+
+
+                } else {
+                    //doesn't have close time
+                    //so it can be timeout
+                }
+            }
+        }
+
+        return;
+    }
+
     getFullStagesInfo(team: Team) {
         let result: FullStagesInfo = {};
         const appState = this.teamManager.getAppState(team.tokenId);

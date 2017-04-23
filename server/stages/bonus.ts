@@ -29,7 +29,15 @@ export const stage: RawStage = {
         {
             text: `Селфи на фоне взлетающего самолёта в Кольцово. Полбалла за каждого участника команды на фото! Максимум 3 балла.`,
             type: QuestType.UPLOAD,
-            answer: ['Фото на фоне самолета']
+            answer: ['Фото на фоне самолета'],
+            openResult: true
+        },
+
+        {
+            text: 'Дополнительные фотографии города на листочках',
+            type: QuestType.UPLOAD,
+            answer: ['Фотографии на листочках'],
+            openResult: true
         }
     ]
 };

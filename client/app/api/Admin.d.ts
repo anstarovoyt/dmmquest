@@ -12,6 +12,7 @@ interface RemoveTeamResponse {
 }
 
 interface TeamInfo {
+    stagePenalties?: { [stageId: string]: number } //stage -> penalty points
     team: TeamSimple,
     firstLoginDateEkbTimezone?: string,
     endQuestEkbTimezone?: string,
@@ -50,7 +51,7 @@ interface AddTeamResponse {
 interface UnlockLastCompletedStageRequest {
     token: string,
     teamTokenId: string,
-    stageId?:string
+    stageId?: string
 }
 
 interface UnlockLastCompletedStageResponse {
