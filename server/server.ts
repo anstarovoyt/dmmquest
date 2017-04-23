@@ -320,7 +320,7 @@ export function initServer() {
             };
 
 
-            let fullStagesInfo = stageManager.getFullStagesInfo(team);
+            let fullStagesInfo = stageManager.getFullStagesInfo(cur);
 
             let info: TeamInfo = {
                 stagesInfo: fullStagesInfo,
