@@ -6,7 +6,7 @@ export class StageElementComponent extends React.Component<{ info: TeamInfo, sta
         const stage = this.props.stage;
         const stageNumber = this.getStageNumber(stage);
 
-        let teamInfo = this.props.info;
+        let teamInfo: TeamInfo = this.props.info;
         let stageInfo = teamInfo.stagesInfo[stage.id];
 
 
@@ -14,9 +14,22 @@ export class StageElementComponent extends React.Component<{ info: TeamInfo, sta
                 <b>Этап {stageNumber}</b>: {stageInfo.realName}
             — <b>{this.getStageStatusText(stage)}</b>
             <div>
+                <i>&nbsp;&nbsp;&nbsp;<b>{'Штраф: '}</b></i> {this.getPenalty(teamInfo, stage)}
                 {this.getAnswers(stage)}
             </div>
                 </span>;
+    }
+
+    private getPenalty(teamInfo: TeamInfo, stage: Stage) {
+        let stagePenalties = teamInfo.stagePenalties;
+        if (stagePenalties) {
+            let stagePenalty = stagePenalties[stage.id];
+            if (stagePenalty != null && stagePenalty < 0) {
+                return <span>{String(stagePenalty)}</span>;
+            }
+        }
+
+        return <span>{'Нет штрафа'}</span>;
     }
 
     private getStageNumber(stage: Stage): string {
@@ -119,7 +132,7 @@ export class StageElementComponent extends React.Component<{ info: TeamInfo, sta
             {teamBonus || obj.type == QuestType.TEXT_NO_TEAM_BONUS ?
                 <div>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    {obj.type != QuestType.TEXT_NO_TEAM_BONUS ?'✓ ' :' '}<span
+                    {obj.type != QuestType.TEXT_NO_TEAM_BONUS ? '✓ ' : ' '}<span
                     className="answer-text-title">Бонус за командность</span>: {obj.type == QuestType.TEXT_NO_TEAM_BONUS ?
                     <span>{'Вручную'}</span> :
                     this.getUserAnswer(answerId, QuestType.UPLOAD, teamBonus.answer, 'TeamBonus')}

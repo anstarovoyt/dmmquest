@@ -324,8 +324,10 @@ export function initServer() {
 
             let appState = teamManager.getAppState(cur.tokenId);
 
+            let stagePenalties = stageManager.geStagePenalties(cur, appState);
+
             let info: TeamInfo = {
-                stagePenalties: {},
+                stagePenalties: stagePenalties,
                 stagesInfo: fullStagesInfo,
                 team: cur,
                 appState: appState

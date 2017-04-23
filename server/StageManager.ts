@@ -2,6 +2,7 @@ import {TeamManager} from './TeamManager';
 import {defaultData, intro, QuestText, RawStage, resultSuccess, resultUnSuccess} from './data';
 import {getCloseDate, logServer, toEkbString, toEkbOnlyTimeString} from './utils';
 import {StateManager} from './StateManager';
+import moment = require('moment');
 
 
 export class StageManager {
@@ -268,11 +269,17 @@ export class StageManager {
     }
 
     geStagePenalties(team: Team, appState: AppState): { [stageId: string]: number } {
+        if (!team.endQuestDate) return {};
 
+        let result = {};
 
         for (let stage of appState.stages) {
-            if (stage.expectedClosedTime) {
+            let expectedClosedTime = stage.expectedClosedTime;
+            if (expectedClosedTime) {
                 //has expected time
+
+                let indexOfSeparator = expectedClosedTime.indexOf(':');
+                let hours = expectedClosedTime.substr(0, indexOfSeparator);
 
                 let id = stage.id;
                 let stageIdNumber = Number(id);
@@ -283,19 +290,28 @@ export class StageManager {
 
                 let timeHours = rawStageInfo.timeHours;
                 let timeMinutes = rawStageInfo.timeMinutes;
-                if (stage.closedTime) {
+                let actualClosedTime = this.getActualCloseTime(team, stage);
 
-                    //we need diff
-
-
-                } else {
-                    //doesn't have close time
-                    //so it can be timeout
+                const expectedDate = moment(expectedClosedTime, 'HH:mm');
+                const actualDate = moment(actualClosedTime, 'HH:mm');
+                let stageMinutes = actualDate.diff(expectedDate, 'minutes');
+                if (stageMinutes > 0) {
+                    result[stage.id] = -stageMinutes;
                 }
             }
         }
 
-        return;
+        return result;
+    }
+
+    private getActualCloseTime(team: Team, stage: Stage) {
+        if (stage.closedTime) {
+            return stage.closedTime;
+        }
+
+        let endQuestDate = team.endQuestDate;
+
+        return toEkbOnlyTimeString(endQuestDate);
     }
 
     getFullStagesInfo(team: Team) {

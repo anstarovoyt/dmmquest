@@ -264,8 +264,9 @@ function initServer() {
             };
             var fullStagesInfo = stageManager.getFullStagesInfo(cur);
             var appState = teamManager.getAppState(cur.tokenId);
+            var stagePenalties = stageManager.geStagePenalties(cur, appState);
             var info = {
-                stagePenalties: {},
+                stagePenalties: stagePenalties,
                 stagesInfo: fullStagesInfo,
                 team: cur,
                 appState: appState

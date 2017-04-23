@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_1 = require("./data");
 var utils_1 = require("./utils");
+var moment = require("moment");
 var StageManager = (function () {
     function StageManager(teamManager, stateManager) {
         this.teamManager = teamManager;
@@ -241,10 +242,16 @@ var StageManager = (function () {
         };
     };
     StageManager.prototype.geStagePenalties = function (team, appState) {
+        if (!team.endQuestDate)
+            return {};
+        var result = {};
         for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
             var stage = _a[_i];
-            if (stage.expectedClosedTime) {
+            var expectedClosedTime = stage.expectedClosedTime;
+            if (expectedClosedTime) {
                 //has expected time
+                var indexOfSeparator = expectedClosedTime.indexOf(':');
+                var hours = expectedClosedTime.substr(0, indexOfSeparator);
                 var id = stage.id;
                 var stageIdNumber = Number(id);
                 if (stageIdNumber == null) {
@@ -253,16 +260,23 @@ var StageManager = (function () {
                 var rawStageInfo = data_1.defaultData.stages[id];
                 var timeHours = rawStageInfo.timeHours;
                 var timeMinutes = rawStageInfo.timeMinutes;
-                if (stage.closedTime) {
-                    //we need diff
-                }
-                else {
-                    //doesn't have close time
-                    //so it can be timeout
+                var actualClosedTime = this.getActualCloseTime(team, stage);
+                var expectedDate = moment(expectedClosedTime, 'HH:mm');
+                var actualDate = moment(actualClosedTime, 'HH:mm');
+                var stageMinutes = actualDate.diff(expectedDate, 'minutes');
+                if (stageMinutes > 0) {
+                    result[stage.id] = -stageMinutes;
                 }
             }
         }
-        return;
+        return result;
+    };
+    StageManager.prototype.getActualCloseTime = function (team, stage) {
+        if (stage.closedTime) {
+            return stage.closedTime;
+        }
+        var endQuestDate = team.endQuestDate;
+        return utils_1.toEkbOnlyTimeString(endQuestDate);
     };
     StageManager.prototype.getFullStagesInfo = function (team) {
         var result = {};
