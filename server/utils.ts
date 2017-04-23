@@ -69,8 +69,8 @@ export function getDefaultTeams() {
 
     teams.push({
         name: 'Тестовая админская команда',
-        secretCode: 'трувеганыедяттольконатуральноемясо',
-        tokenId: 'трувеганыедяттольконатуральноемясо',
+        secretCode: 'зачемятаквчеранапился',
+        tokenId: 'зачемятаквчеранапился',
         admin: true,
         startFromStage: 0
     });
