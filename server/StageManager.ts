@@ -296,7 +296,7 @@ export class StageManager {
                 const actualDate = moment(actualClosedTime, 'HH:mm');
                 let stageMinutes = actualDate.diff(expectedDate, 'minutes');
                 if (stageMinutes > 0) {
-                    result[stage.id] = -stageMinutes;
+                    result[stage.id] = -(Math.floor(stageMinutes / 10) + 1);
                 }
             }
         }
