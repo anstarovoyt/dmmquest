@@ -265,7 +265,7 @@ var StageManager = (function () {
                 var actualDate = moment(actualClosedTime, 'HH:mm');
                 var stageMinutes = actualDate.diff(expectedDate, 'minutes');
                 if (stageMinutes > 0) {
-                    result[stage.id] = -(Math.floor(stageMinutes / 10) + 1);
+                    result[stage.id] = -((Math.floor(stageMinutes / 10) + 1) / 2);
                 }
             }
         }
