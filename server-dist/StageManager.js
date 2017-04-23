@@ -56,7 +56,7 @@ var StageManager = (function () {
         var hours = 2;
         var minutes = 30;
         var stageId = Number(obj.id);
-        if (stageId) {
+        if (stageId != null && !isNaN(stageId)) {
             var rawStage = data_1.defaultData.stages[stageId];
             if (rawStage.timeHours) {
                 hours = rawStage.timeHours;
@@ -258,7 +258,7 @@ var StageManager = (function () {
         for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
             var stage = _a[_i];
             var stageNumber = Number(stage.id);
-            if (stageNumber) {
+            if (stageNumber != null && !isNaN(stageNumber)) {
                 var rawStage = data_1.defaultData.stages[stageNumber];
                 if (rawStage.bonuses) {
                     for (var _b = 0, _c = rawStage.bonuses; _b < _c.length; _b++) {

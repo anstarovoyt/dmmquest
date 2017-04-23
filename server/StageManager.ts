@@ -63,11 +63,11 @@ export class StageManager {
         });
     }
 
-    private getTimeInfo(obj) {
+    private getTimeInfo(obj: Stage) {
         let hours = 2;
         let minutes = 30;
         let stageId = Number(obj.id);
-        if (stageId) {
+        if (stageId != null && !isNaN(stageId)) {
             let rawStage = defaultData.stages[stageId];
             if (rawStage.timeHours) {
                 hours = rawStage.timeHours;
@@ -289,7 +289,7 @@ export class StageManager {
         for (let stage of appState.stages) {
             let stageNumber = Number(stage.id);
 
-            if (stageNumber) {
+            if (stageNumber != null && !isNaN(stageNumber)) {
                 let rawStage = defaultData.stages[stageNumber];
                 if (rawStage.bonuses) {
                     for (let bonus of rawStage.bonuses) {

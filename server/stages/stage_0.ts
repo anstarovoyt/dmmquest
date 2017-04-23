@@ -6,7 +6,7 @@ export const stage: RawStage = {
     internalName: 'Уралмаш',
     description: getVideo(true, 'https://www.youtube.com/embed/oEV83TYje64'),
     timeHours: 3,
-    timeMinutes:0,
+    timeMinutes: 0,
     quests: [
         {
             text: 'Код по результатам прохождения этапа.',
