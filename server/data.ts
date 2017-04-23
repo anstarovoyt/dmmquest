@@ -3,6 +3,8 @@ import {getVideo} from './stages/helper';
 export type QuestText = (string | { type: QuestType; text: string, values?: string[], answer?: string[] });
 
 export interface RawStage {
+    timeHours?: number,
+    timeMinutes?: number,
     name: string,
     internalName?: string,
     quests: QuestText[]

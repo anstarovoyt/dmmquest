@@ -4,6 +4,8 @@ import {getVideo} from './helper';
 export const stage: RawStage = {
     name: 'Постмодерн',
     internalName: 'Ботаника',
+    timeHours: 2,
+    timeMinutes: 30,
     description: getVideo(true, 'https://www.youtube.com/embed/cIWOO9nbcJU'),
 
     quests: [

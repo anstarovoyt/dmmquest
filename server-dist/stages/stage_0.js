@@ -5,6 +5,8 @@ exports.stage = {
     name: 'Классика',
     internalName: 'Уралмаш',
     description: helper_1.getVideo(true, 'https://www.youtube.com/embed/oEV83TYje64'),
+    timeHours: 3,
+    timeMinutes: 0,
     quests: [
         {
             text: 'Код по результатам прохождения этапа.',

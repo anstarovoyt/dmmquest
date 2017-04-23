@@ -38,7 +38,8 @@ var StageManager = (function () {
         for (var _i = 0, _a = appState.stages; _i < _a.length; _i++) {
             var obj = _a[_i];
             if (obj.status == 1 /* OPEN */) {
-                obj.expectedClosedTime = utils_1.getCloseDate(startDate);
+                var _b = this.getTimeInfo(obj), hours = _b.hours, minutes = _b.minutes;
+                obj.expectedClosedTime = utils_1.getCloseDate(startDate, hours, minutes);
                 break;
             }
         }
@@ -50,6 +51,19 @@ var StageManager = (function () {
                 utils_1.logServer('ALERT: Error update app state for ' + tokenId);
             }
         });
+    };
+    StageManager.prototype.getTimeInfo = function (obj) {
+        var hours = 2;
+        var minutes = 30;
+        var stageId = Number(obj.id);
+        if (stageId) {
+            var rawStage = data_1.defaultData.stages[stageId];
+            if (rawStage.timeHours) {
+                hours = rawStage.timeHours;
+                minutes = rawStage.timeMinutes;
+            }
+        }
+        return { hours: hours, minutes: minutes };
     };
     StageManager.prototype.updateTeamBonuses = function (teamBonuses, stage, fromClose) {
         for (var _i = 0, teamBonuses_1 = teamBonuses; _i < teamBonuses_1.length; _i++) {
@@ -101,7 +115,8 @@ var StageManager = (function () {
         var nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == 0 /* LOCKED */) {
             nextStage.status = 1 /* OPEN */;
-            nextStage.expectedClosedTime = utils_1.getCloseDate(currentDateObject);
+            var _a = this.getTimeInfo(nextStage), hours = _a.hours, minutes = _a.minutes;
+            nextStage.expectedClosedTime = utils_1.getCloseDate(currentDateObject, hours, minutes);
         }
         if (stage.last) {
             //close bonus if the stage is last

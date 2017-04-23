@@ -47,7 +47,9 @@ export class StageManager {
         const appState = this.teamManager.getAppState(tokenId);
         for (let obj of appState.stages) {
             if (obj.status == StageStatus.OPEN) {
-                obj.expectedClosedTime = getCloseDate(startDate);
+                let {hours, minutes} = this.getTimeInfo(obj);
+
+                obj.expectedClosedTime = getCloseDate(startDate, hours, minutes);
                 break;
             }
         }
@@ -59,6 +61,20 @@ export class StageManager {
                 logServer('ALERT: Error update app state for ' + tokenId);
             }
         });
+    }
+
+    private getTimeInfo(obj) {
+        let hours = 2;
+        let minutes = 30;
+        let stageId = Number(obj.id);
+        if (stageId) {
+            let rawStage = defaultData.stages[stageId];
+            if (rawStage.timeHours) {
+                hours = rawStage.timeHours;
+                minutes = rawStage.timeMinutes;
+            }
+        }
+        return {hours, minutes};
     }
 
     private updateTeamBonuses(teamBonuses: QuestAnswer[], stage: Stage, fromClose: boolean) {
@@ -116,7 +132,8 @@ export class StageManager {
         const nextStage = this.getNextStage(appState, stage);
         if (nextStage && nextStage.status == StageStatus.LOCKED) {
             nextStage.status = StageStatus.OPEN;
-            nextStage.expectedClosedTime = getCloseDate(currentDateObject);
+            let {hours, minutes} = this.getTimeInfo(nextStage);
+            nextStage.expectedClosedTime = getCloseDate(currentDateObject, hours, minutes);
         }
 
         if (stage.last) {

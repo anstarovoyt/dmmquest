@@ -4,6 +4,8 @@ var helper_1 = require("./helper");
 exports.stage = {
     name: 'Постмодерн',
     internalName: 'Ботаника',
+    timeHours: 2,
+    timeMinutes: 30,
     description: helper_1.getVideo(true, 'https://www.youtube.com/embed/cIWOO9nbcJU'),
     quests: [
         {
